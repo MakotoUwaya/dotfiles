@@ -49,7 +49,12 @@ return {
         if client and client.name == "eslint" then
           vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = bufnr,
-            command = "EslintFixAll",
+            callback = function()
+              -- pcall を使うことで、エラーが発生しても無視して保存を続行します
+              pcall(function()
+                vim.cmd("EslintFixAll")
+              end)
+            end,
           })
         end
       end,
@@ -73,4 +78,3 @@ return {
     })
   end,
 }
-
