@@ -23,3 +23,9 @@ keymap.set('n', '<C-a>', 'gg<S-v>G', { desc = 'Select all', noremap = true })
 keymap.set('n', '<C-b>', ':Neotree<cr>', { desc = 'Open Neotree', noremap = true })
 
 keymap.set('i', 'jk', '<ESC>', { desc = 'jk to ESC', noremap = true })
+
+-- barbar
+keymap.set("n", "<Tab>", ":BufferNext<CR>", { desc = "Move to next tab", noremap = true })
+keymap.set("n", "<S-Tab>", ":BufferPrevious<CR>", { desc = "Move to previous tab", noremap = true })
+keymap.set("n", "<leader>x", ":BufferClose<CR>", { desc = "Buffer close", noremap = true })
+keymap.set("n", "<A-p>", ":BufferPin<CR>", { desc = "Pin buffer", noremap = true })
