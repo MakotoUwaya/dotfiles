@@ -1,8 +1,8 @@
 return {
-  "nvim-lualine/lualine.nvim",
+  'nvim-lualine/lualine.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   opts = {
-    options = { 
+    options = {
       theme = codedark,
       refresh = {
         statusline = 100,
@@ -25,4 +25,3 @@ return {
     }
   }
 }
-

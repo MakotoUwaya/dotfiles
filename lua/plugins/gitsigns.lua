@@ -1,19 +1,19 @@
 return {
-  "lewis6991/gitsigns.nvim",
-  event = { "BufReadPre", "BufNewFile" },
+  'lewis6991/gitsigns.nvim',
+  event = { 'BufReadPre', 'BufNewFile' },
   opts = {
     signs = {
-      add          = { text = "┃" },
-      change       = { text = "┃" },
-      delete       = { text = "_" },
-      topdelete    = { text = "‾" },
-      changedelete = { text = "~" },
-      untracked    = { text = "┆" },
+      add          = { text = '┃' },
+      change       = { text = '┃' },
+      delete       = { text = '_' },
+      topdelete    = { text = '‾' },
+      changedelete = { text = '~' },
+      untracked    = { text = '┆' },
     },
     current_line_blame = true,
     current_line_blame_opts = {
       virt_text = true,
-      virt_text_pos = "eol", -- 行末に表示
+      virt_text_pos = 'eol', -- 行末に表示
       delay = 500,           -- 0.5秒待機して表示
     },
 
@@ -26,21 +26,21 @@ return {
         vim.keymap.set(mode, l, r, opts)
       end
 
-      map("n", "]c", function()
-        if vim.wo.diff then return "]c" end
+      map('n', ']c', function()
+        if vim.wo.diff then return ']c' end
         vim.schedule(function() gs.next_hunk() end)
-        return "<Ignore>"
-      end, { expr = true, desc = "Next Hunk" })
+        return '<Ignore>'
+      end, { expr = true, desc = 'Next Hunk' })
 
-      map("n", "[c", function()
-        if vim.wo.diff then return "[c" end
+      map('n', '[c', function()
+        if vim.wo.diff then return '[c' end
         vim.schedule(function() gs.prev_hunk() end)
-        return "<Ignore>"
-      end, { expr = true, desc = "Prev Hunk" })
+        return '<Ignore>'
+      end, { expr = true, desc = 'Prev Hunk' })
 
-      map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview Hunk" })
-      map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
-      map("n", "<leader>hd", gs.diffthis, { desc = "Diff This" })
+      map('n', '<leader>hp', gs.preview_hunk, { desc = 'Preview Hunk' })
+      map('n', '<leader>hb', function() gs.blame_line({ full = true }) end, { desc = 'Blame Line' })
+      map('n', '<leader>hd', gs.diffthis, { desc = 'Diff This' })
     end,
   },
 }

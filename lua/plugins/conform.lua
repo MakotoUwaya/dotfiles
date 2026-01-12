@@ -1,29 +1,29 @@
 return {
-  "stevearc/conform.nvim",
-  event = { "BufWritePre", "InsertLeave" },
-  cmd = { "ConformInfo" },
+  'stevearc/conform.nvim',
+  event = { 'BufWritePre', 'InsertLeave' },
+  cmd = { 'ConformInfo' },
   keys = {
     {
-      "<leader>f",
+      '<leader>f',
       function()
-        require("conform").format({ async = true, lsp_fallback = true })
+        require('conform').format({ async = true, lsp_fallback = true })
       end,
-      mode = "",
-      desc = "Format buffer",
+      mode = '',
+      desc = 'Format buffer',
     },
   },
   opts = {
     formatters_by_ft = {
-      lua = { "stylua" },
-      typescript = { "prettierd", "prettier", stop_after_first = true },
-      typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-      javascript = { "prettierd", "prettier", stop_after_first = true },
-      javascriptreact = { "prettierd", "prettier", stop_after_first = true },
-      html = { "prettier" },
-      css = { "prettier" },
-      json = { "prettier" },
-      xml = { "xmlformatter" },
-      xaml = { "xmlformatter" },
+      lua = { 'stylua' },
+      typescript = { 'prettierd', 'prettier', stop_after_first = true },
+      typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      javascript = { 'prettierd', 'prettier', stop_after_first = true },
+      javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      html = { 'prettier' },
+      css = { 'prettier' },
+      json = { 'prettier' },
+      xml = { 'xmlformatter' },
+      xaml = { 'xmlformatter' },
     },
     format_on_save = {
       timeout_ms = 500,
@@ -31,11 +31,11 @@ return {
     },
   },
   config = function(_, opts)
-    local conform = require("conform")
+    local conform = require('conform')
     conform.setup(opts)
 
-    vim.api.nvim_create_autocmd("InsertLeave", {
-      pattern = "*",
+    vim.api.nvim_create_autocmd('InsertLeave', {
+      pattern = '*',
       callback = function(args)
         conform.format({
           bufnr = args.buf,
