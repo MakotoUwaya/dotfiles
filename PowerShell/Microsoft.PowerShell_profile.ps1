@@ -1,6 +1,7 @@
 # Alias
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name touch -Value New-Item
+Set-Alias -Name vim -Value nvim
 Set-Alias -Name gg -Value lazygit
 
 # mise
@@ -40,21 +41,14 @@ function base64(){
     End{}
 }
 
-# Scoop
-$ENV:Path+=";$env:USERPROFILE\scoop\shims"
-
-# Credential Manager を設定(SSH ではなく HTTPS で通信したい場合)
-# git config --global credential.helper manager
-. "$HOME\.safe-chain\scripts\init-pwsh.ps1" # Safe-chain PowerShell initialization script
+# Safe-chain PowerShell initialization script
+. "$HOME\.safe-chain\scripts\init-pwsh.ps1"
 
 # fzf
 $env:FZF_PREVIEW_SCRIPT_PATH = "$env:USERPROFILE\Documents\PowerShell\fzf-preview.ps1".Replace('\', '/')
-# $env:FZF_DEFAULT_COMMAND="fd --type f --strip-cwd-prefix"
 $env:FZF_DEFAULT_OPTS="--prompt='QUERY> ' --height 60% --layout reverse --border=rounded --style full"
 $env:FZF_CTRL_T_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF_PREVIEW_SCRIPT_PATH\"" {}"" --bind 'focus:transform-header:file --brief {}'"
 $env:FZF_ALT_C_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF_PREVIEW_SCRIPT_PATH\"" {}"" --bind 'focus:transform-header:file --brief {}'"
-
-# Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -ScriptBlock { Write-Host "設定成功！" }
 
 # ghq
 function Set-GhqLocation {
