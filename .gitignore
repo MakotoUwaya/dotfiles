@@ -47,9 +47,13 @@
 !/.profile
 !/.viminfo
 
+!/PowerShell/
+/PowerShell/**
+!/PowerShell/Scripts/
+!/PowerShell/Scripts/*.bat
+!/PowerShell/*.ps1
+
 !/README.md
 !.gitignore
 !.gitkeep
 
-!/.zfunc/
-/.zfunc/**  # ディレクトリは管理したいけど中身はいらないときはこんな感じ
