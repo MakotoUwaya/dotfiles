@@ -16,6 +16,13 @@ ghq clone https://github.com/MakotoUwaya/dotfiles.git
 
 ```sh
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\Documents\PowerShell\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\PowerShell\"
+```
+
+```sh
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\nvim\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\nvim\"
+```
+
+```sh
+winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\settings.json"
 ```
 

@@ -52,6 +52,9 @@
 !/PowerShell/Scripts/
 !/PowerShell/Scripts/*.bat
 !/PowerShell/*.ps1
+!/winget/
+/winget/**
+!/winget/settings.json
 
 !/README.md
 !.gitignore
