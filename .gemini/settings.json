@@ -6,7 +6,7 @@
   "general": {
     "preferredEditor": "vscode",
     "previewFeatures": true,
-    "vimMode": false
+    "vimMode": true
   },
   "security": {
     "auth": {
