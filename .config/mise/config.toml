@@ -10,4 +10,5 @@ npm = "latest"
 "npm:neovim" = "latest"
 delta = "latest"
 fzf = "latest"
+gemini-cli = "latest"
 

@@ -23,6 +23,10 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\nvim\" -Ta
 ```
 
 ```sh
+New-Item -ItemType SymbolicLink -Path "$HOME\.config\mise\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\mise\"
+```
+
+```sh
 winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\settings.json"
 ```
 
