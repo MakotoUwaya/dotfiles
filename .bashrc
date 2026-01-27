@@ -119,7 +119,7 @@ fi
 # User customize part
 
 # mise
-eval "$(~/.local/bin/mise activate bash)"
+eval "$(/usr/bin/mise activate bash)"
 
 # keychain
 eval `keychain --eval --agents ssh id_rsa`
