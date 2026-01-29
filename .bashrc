@@ -171,3 +171,7 @@ bind '"\C-g": " gitdir\C-m"'
 # Starship
 eval "$(starship init bash)"
 
+
+# multi-agent-shogun aliases (added by first_setup.sh)
+alias css='cd "/home/m-uwaya/ghq/github.com/yohey-w/multi-agent-shogun" && ./shutsujin_departure.sh'
+alias csm='cd "/home/m-uwaya/ghq/github.com/yohey-w/multi-agent-shogun"'
