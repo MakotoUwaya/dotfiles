@@ -11,4 +11,5 @@ npm = "latest"
 delta = "latest"
 fzf = "latest"
 gemini-cli = "latest"
+tmux = "latest"
 
