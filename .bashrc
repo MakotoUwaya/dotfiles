@@ -168,6 +168,9 @@ bind '"\C-f": " \C-e\C-u tfz -m\C-m"'
 alias gitdir='cd "$(ghq list --full-path | fzf)"'
 bind '"\C-g": " gitdir\C-m"'
 
+# for tmux
+bind '"\C-h": backward-kill-word' 
+
 # Starship
 eval "$(starship init bash)"
 
