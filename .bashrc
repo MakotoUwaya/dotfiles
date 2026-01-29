@@ -157,7 +157,7 @@ esac
 
 # tfz
 export FZF_DEFAULT_OPTS="--prompt='QUERY> ' --height 60% --layout reverse --border=rounded --style full"
-export FZF_CTRL_T_OPTS="--preview 'fzf-preview.sh {}' --bind 'focus:transform-header:file --brief {}' --height 100%"
+export FZF_CTRL_T_COMMAND=""
 export FZF_ALT_C_OPTS="--height 100% --preview 'eza {} -h -T -F --no-user --no-time --no-filesize --no-permissions --long | head -200'"
 export EDITOR=nvim
 
