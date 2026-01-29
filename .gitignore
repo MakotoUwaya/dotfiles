@@ -45,6 +45,7 @@
 !/.bashrc
 !/.gitconfig
 !/.profile
+!/.tmux.conf
 !/.viminfo
 
 !/PowerShell/
