@@ -50,6 +50,9 @@ $env:FZF_DEFAULT_OPTS="--prompt='QUERY> ' --height 60% --layout reverse --border
 $env:FZF_CTRL_T_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF_PREVIEW_SCRIPT_PATH\"" {}"" --bind 'focus:transform-header:file --brief {}'"
 $env:FZF_ALT_C_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF_PREVIEW_SCRIPT_PATH\"" {}"" --bind 'focus:transform-header:file --brief {}'"
 
+# ripgrep
+$env:RIPGREP_CONFIG_PATH="$HOME\.ripgreprc"
+
 # ghq
 function Set-GhqLocation {
     $ghqRoot = ghq root

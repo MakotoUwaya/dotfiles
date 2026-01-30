@@ -27,6 +27,10 @@ New-Item -ItemType SymbolicLink -Path "$HOME\.config\mise\" -Target "$env:USERPR
 ```
 
 ```sh
+New-Item -ItemType SymbolicLink -Path "$HOME\.ripgreprc" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.ripgreprc"
+```
+
+```sh
 winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\settings.json"
 ```
 
