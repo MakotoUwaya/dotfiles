@@ -139,6 +139,9 @@
 					"PackageIdentifier" : "GnuWin32.Zip"
 				},
 				{
+					"PackageIdentifier" : "Kitware.CMake"
+				},
+				{
 					"PackageIdentifier" : "Microsoft.VisualStudio.Community"
 				},
 				{
