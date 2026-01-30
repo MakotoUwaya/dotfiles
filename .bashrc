@@ -164,6 +164,9 @@ export EDITOR=nvim
 eval "$($HOME/.local/share/mise/shims/fzf --bash)"
 bind '"\C-f": " \C-e\C-u tfz -m\C-m"'
 
+# repgrep
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
 # ghq
 alias gitdir='cd "$(ghq list --full-path | fzf)"'
 bind '"\C-g": " gitdir\C-m"'

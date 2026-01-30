@@ -1,0 +1,12 @@
+# .gitignore を尊重しない
+--no-ignore-vcs
+
+# 隠しファイル・ディレクトリも検索
+--hidden
+
+# 除外ディレクトリ指定
+--glob=!.git/*
+--glob=!node_modules/*
+
+# スマートケース検索
+--smart-case

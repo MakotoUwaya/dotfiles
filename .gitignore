@@ -45,6 +45,7 @@
 !/.bashrc
 !/.gitconfig
 !/.profile
+!/.ripgreprc
 !/.tmux.conf
 !/.viminfo
 
