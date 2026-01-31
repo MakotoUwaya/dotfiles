@@ -2,11 +2,25 @@
 
 ## Using
 
+### Install
+
+- [jdx/mise](https://github.com/jdx/mise)
+    - The front-end to your dev env
+- [x-motemen/ghq](https://github.com/x-motemen/ghq)
+
+```sh
+mise install ghq && mise use ghq
+```
+
 ```sh
 ghq clone https://github.com/MakotoUwaya/dotfiles.git
 ```
 
 ### For Ubuntu
+
+```sh
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+```
 
 ```sh
 ~/ghq/github.com/MakotoUwaya/dotfiles/.bin/install.sh
