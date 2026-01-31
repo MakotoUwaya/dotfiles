@@ -16,7 +16,14 @@ mise install ghq && mise use ghq
 ghq clone https://github.com/MakotoUwaya/dotfiles.git
 ```
 
-### For Ubuntu
+### For WSL2 Ubuntu
+
+How to install Linux on Windows with WSL  
+https://learn.microsoft.com/ja-jp/windows/wsl/install
+
+```sh
+wsl --install -d Ubuntu-24.04
+```
 
 ```sh
 sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
