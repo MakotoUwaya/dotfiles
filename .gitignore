@@ -6,6 +6,7 @@
 !/.aws/
 /.aws/**
 !/.aws/config
+!/.bin/
 !/.cargo/
 /.cargo/**
 !/.cargo/.crates.toml
