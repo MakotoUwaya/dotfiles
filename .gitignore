@@ -28,7 +28,6 @@
 !/.config/mise/
 !/.config/mise/config.toml
 !/.config/nvim/
-!/.config/nvim/**
 !/.config/starship.toml
 !/.config/systemd/
 !/.config/systemd/user/
@@ -39,8 +38,8 @@
 /.gemini/**
 !/.gemini/GEMINI.md
 !/.gemini/settings.json
+!/etc/
 !/sound/
-!/sound/**
 !/.bash_aliases
 !/.bash_logout
 !/.bashrc
