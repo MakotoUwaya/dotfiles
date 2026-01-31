@@ -41,5 +41,3 @@
 	line-numbers = true
 [merge]
     	conflictStyle = zdiff3	
-[include]
-	path = ~/.gitconfig_shared
