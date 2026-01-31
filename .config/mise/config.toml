@@ -12,4 +12,6 @@ delta = "latest"
 fzf = "latest"
 gemini-cli = "latest"
 starship = "latest"
+ghq = "latest"
+lazygit = "latest"
 
