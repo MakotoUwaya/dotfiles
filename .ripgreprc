@@ -6,7 +6,12 @@
 
 # 除外ディレクトリ指定
 --glob=!.git/*
---glob=!node_modules/*
+--glob=!**/node_modules/*
+--glob=!**/.turbo/*
+--glob=!**/.next/*
+--glob=!**/_pagefind/*
+--glob=!**/storybook-static/*
+--glob=!**/coverage/*
 
 # スマートケース検索
 --smart-case
