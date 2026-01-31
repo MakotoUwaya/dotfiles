@@ -124,23 +124,11 @@ eval "$(/usr/bin/mise activate bash)"
 # keychain
 eval `keychain --eval --agents ssh id_rsa`
 
-# Python
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-# pipenv
-export PIPENV_VENV_IN_PROJECT=true
-
 # aws-vault
 export AWS_VAULT_BACKEND=pass
 export AWS_VAULT_PASS_PREFIX=aws-vault
 export AWS_SESSION_TOKEN_TTL=3h
 export GPG_TTY=$(tty)
-
-# asdf
-. "$HOME/.asdf/asdf.sh"
-. "$HOME/.asdf/completions/asdf.bash"
 
 # Rust
 . "$HOME/.cargo/env"
