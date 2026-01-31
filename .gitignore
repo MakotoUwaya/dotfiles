@@ -40,6 +40,7 @@
 !/.gemini/settings.json
 !/etc/
 !/sound/
+!/usr/
 !/.bash_aliases
 !/.bash_logout
 !/.bashrc
