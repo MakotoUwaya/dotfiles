@@ -106,6 +106,7 @@ desktop-file-utils				install
 dhcpcd-base					install
 dictionaries-common				install
 diffutils					install
+direnv						install
 dirmngr						install
 distro-info					install
 distro-info-data				install

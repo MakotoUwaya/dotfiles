@@ -159,6 +159,9 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 alias gitdir='cd "$(ghq list --full-path | fzf)"'
 bind '"\C-g": " gitdir\C-m"'
 
+# direnv
+eval "$(direnv hook bash)"
+
 # for tmux
 bind '"\C-h": backward-kill-word' 
 
