@@ -13,10 +13,10 @@ return {
     current_line_blame = true,
     current_line_blame_opts = {
       virt_text = true,
-      virt_text_pos = 'eol', -- 行末に表示
-      delay = 500,           -- 0.5秒待機して表示
+      virt_text_pos = 'eol',
+      virt_text_priority = 100,
+      delay = 1000,
     },
-
     on_attach = function(bufnr)
       local gs = package.loaded.gitsigns
 
