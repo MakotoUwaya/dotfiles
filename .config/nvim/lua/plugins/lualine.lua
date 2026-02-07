@@ -3,7 +3,7 @@ return {
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   opts = {
     options = {
-      theme = codedark,
+      theme = 'codedark',
       refresh = {
         statusline = 100,
         tabline = 100,
