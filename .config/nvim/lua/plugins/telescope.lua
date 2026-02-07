@@ -5,13 +5,20 @@ return {
     'nvim-lua/plenary.nvim',
     {
       'nvim-telescope/telescope-fzf-native.nvim',
-      build = function()
+      build = function(plugin)
         if vim.fn.has('win32') == 1 then
-          -- Windows: Visual Studio ジェネレーターを使用（Developer Command Prompt 不要）
-          vim.fn.system('cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 18 2026" -A x64')
-          vim.fn.system('cmake --build build --config Release --target install')
+          -- Windows: zig cc で直接 DLL をビルド（mise 経由で zig がインストール済み）
+          -- リスト引数でシェルを回避（shellcmdflag の不整合対策）
+          local dir = plugin.dir
+          vim.fn.mkdir(dir .. '/build', 'p')
+          vim.fn.system({
+            'zig', 'cc', '-shared', '-O2',
+            '-o', dir .. '/build/libfzf.dll',
+            dir .. '/src/fzf.c',
+            '-I' .. dir .. '/src',
+          })
         else
-          vim.fn.system('make')
+          vim.fn.system({ 'make', '-C', plugin.dir })
         end
       end,
     },
