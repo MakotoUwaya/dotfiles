@@ -5,7 +5,15 @@ return {
     'nvim-lua/plenary.nvim',
     {
       'nvim-telescope/telescope-fzf-native.nvim',
-      build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release --target install',
+      build = function()
+        if vim.fn.has('win32') == 1 then
+          -- Windows: Visual Studio ジェネレーターを使用（Developer Command Prompt 不要）
+          vim.fn.system('cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 18 2026" -A x64')
+          vim.fn.system('cmake --build build --config Release --target install')
+        else
+          vim.fn.system('make')
+        end
+      end,
     },
   },
   config = function()
