@@ -54,7 +54,6 @@
 !/.profile
 !/.ripgreprc
 !/.tmux.conf
-!/.viminfo
 
 !/PowerShell/
 /PowerShell/**
