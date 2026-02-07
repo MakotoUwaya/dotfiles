@@ -20,6 +20,7 @@ return {
       lemminx = {
         filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'xaml' },
       },
+      yamlls = {},
     },
   },
   config = function(_, opts)
