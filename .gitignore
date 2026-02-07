@@ -34,6 +34,11 @@
 !/.config/systemd/user/default.target.wants/
 !/.config/systemd/user/default.target.wants/wsl-wayland-symlink.service
 !/.config/systemd/user/wsl-wayland-symlink.service
+!/.claude/
+/.claude/**
+!/.claude/settings.json
+!/.claude/rules/
+!/.claude/rules/**
 !/.gemini/
 /.gemini/**
 !/.gemini/GEMINI.md
