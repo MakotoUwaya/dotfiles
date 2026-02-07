@@ -3,6 +3,7 @@ require('config.lazy')
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.wrap = false
+vim.opt.laststatus = 3
 
 local keymap = vim.keymap
 
