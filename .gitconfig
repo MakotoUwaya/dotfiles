@@ -27,7 +27,7 @@
 [push]
         default = current
 [credential]
-        helper = /mnt/c/Program\\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
+        helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
 [init]
         defaultBranch = main
 [fetch]
