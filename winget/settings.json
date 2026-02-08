@@ -275,6 +275,9 @@
 				},
 				{
 					"PackageIdentifier" : "Microsoft.WSL"
+				},
+				{
+					"PackageIdentifier" : "BrechtSanders.WinLibs.POSIX.UCRT"
 				}
 			],
 			"SourceDetails" : 

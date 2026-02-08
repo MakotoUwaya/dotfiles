@@ -4,9 +4,9 @@ return {
   event = { 'BufReadPost', 'BufNewFile' },
   build = ':TSUpdate',
   config = function(_, opts)
-    -- Windows 環境では zig を C コンパイラとして使用する
+    -- Windows 環境では gcc を優先し、zig をフォールバックとして使用する
     if vim.fn.has('win32') == 1 then
-      require('nvim-treesitter.install').compilers = { 'zig' }
+      require('nvim-treesitter.install').compilers = { 'gcc', 'zig' }
     end
     require('nvim-treesitter.configs').setup(opts)
   end,
