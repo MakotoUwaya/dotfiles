@@ -75,15 +75,20 @@ return {
 
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+    -- JS 向け root_dir フォールバックを適用しないサーバー（lspconfig のデフォルトを使用）
+    local skip_root_fallback = { basedpyright = true, ruff = true }
+
     require('mason-lspconfig').setup({
       ensure_installed = vim.tbl_keys(opts.servers),
       handlers = {
         function(server_name)
           local server_opts = opts.servers[server_name] or {}
           server_opts.capabilities = vim.deepcopy(capabilities)
-          server_opts.root_dir = server_opts.root_dir or util.root_pattern(
-            'package.json', '.eslintrc.js', '.eslintrc.json', '.git'
-          )
+          if not skip_root_fallback[server_name] then
+            server_opts.root_dir = server_opts.root_dir or util.root_pattern(
+              'package.json', '.eslintrc.js', '.eslintrc.json', '.git'
+            )
+          end
           lspconfig[server_name].setup(server_opts)
         end,
       },
