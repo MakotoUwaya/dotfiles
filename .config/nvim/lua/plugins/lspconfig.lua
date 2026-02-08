@@ -25,12 +25,17 @@ return {
       lua_ls = {},
       ts_ls = {},
       html = {},
+      cssls = {},
       lemminx = {
         filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'xaml' },
       },
       yamlls = {},
       dockerls = {},
       docker_compose_language_service = {},
+      gopls = {},
+      rust_analyzer = {},
+      bashls = {},
+      sqlls = {},
       basedpyright = {},
       ruff = {},
     },
@@ -76,7 +81,14 @@ return {
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
     -- JS 向け root_dir フォールバックを適用しないサーバー（lspconfig のデフォルトを使用）
-    local skip_root_fallback = { basedpyright = true, ruff = true }
+    local skip_root_fallback = {
+      basedpyright = true,
+      ruff = true,
+      gopls = true,
+      rust_analyzer = true,
+      bashls = true,
+      sqlls = true,
+    }
 
     require('mason-lspconfig').setup({
       ensure_installed = vim.tbl_keys(opts.servers),

@@ -3,12 +3,21 @@ return {
   branch = 'master',
   event = { 'BufReadPost', 'BufNewFile' },
   build = ':TSUpdate',
+  config = function(_, opts)
+    -- Windows 環境では gcc を優先し、zig をフォールバックとして使用する
+    if vim.fn.has('win32') == 1 then
+      require('nvim-treesitter.install').compilers = { 'gcc', 'zig' }
+    end
+    require('nvim-treesitter.configs').setup(opts)
+  end,
   opts = {
     ensure_installed = {
       'bash',
       'c_sharp',
+      'css',
       'dockerfile',
       'go',
+      'html',
       'json',
       'lua',
       'markdown',
@@ -21,6 +30,7 @@ return {
       'tsx',
       'typescript',
       'vim',
+      'xml',
       'yaml',
     },
   },
