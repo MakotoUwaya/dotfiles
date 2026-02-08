@@ -1,3 +1,12 @@
+-- mise shims を PATH に追加（Mason 等が mise 管理のツールを参照できるようにする）
+local sep = vim.fn.has('win32') == 1 and ';' or ':'
+local mise_shims = vim.fn.has('win32') == 1
+  and vim.fn.expand('$LOCALAPPDATA/mise/shims')
+  or vim.fn.expand('$HOME/.local/share/mise/shims')
+if vim.fn.isdirectory(mise_shims) == 1 then
+  vim.env.PATH = mise_shims .. sep .. vim.env.PATH
+end
+
 require('config.lazy')
 
 vim.opt.termguicolors = true

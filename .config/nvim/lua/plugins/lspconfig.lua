@@ -4,7 +4,13 @@ return {
   dependencies = {
     {
       'williamboman/mason.nvim',
-      cmd = { 'Mason', 'MasonInstall', 'MasonUninstall' },
+      cmd = { 'Mason', 'MasonInstall', 'MasonUninstall', 'MasonLog' },
+      opts = {
+        registries = {
+          'github:mason-org/mason-registry',
+          'github:Crashdummyy/mason-registry',
+        },
+      },
     },
     'williamboman/mason-lspconfig.nvim',
     'hrsh7th/cmp-nvim-lsp',
@@ -67,12 +73,6 @@ return {
       end,
     })
 
-    require('mason').setup({
-      registries = {
-        'github:mason-org/mason-registry',
-        'github:Crashdummyy/mason-registry',
-      },
-    })
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
     require('mason-lspconfig').setup({
