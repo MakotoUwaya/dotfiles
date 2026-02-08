@@ -121,9 +121,6 @@ fi
 # mise
 eval "$(/usr/bin/mise activate bash)"
 
-# keychain
-eval `keychain --eval --agents ssh id_rsa`
-
 # aws-vault
 export AWS_VAULT_BACKEND=pass
 export AWS_VAULT_PASS_PREFIX=aws-vault
