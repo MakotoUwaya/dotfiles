@@ -7,8 +7,10 @@ return {
     ensure_installed = {
       'bash',
       'c_sharp',
+      'css',
       'dockerfile',
       'go',
+      'html',
       'json',
       'lua',
       'markdown',
@@ -21,6 +23,7 @@ return {
       'tsx',
       'typescript',
       'vim',
+      'xml',
       'yaml',
     },
   },
