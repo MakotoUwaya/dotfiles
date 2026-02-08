@@ -7,11 +7,13 @@ return {
     ensure_installed = {
       'bash',
       'c_sharp',
+      'dockerfile',
       'go',
       'json',
       'lua',
       'markdown',
       'markdown_inline',
+      'mermaid',
       'python',
       'regex',
       'rust',
