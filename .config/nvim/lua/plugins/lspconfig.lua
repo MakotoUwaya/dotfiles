@@ -35,7 +35,7 @@ return {
       gopls = {},
       rust_analyzer = {},
       bashls = {},
-      sqls = {},
+      sqlls = {},
       basedpyright = {},
       ruff = {},
     },
@@ -87,7 +87,7 @@ return {
       gopls = true,
       rust_analyzer = true,
       bashls = true,
-      sqls = true,
+      sqlls = true,
     }
 
     require('mason-lspconfig').setup({
