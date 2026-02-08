@@ -16,4 +16,5 @@ lazygit = "latest"
 delta = "latest"
 glab = "latest"
 zig = "latest"
+gh = "latest"
 
