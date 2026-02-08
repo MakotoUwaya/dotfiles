@@ -29,6 +29,10 @@ return {
         filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'xaml' },
       },
       yamlls = {},
+      dockerls = {},
+      docker_compose_language_service = {},
+      basedpyright = {},
+      ruff = {},
     },
   },
   config = function(_, opts)
