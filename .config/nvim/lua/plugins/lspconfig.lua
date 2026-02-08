@@ -2,7 +2,16 @@ return {
   'neovim/nvim-lspconfig',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
-    'williamboman/mason.nvim',
+    {
+      'williamboman/mason.nvim',
+      cmd = { 'Mason', 'MasonInstall', 'MasonUninstall' },
+      opts = {
+        registries = {
+          'github:mason-org/mason-registry',
+          'github:Crashdummyy/mason-registry',
+        },
+      },
+    },
     'williamboman/mason-lspconfig.nvim',
     'hrsh7th/cmp-nvim-lsp',
     { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
@@ -14,7 +23,6 @@ return {
       },
       -- 警告回避のため、余計な設定を削除して空にします
       lua_ls = {},
-      omnisharp = {},
       ts_ls = {},
       html = {},
       lemminx = {

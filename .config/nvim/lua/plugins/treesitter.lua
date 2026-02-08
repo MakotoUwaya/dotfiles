@@ -6,6 +6,7 @@ return {
   opts = {
     ensure_installed = {
       'bash',
+      'c_sharp',
       'go',
       'json',
       'lua',
