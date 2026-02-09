@@ -65,6 +65,8 @@
 !/winget/settings.json
 
 !/CLAUDE.md
+!/GEMINI.md
+!/RULES.md
 !/README.md
 !.gitignore
 !.gitkeep
