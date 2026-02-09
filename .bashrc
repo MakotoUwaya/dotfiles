@@ -156,6 +156,8 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 alias gitdir='cd "$(ghq list --full-path | fzf)"'
 bind '"\C-g": " gitdir\C-m"'
 
+# PC固有の設定を読み込む
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local
 
 # for tmux
 bind '"\C-h": backward-kill-word' 
