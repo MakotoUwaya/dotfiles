@@ -1,3 +1,6 @@
+[settings]
+go_set_gobin = false
+
 [tools]
 node = "24.11.1"
 pnpm = "10"
@@ -9,6 +12,7 @@ npm = "latest"
 "ubi:sharkdp/bat" = "latest"
 "npm:neovim" = "latest"
 "npm:prettier" = "latest"
+"npm:cspell" = "latest"
 neovim = "latest"
 python = "3.12"
 fzf = "latest"
@@ -16,9 +20,9 @@ starship = "latest"
 ghq = "latest"
 lazygit = "latest"
 delta = "latest"
-glab = "latest"
 zig = "latest"
 gh = "latest"
 go = "latest"
 jq = "latest"
+glab = "latest"
 
