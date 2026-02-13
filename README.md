@@ -108,3 +108,10 @@ New-Item -ItemType SymbolicLink -Path "$HOME\.ripgreprc" -Target "$env:USERPROFI
 winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\settings.json"
 ```
 
+```powershell
+# Claude Code 設定
+New-Item -ItemType Directory -Path "$HOME\.claude" -Force
+New-Item -ItemType SymbolicLink -Path "$HOME\.claude\settings.json" `
+  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\claude-code\settings.json"
+```
+

@@ -29,6 +29,8 @@
 !/.config/mise/config.toml
 !/.config/nvim/
 !/.config/nvim/**
+!/.config/claude-code/
+!/.config/claude-code/**
 !/.config/starship.toml
 !/.config/systemd/
 !/.config/systemd/user/

@@ -18,6 +18,7 @@ link_to_homedir() {
   if [[ "$HOME" != "$dotdir" ]];then
     for f in $dotdir/.??*; do
       [[ `basename $f` == ".git" ]] && continue
+      [[ `basename $f` == ".claude" ]] && continue
       if [[ -L "$HOME/`basename $f`" ]];then
         command rm -f "$HOME/`basename $f`"
       fi
@@ -29,6 +30,14 @@ link_to_homedir() {
   else
     command echo "same install src dest"
   fi
+}
+
+setup_claude_code() {
+  local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+  local dotdir=$(dirname ${script_dir})
+  command mkdir -p "$HOME/.claude"
+  command ln -snf "$dotdir/.config/claude-code/settings.json" "$HOME/.claude/settings.json"
+  command echo "Claude Code settings.json linked."
 }
 
 clone_tmux_plugin_manager() {
@@ -52,6 +61,7 @@ done
 
 link_to_homedir
 git config --global include.path "~/.gitconfig_shared"
+setup_claude_code
 clone_tmux_plugin_manager
 command echo -e "\e[1;36m Install completed!!!! \e[m"
 
