@@ -112,8 +112,10 @@ winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\setti
 # Claude Code 設定
 New-Item -ItemType Directory -Path "$HOME\.claude" -Force
 New-Item -ItemType SymbolicLink -Path "$HOME\.claude\settings.json" `
-  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\claude-code\settings.json"
+  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.claude\settings.json"
 New-Item -ItemType SymbolicLink -Path "$HOME\.claude\rules" `
   -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\claude-code\rules" -Force
+New-Item -ItemType SymbolicLink -Path "$HOME\.bin" `
+  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.bin"
 ```
 
