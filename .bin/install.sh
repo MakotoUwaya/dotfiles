@@ -37,7 +37,8 @@ setup_claude_code() {
   local dotdir=$(dirname ${script_dir})
   command mkdir -p "$HOME/.claude"
   command ln -snf "$dotdir/.config/claude-code/settings.json" "$HOME/.claude/settings.json"
-  command echo "Claude Code settings.json linked."
+  command ln -snf "$dotdir/.config/claude-code/rules" "$HOME/.claude/rules"
+  command echo "Claude Code settings linked."
 }
 
 clone_tmux_plugin_manager() {
