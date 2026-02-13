@@ -14,12 +14,19 @@ const cwd = data.workspace?.current_dir ?? process.cwd();
 const dirName = cwd.replace(/\\/g, "/").split("/").pop();
 
 let branch = "";
+let commitHash = "";
 let dirty = "";
 let ahead = 0;
 let behind = 0;
 
 try {
   branch = execSync("git rev-parse --abbrev-ref HEAD", {
+    cwd,
+    stdio: ["ignore", "pipe", "ignore"],
+    encoding: "utf8",
+  }).trim();
+
+  commitHash = execSync("git rev-parse --short=7 HEAD", {
     cwd,
     stdio: ["ignore", "pipe", "ignore"],
     encoding: "utf8",
@@ -52,7 +59,7 @@ const reset = "\x1b[0m";
 
 let line = `${yellow}[${model}]${reset} ${dirName}`;
 if (branch) {
-  line += ` ${cyan}${branch}${reset}${dirty}`;
+  line += ` ${cyan}${branch}${reset} ${commitHash}${dirty}`;
 }
 const arrows = [];
 if (ahead > 0) arrows.push(`\u2191${ahead}`);
