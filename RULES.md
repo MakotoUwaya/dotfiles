@@ -45,4 +45,6 @@
 ## インストール手順
 1. `mise use -g ghq`
 2. `ghq clone https://github.com/MakotoUwaya/dotfiles.git`
-3. `~/.bin/install.sh` (シンボリックリンク作成。既存ファイルは `~/.dotbackup` に移動)
+3. OS に応じたインストールスクリプトを実行:
+   - **WSL2 / Linux**: `~/.bin/install.sh`（シンボリックリンク作成。既存ファイルは `~/.dotbackup` に移動）
+   - **Windows**: 管理者権限 PowerShell で `~\.bin\install.ps1`（シンボリックリンク作成 + winget パッケージインポート。既存ファイルは `~\.dotbackup` に移動）

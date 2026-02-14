@@ -88,34 +88,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ### For Windows
 
-```sh
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\Documents\PowerShell\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\PowerShell\"
-```
-
-```sh
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\AppData\Local\nvim\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\nvim\"
-```
-
-```sh
-New-Item -ItemType SymbolicLink -Path "$HOME\.config\mise\" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\mise\"
-```
-
-```sh
-New-Item -ItemType SymbolicLink -Path "$HOME\.ripgreprc" -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.ripgreprc"
-```
-
-```sh
-winget import "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\winget\settings.json"
-```
+管理者権限の PowerShell で以下を実行:
 
 ```powershell
-# Claude Code 設定
-New-Item -ItemType Directory -Path "$HOME\.claude" -Force
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\settings.json" `
-  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.claude\settings.json"
-New-Item -ItemType SymbolicLink -Path "$HOME\.claude\rules" `
-  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.config\claude-code\rules" -Force
-New-Item -ItemType SymbolicLink -Path "$HOME\.bin" `
-  -Target "$env:USERPROFILE\ghq\github.com\MakotoUwaya\dotfiles\.bin"
+~\ghq\github.com\MakotoUwaya\dotfiles\.bin\install.ps1
+```
+
+デバッグモード（詳細出力）:
+
+```powershell
+~\ghq\github.com\MakotoUwaya\dotfiles\.bin\install.ps1 -Debug
 ```
 

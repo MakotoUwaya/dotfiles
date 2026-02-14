@@ -8,6 +8,7 @@
 !/.aws/config
 !/.bin/
 !/.bin/claude-statusline.mjs
+!/.bin/install.ps1
 !/.cargo/
 /.cargo/**
 !/.cargo/.crates.toml
