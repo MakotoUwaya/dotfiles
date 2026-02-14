@@ -35,9 +35,11 @@ link_to_homedir() {
 setup_claude_code() {
   local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
   local dotdir=$(dirname ${script_dir})
+  local claude_src="$dotdir/.config/claude-code"
   command mkdir -p "$HOME/.claude"
-  command ln -snf "$dotdir/.config/claude-code/settings.json" "$HOME/.claude/settings.json"
-  command ln -snf "$dotdir/.config/claude-code/rules" "$HOME/.claude/rules"
+  command ln -snf "$claude_src/settings.json" "$HOME/.claude/settings.json"
+  command ln -snf "$claude_src/rules" "$HOME/.claude/rules"
+  command ln -snf "$claude_src/skills" "$HOME/.claude/skills"
   command echo "Claude Code settings linked."
 }
 

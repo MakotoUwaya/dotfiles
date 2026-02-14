@@ -1,0 +1,145 @@
+---
+name: review-mr
+description: GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。ユーザーが GUI で確認・確定する運用。
+argument-hint: "<MR番号> [--issue <Issue番号>]"
+---
+
+# GitLab MR コードレビュー
+
+GitLab Merge Request のコードレビューを行い、レビューコメントをドラフトノートとして投稿するスキルです。
+
+## 引数
+
+$ARGUMENTS
+
+- MR 番号は必須（例: `4720`）
+- `--issue` で関連 Issue 番号を指定可能。省略時は MR の説明文から自動検出を試みる
+
+## レビュー手順
+
+### 1. 情報収集
+
+以下を並列で取得する:
+
+```bash
+# MR の詳細情報
+glab mr view <MR番号>
+
+# MR の差分
+glab mr diff <MR番号>
+
+# MR のコミット一覧
+glab api "projects/:id/merge_requests/<MR番号>/commits"
+
+# 関連 Issue（番号が判明している場合）
+glab issue view <Issue番号>
+```
+
+MR の説明文やコミットメッセージから Issue 番号（`#1234` 形式）が見つかった場合、自動的に Issue を取得する。
+
+### 2. レビュー観点
+
+以下の観点を **すべて** 確認し、レビューコメントに含める:
+
+#### 2-1. Issue との整合性
+
+- Issue に記載された **背景・対応方針・仕様** と、コードの変更に齟齬がないこと
+- Issue の記載が **必要十分** であること:
+  - 今回の対応スコープが正確に明記されているか
+  - 変更・新規策定した仕様が明記されているか
+  - 不足があればレビューコメントで Issue への追記を依頼する
+
+#### 2-2. コード品質
+
+- ロジックの正しさ、エッジケースの考慮
+- 既存パターンとの一貫性
+- セキュリティ上の懸念（OWASP Top 10 等）
+- 不要なコードや過剰な変更が含まれていないこと
+
+#### 2-3. テスト観点
+
+- 変更後の **確認観点（テスト観点）** が MR または Issue に明記されていること
+- **テスト実行結果** が明記されていること
+- 確認範囲が適切であること（変更影響の考慮漏れがないか）
+- Claude Code では実行が難しいテスト（E2E、VRT、手動確認等）がある場合、その旨をユーザーに伝え対応を依頼する
+
+### 3. レビューコメントの作成
+
+レビュー結果をユーザーに提示し、コメント投稿の確認を取る。
+
+#### コメントの原則
+
+- **コード修正が必要な場合は、修正案（コード例）を必ず記載する**
+- コメントの重要度を明示する:
+  - `[must]` — マージ前に対応が必要
+  - `[should]` — 対応を推奨（次回以降でも可）
+  - `[nits]` — 軽微な指摘・提案
+  - `[question]` — 確認・質問
+  - `[praise]` — 良い実装への賞賛
+
+### 4. ドラフトノートの投稿
+
+**Review Mode（ドラフトノート）** で投稿し、ユーザーが GitLab の GUI で内容を確認してからコメントを確定する。
+API では「Request Changes」のステータスをリクエストすることはできないため、必要に応じてコメント本文でその意図を伝える。
+
+#### 一般コメント（MR 全体に対するコメント）
+
+```bash
+glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
+  --raw-field "note=<コメント本文>"
+```
+
+#### インラインコメント（特定の差分行に対するコメント）
+
+**重要**: ネストされた `position` パラメータは `--raw-field` では正しく送信できない。JSON ファイル + `--input` を使用すること。
+
+まず diff_refs を取得:
+
+```bash
+glab api "projects/:id/merge_requests/<MR番号>" \
+  | python3 -c "import json,sys; d=json.load(sys.stdin)['diff_refs']; print(d['base_sha'], d['head_sha'], d['start_sha'])"
+```
+
+Python で JSON ファイルを生成して投稿:
+
+```bash
+python3 -c "
+import json
+body = {
+    'note': '<コメント本文>',
+    'position': {
+        'base_sha': '<base_sha>',
+        'head_sha': '<head_sha>',
+        'start_sha': '<start_sha>',
+        'new_path': '<ファイルパス>',
+        'old_path': '<ファイルパス>',
+        'position_type': 'text',
+        'new_line': <行番号>
+    }
+}
+with open('/tmp/draft_note.json', 'w') as f:
+    json.dump(body, f, ensure_ascii=False)
+" && glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
+  --method POST --input /tmp/draft_note.json -H "Content-Type: application/json"
+```
+
+- `new_line`: 追加行（`+` 行）にコメントする場合
+- `old_line`: 削除行（`-` 行）にコメントする場合
+- 削除行の場合は `"new_line"` を `"old_line"` に置き換える
+
+### 5. 投稿後の案内
+
+ドラフトノート投稿後、以下をユーザーに案内する:
+
+1. GitLab の MR ページで **「Review」** タブからドラフトコメントを確認できること
+2. 内容を確認・編集した上で **「Submit review」** で確定すること
+3. 必要に応じてコメントの削除・修正が可能であること
+
+## 注意事項
+
+- レビューコメントの投稿前に、必ずユーザーにコメント内容を提示し、投稿の承認を得ること
+- API で Approve / Request Changes のステータス変更はできない。コメント本文で意図を伝える
+- コメントは日本語で記述する
+- MR の差分に含まれないファイルについてのコメントは一般コメントとして投稿する
+- **ディスカッション取得時は必ずページネーションする**: GitLab API はデフォルトで 20 件しか返さない。`per_page=100` を指定し、レスポンスヘッダの `x-next-page` を確認して全ページを取得すること
+- 既存ディスカッションへの返信もドラフトノートで行う: `in_reply_to_discussion_id` パラメータを使用し、通常の `discussions/:id/notes` API は使わない
