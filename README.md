@@ -39,41 +39,14 @@ sudo dselect update
 
 #### Clone dotfiles
 
-install mise & ghq  
+install mise & ghq
 clone dotfiles
 
 #### Install Node.js
 
 ```sh
-cd ghq/github.com/MakotoUwaya/dotfiles/
+cd ~/ghq/github.com/MakotoUwaya/dotfiles/
 mise use -g node@24
-```
-
-#### Install apt
-
-```sh
-sudo mv /etc/apt/sources.list.d/ /etc/apt/backup-sources.list.d/
-sudo ln -s /home/makot/ghq/github.com/MakotoUwaya/dotfiles/etc/apt/sources.list.d /etc/apt/sources.list.d
-sudo rm -r /etc/apt/backup-sources.list.d/
-ll /etc/apt/
-```
-
-```sh
-sudo cp ./usr/share/keyrings/cloud.google.gpg /usr/share/keyrings/ \
-sudo cp ./usr/share/keyrings/docker-archive-keyring.gpg /usr/share/keyrings/ \
-sudo cp ./usr/share/keyrings/hashicorp-archive-keyring.gpg /usr/share/keyrings/ \
-sudo cp ./etc/apt/keyrings/mise-archive-keyring.pub /etc/apt/keyrings/ \
-sudo cp ./etc/apt/trusted.gpg.d/google-chrome.gpg /etc/apt/trusted.gpg.d/
-```
-
-```sh
-sudo apt update && sudo dselect update
-sudo apt update && sudo dselect update && sudo apt upgrade -y
-```
-
-```sh
-sudo dpkg --set-selections < ~/ghq/github.com/MakotoUwaya/dotfiles/.bin/apt-installed.list
-sudo apt-get dselect-upgrade -y
 ```
 
 #### Install Rust
@@ -82,8 +55,18 @@ sudo apt-get dselect-upgrade -y
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
+#### Run install script
+
+シンボリックリンク作成、apt sources/PGP 鍵設定、パッケージ復元を一括で実行:
+
 ```sh
 ~/ghq/github.com/MakotoUwaya/dotfiles/.bin/install.sh
+```
+
+デバッグモード（詳細出力）:
+
+```sh
+~/ghq/github.com/MakotoUwaya/dotfiles/.bin/install.sh --debug
 ```
 
 ### For Windows
