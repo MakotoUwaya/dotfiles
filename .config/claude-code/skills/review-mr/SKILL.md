@@ -7,6 +7,7 @@ argument-hint: "<MR番号> [--issue <Issue番号>]"
 # GitLab MR コードレビュー
 
 GitLab Merge Request のコードレビューを行い、レビューコメントをドラフトノートとして投稿するスキルです。
+GitLab API の操作詳細（ドラフトノートの投稿方法、ページネーション等）は gitlab-api スキルを参照すること。
 
 ## 引数
 
@@ -21,19 +22,10 @@ $ARGUMENTS
 
 以下を並列で取得する:
 
-```bash
-# MR の詳細情報
-glab mr view <MR番号>
-
-# MR の差分
-glab mr diff <MR番号>
-
-# MR のコミット一覧
-glab api "projects/:id/merge_requests/<MR番号>/commits"
-
-# 関連 Issue（番号が判明している場合）
-glab issue view <Issue番号>
-```
+- MR の詳細情報（`glab mr view`）
+- MR の差分（`glab mr diff`）
+- MR のコミット一覧（MCP `get_merge_request_commits` または `glab api`）
+- 関連 Issue（番号が判明している場合）
 
 MR の説明文やコミットメッセージから Issue 番号（`#1234` 形式）が見つかった場合、自動的に Issue を取得する。
 
@@ -79,53 +71,11 @@ MR の説明文やコミットメッセージから Issue 番号（`#1234` 形�
 
 ### 4. ドラフトノートの投稿
 
-**Review Mode（ドラフトノート）** で投稿し、ユーザーが GitLab の GUI で内容を確認してからコメントを確定する。
-API では「Request Changes」のステータスをリクエストすることはできないため、必要に応じてコメント本文でその意図を伝える。
+ドラフトノートで投稿する（投稿方法は gitlab-api スキルを参照）。
 
-#### 一般コメント（MR 全体に対するコメント）
-
-```bash
-glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
-  --raw-field "note=<コメント本文>"
-```
-
-#### インラインコメント（特定の差分行に対するコメント）
-
-**重要**: ネストされた `position` パラメータは `--raw-field` では正しく送信できない。JSON ファイル + `--input` を使用すること。
-
-まず diff_refs を取得:
-
-```bash
-glab api "projects/:id/merge_requests/<MR番号>" \
-  | python3 -c "import json,sys; d=json.load(sys.stdin)['diff_refs']; print(d['base_sha'], d['head_sha'], d['start_sha'])"
-```
-
-Python で JSON ファイルを生成して投稿:
-
-```bash
-python3 -c "
-import json
-body = {
-    'note': '<コメント本文>',
-    'position': {
-        'base_sha': '<base_sha>',
-        'head_sha': '<head_sha>',
-        'start_sha': '<start_sha>',
-        'new_path': '<ファイルパス>',
-        'old_path': '<ファイルパス>',
-        'position_type': 'text',
-        'new_line': <行番号>
-    }
-}
-with open('/tmp/draft_note.json', 'w') as f:
-    json.dump(body, f, ensure_ascii=False)
-" && glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
-  --method POST --input /tmp/draft_note.json -H "Content-Type: application/json"
-```
-
-- `new_line`: 追加行（`+` 行）にコメントする場合
-- `old_line`: 削除行（`-` 行）にコメントする場合
-- 削除行の場合は `"new_line"` を `"old_line"` に置き換える
+- レビューコメントの投稿前に、必ずユーザーにコメント内容を提示し、投稿の承認を得ること
+- コメントは日本語で記述する
+- MR の差分に含まれないファイルについてのコメントは一般コメントとして投稿する
 
 ### 5. 投稿後の案内
 
@@ -134,12 +84,3 @@ with open('/tmp/draft_note.json', 'w') as f:
 1. GitLab の MR ページで **「Review」** タブからドラフトコメントを確認できること
 2. 内容を確認・編集した上で **「Submit review」** で確定すること
 3. 必要に応じてコメントの削除・修正が可能であること
-
-## 注意事項
-
-- レビューコメントの投稿前に、必ずユーザーにコメント内容を提示し、投稿の承認を得ること
-- API で Approve / Request Changes のステータス変更はできない。コメント本文で意図を伝える
-- コメントは日本語で記述する
-- MR の差分に含まれないファイルについてのコメントは一般コメントとして投稿する
-- **ディスカッション取得時は必ずページネーションする**: GitLab API はデフォルトで 20 件しか返さない。`per_page=100` を指定し、レスポンスヘッダの `x-next-page` を確認して全ページを取得すること
-- 既存ディスカッションへの返信もドラフトノートで行う: `in_reply_to_discussion_id` パラメータを使用し、通常の `discussions/:id/notes` API は使わない
