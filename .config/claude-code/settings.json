@@ -8,12 +8,9 @@
     "security-guidance@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "sentry@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "csharp-lsp@claude-plugins-official": true,
     "gitlab@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
     "figma@claude-plugins-official": false
   },
   "language": "japanese",
