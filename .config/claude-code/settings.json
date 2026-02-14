@@ -15,5 +15,9 @@
   },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
-  "autoUpdatesChannel": "latest"
+  "autoUpdatesChannel": "latest",
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'input=$(cat); model=$(echo \"$input\" | jq -r \".model.display_name\"); cwd=$(echo \"$input\" | jq -r \".workspace.current_dir\"); project=$(basename \"$cwd\"); if [ -d \"$cwd/.git\" ]; then branch=$(git -c core.useBuiltinFSMonitor=false --git-dir=\"$cwd/.git\" --work-tree=\"$cwd\" branch --show-current 2>/dev/null); commit=$(git -c core.useBuiltinFSMonitor=false --git-dir=\"$cwd/.git\" --work-tree=\"$cwd\" rev-parse --short HEAD 2>/dev/null); [ -n \"$branch\" ] && [ -n \"$commit\" ] && echo \"[$model] $project $branch $commit\" || echo \"[$model] $project\"; else echo \"[$model] $project\"; fi'"
+  }
 }
