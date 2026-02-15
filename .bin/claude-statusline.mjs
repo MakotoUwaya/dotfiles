@@ -57,7 +57,7 @@ const yellow = "\x1b[33m";
 const cyan = "\x1b[36m";
 const reset = "\x1b[0m";
 
-let line = `${yellow}[${model}]${reset} ${dirName}`;
+let line = `${dirName}`;
 if (branch) {
   line += ` ${cyan}${branch}${reset} ${commitHash}${dirty}`;
 }
@@ -66,6 +66,13 @@ if (ahead > 0) arrows.push(`\u2191${ahead}`);
 if (behind > 0) arrows.push(`\u2193${behind}`);
 if (arrows.length > 0) {
   line += ` ${arrows.join("")}`;
+}
+
+line += ` ${yellow}[${model}]${reset}`;
+
+const ctx = data.context_window;
+if (ctx && ctx.used_percentage != null) {
+  line += ` ctx:${ctx.used_percentage}%`;
 }
 
 process.stdout.write(line);
