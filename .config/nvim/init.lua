@@ -1,13 +1,29 @@
 -- Neovim の Python provider を無効化（LSP とは別の仕組みで、今回不要）
 vim.g.loaded_python3_provider = 0
 
--- mise shims を PATH に追加（Mason 等が mise 管理のツールを参照できるようにする）
+-- mise 管理のツールを PATH に追加（Mason 等が参照できるようにする）
+-- Windows では shim が壊れるため、mise bin-paths で実際のバイナリパスを使う
 local sep = vim.fn.has('win32') == 1 and ';' or ':'
-local mise_shims = vim.fn.has('win32') == 1
-    and vim.fn.expand('$LOCALAPPDATA/mise/shims')
-    or vim.fn.expand('$HOME/.local/share/mise/shims')
-if vim.fn.isdirectory(mise_shims) == 1 then
-  vim.env.PATH = mise_shims .. sep .. vim.env.PATH
+if vim.fn.has('win32') == 1 then
+  local mise_path = vim.fn.exepath('mise')
+  if mise_path ~= '' then
+    local bin_paths = vim.fn.system('"' .. mise_path .. '" bin-paths')
+    if vim.v.shell_error == 0 then
+      -- bin-paths を逆順に prepend して元の順序を維持する
+      local paths = {}
+      for path in bin_paths:gmatch('[^\r\n]+') do
+        table.insert(paths, path)
+      end
+      for i = #paths, 1, -1 do
+        vim.env.PATH = paths[i] .. sep .. vim.env.PATH
+      end
+    end
+  end
+else
+  local mise_shims = vim.fn.expand('$HOME/.local/share/mise/shims')
+  if vim.fn.isdirectory(mise_shims) == 1 then
+    vim.env.PATH = mise_shims .. sep .. vim.env.PATH
+  end
 end
 
 require('config.lazy')
