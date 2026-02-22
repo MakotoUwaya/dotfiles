@@ -35,6 +35,16 @@ make_symlink() {
   local link_path="$1"
   local target_path="$2"
 
+  # Guard: skip if link_path and target_path resolve to the same file
+  # (e.g. ~/.config is already a symlink to $DOTDIR/.config)
+  local resolved_link resolved_target
+  resolved_link="$(readlink -f "$(dirname "$link_path")")/$(basename "$link_path")"
+  resolved_target="$(readlink -f "$target_path")"
+  if [ "$resolved_link" = "$resolved_target" ]; then
+    echo "Skipping (same path): $link_path"
+    return
+  fi
+
   local parent_dir
   parent_dir="$(dirname "$link_path")"
   if [ ! -d "$parent_dir" ]; then

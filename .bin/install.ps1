@@ -35,6 +35,14 @@ function New-SymLink {
         [switch]$IsDirectory
     )
 
+    # Guard: skip if LinkPath and TargetPath resolve to the same path
+    $resolvedLink = Join-Path (Resolve-Path (Split-Path -Parent $LinkPath)).Path (Split-Path -Leaf $LinkPath)
+    $resolvedTarget = (Resolve-Path $TargetPath -ErrorAction SilentlyContinue).Path
+    if ($resolvedTarget -and ($resolvedLink -eq $resolvedTarget)) {
+        Write-Step "  Skipping (same path): $LinkPath"
+        return
+    }
+
     $parentDir = Split-Path -Parent $LinkPath
     if (-not (Test-Path $parentDir)) {
         Write-Debug "Creating parent directory: $parentDir"
