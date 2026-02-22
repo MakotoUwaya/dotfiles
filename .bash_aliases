@@ -12,3 +12,7 @@ alias beep='aplay -q -D pulse ~/sound/voice_終わりました_ロザリア・�
 alias cdsfa='cd ~/documents/node/eb-sfa-webapp/'
 alias cdrent='cd ~/documents/node/rent-webapp/'
 alias cdsale='cd ~/documents/node/sale-bukken/'
+
+# multi-agent-shogun aliases
+alias css='tmux attach-session -t shogun'
+alias csm='tmux attach-session -t multiagent'
