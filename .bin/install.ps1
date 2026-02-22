@@ -100,6 +100,10 @@ New-SymLink -LinkPath (Join-Path $HOME '.bin') `
             -TargetPath (Join-Path $dotdir '.bin') `
             -IsDirectory
 
+# Symlink: Windows Terminal settings
+New-SymLink -LinkPath (Join-Path $env:LOCALAPPDATA 'Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json') `
+            -TargetPath (Join-Path $dotdir 'WindowsTerminal\settings.json')
+
 # winget import
 Write-Step 'Importing winget packages...'
 $wingetFile = Join-Path $dotdir 'winget\settings.json'

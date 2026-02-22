@@ -64,6 +64,9 @@
 !/PowerShell/Scripts/
 !/PowerShell/Scripts/*.bat
 !/PowerShell/*.ps1
+!/WindowsTerminal/
+/WindowsTerminal/**
+!/WindowsTerminal/settings.json
 !/winget/
 /winget/**
 !/winget/settings.json
