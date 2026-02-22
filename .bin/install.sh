@@ -105,6 +105,7 @@ make_symlink "$HOME/.config/lazygit"      "$DOTDIR/.config/lazygit"
 make_symlink "$HOME/.config/mise"         "$DOTDIR/.config/mise"
 make_symlink "$HOME/.config/nvim"         "$DOTDIR/.config/nvim"
 make_symlink "$HOME/.bin"                 "$DOTDIR/.bin"
+make_symlink "$HOME/.sound"              "$DOTDIR/sound"
 
 # 2. Claude Code settings
 print_step "Linking Claude Code settings..."

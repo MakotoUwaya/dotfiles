@@ -67,6 +67,7 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 | リンクパス | リンク先 |
 |---|---|
 | `~/.bin` | `$DOTDIR/.bin` |
+| `~/.sound` | `$DOTDIR/sound` |
 
 ## Windows 検証項目
 
