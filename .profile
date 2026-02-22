@@ -26,8 +26,4 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-. "$HOME/.cargo/env"
-
-# mise
-eval "$(mise activate bash --shims)"
 
