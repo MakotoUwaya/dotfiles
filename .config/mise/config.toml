@@ -25,4 +25,6 @@ gh = "latest"
 go = "latest"
 jq = "latest"
 glab = "latest"
+uv = "latest"
+bun = "latest"
 
