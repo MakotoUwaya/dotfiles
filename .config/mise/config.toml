@@ -27,4 +27,5 @@ jq = "latest"
 glab = "latest"
 uv = "latest"
 bun = "latest"
+rust = "latest"
 

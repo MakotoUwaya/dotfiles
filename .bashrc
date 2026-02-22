@@ -127,8 +127,6 @@ export AWS_VAULT_PASS_PREFIX=aws-vault
 export AWS_SESSION_TOKEN_TTL=3h
 export GPG_TTY=$(tty)
 
-# Rust
-. "$HOME/.cargo/env"
 
 # Go
 export PATH="$HOME/go/bin:$PATH"
