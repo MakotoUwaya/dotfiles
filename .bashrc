@@ -165,7 +165,5 @@ bind '"\C-h": backward-kill-word'
 # Starship
 eval "$(starship init bash)"
 
-
-# multi-agent-shogun aliases (added by first_setup.sh)
-alias css='cd "/home/m-uwaya/ghq/github.com/yohey-w/multi-agent-shogun" && ./shutsujin_departure.sh'
-alias csm='cd "/home/m-uwaya/ghq/github.com/yohey-w/multi-agent-shogun"'
+# https://learn.microsoft.com/en-us/windows/terminal/tutorials/new-tab-same-directory
+PROMPT_COMMAND=${PROMPT_COMMAND:+"$PROMPT_COMMAND; "}'printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"'
