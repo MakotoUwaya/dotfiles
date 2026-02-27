@@ -76,16 +76,11 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
 alias ll='ls -alF'
@@ -127,7 +122,6 @@ export AWS_VAULT_PASS_PREFIX=aws-vault
 export AWS_SESSION_TOKEN_TTL=3h
 export GPG_TTY=$(tty)
 
-
 # Go
 export PATH="$HOME/go/bin:$PATH"
 
@@ -147,15 +141,25 @@ export EDITOR=nvim
 eval "$($HOME/.local/share/mise/shims/fzf --bash)"
 bind '"\C-f": " \C-e\C-u tfz -m\C-m"'
 
-# repgrep
+# ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 # ghq
 alias gitdir='cd "$(ghq list --full-path | fzf)"'
 bind '"\C-g": " gitdir\C-m"'
 
-# PC固有の設定を読み込む
+# loading local settings
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+# Workaround to prevent Claude Code from repeatedly spawning powershell.exe.
+# ref: https://github.com/anthropics/claude-code/issues/14352
+export CLAUDE_CODE_SKIP_WINDOWS_PROFILE=1
+if [ -d "/mnt/c/Users/$(whoami)" ]; then
+  export USERPROFILE="/mnt/c/Users/$(whoami)"
+else
+  WIN_USER=$(ls /mnt/c/Users | grep -v -E 'Public|Default|All Users|defaultuser0' | head -n1)
+  export USERPROFILE="/mnt/c/Users/$WIN_USER"
+fi
 
 # for tmux
 bind '"\C-h": backward-kill-word' 
