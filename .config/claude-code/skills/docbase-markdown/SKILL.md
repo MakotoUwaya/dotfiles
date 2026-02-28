@@ -45,6 +45,18 @@ DocBase は CommonMark 準拠 + 独自拡張の Markdown を採用している�
 
 ### 画像サイズ指定
 
+画像サイズは HTML の img タグを使って、横幅100%表示にする(auto にしない)
+
+```
+# Bad
+![image.png](https://image.docbase.io/uploads/b0943c6b-ae3e-4eb0-82c8-60:0d72c7e13d.png =WxH)
+
+# Good
+<img src="https://image.docbase.io/uploads/b0943c6b-ae3e-4eb0-82c8-600d72c7e13d.png" width=100%>
+```
+
+使うことは少ないが、一応公式のサイズ指定方法は以下の通り。  
+印刷時に横幅以上に拡がってしまうので、「幅自動」は使いにくい。  
 URL の後に半角スペース + `=幅x高さ` で指定。`x` は半角アルファベット。
 
 ```markdown
