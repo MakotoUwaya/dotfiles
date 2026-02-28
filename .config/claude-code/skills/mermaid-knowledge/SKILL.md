@@ -1,6 +1,7 @@
 ---
 name: mermaid-knowledge
 description: ナレッジドキュメントに Mermaid 図解を生成・検証して挿入する。日本語テキストや記号のパースエラーを事前検出し、安全な図解を作成する。「図解」「ダイアグラム」「mermaid」で使用。
+user-invocable: false
 ---
 
 # Mermaid Knowledge - 図解生成・検証

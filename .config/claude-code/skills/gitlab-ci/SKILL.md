@@ -1,6 +1,7 @@
 ---
 name: gitlab-ci
 description: GitLab CI の rules/changes 設定を調査・修正する際の進め方。修正方針の策定、影響調査、ドキュメント作成のプロセスを定義
+user-invocable: false
 ---
 
 # GitLab CI Rules 修正ガイド

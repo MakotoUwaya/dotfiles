@@ -1,6 +1,7 @@
 ---
 name: ffmpeg
 description: 動画・音声ファイルの変換・編集。「動画」「音声」「変換」「エンコード」「圧縮」「トリミング」などで自動呼び出し
+user-invocable: false
 ---
 
 # FFmpeg
