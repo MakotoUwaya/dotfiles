@@ -1,6 +1,7 @@
 ---
 name: agent-creator
 description: Claude Code の SubAgent 定義ファイル (.md) を生成する際の仕様リファレンス。frontmatter フィールド、ツール一覧、設計パターン、プロンプト設計ガイドラインを提供。SubAgent 作成・レビュー時に使用。
+user-invocable: false
 ---
 
 # Agent Creator - SubAgent 仕様リファレンス
