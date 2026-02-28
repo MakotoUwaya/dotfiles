@@ -24,7 +24,7 @@ SKILL.md の品質を検証し、Claude が正しくスキルを認識・使用�
 
 1. `~/.claude/skills/` 配下の全スキルディレクトリを列挙する
 2. 各スキルの `SKILL.md` を読み込む
-3. 下記 Validation Rules の各ルール（1〜7）で検証する
+3. 下記 Validation Rules の各ルール（1〜8）で検証する
 4. Judgment Levels に基づき PASS / WARNING / FAIL を判定する
 5. Output Format に従いレポートを出力する
 6. 全スキルの検証完了後、総合サマリを出力する
@@ -105,6 +105,18 @@ SKILL.md 本文に以下のセクションが存在すること：
 
 不足している場合は **Warning** を出す。
 
+#### リファレンス型スキルの例外
+
+記法ルール集やコマンドリファレンスなど、**手順よりも参照情報が主体のスキル**は以下を許容する：
+
+- `## Instructions` が無くても WARNING としない（本文自体が参照手順を兼ねるため）
+- `## Examples` が無くても WARNING としない（記法例やコマンド例がセクション外に散在していれば十分）
+
+リファレンス型かどうかの判断基準：
+- description に「記法」「リファレンス」「コマンド集」等の語が含まれる
+- 本文が主にテーブル・コードブロックの羅列で構成されている
+- 手順（1→2→3）ではなく、項目の並列列挙が中心
+
 ---
 
 ### 5. Instructions の具体性
@@ -133,7 +145,25 @@ Output: YYY
 
 ---
 
-### 7. ディレクトリ構造チェック
+### 7. description と本文の整合性チェック
+
+description の記述と本文（Instructions / Examples / Guidelines）の内容が矛盾していないことを検証する。
+
+チェック観点：
+- description で「読み取り専用」「参照のみ」と記述しているのに、本文に書き込み・変更操作の例がある → **FAIL**
+- description で「○○時に使用」と限定しているのに、本文がその範囲を超えた手順を含む → **WARNING**
+- description に記載されたアクション（検証する / 変換する等）が、本文の Instructions で実際に手順化されていない → **WARNING**
+
+**NG例**
+```
+description: GitLab CLI の読み取り操作専用リファレンス
+## Examples に git push や MR 作成の例が含まれている
+→ description と本文が矛盾
+```
+
+---
+
+### 8. ディレクトリ構造チェック
 
 - SKILL.md がルートに存在する
 - `scripts/`, `resources/` が存在する場合：
