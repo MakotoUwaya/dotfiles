@@ -18,6 +18,17 @@ SKILL.md の品質を検証し、Claude が正しくスキルを認識・使用�
 - スキル数が増え、品質ばらつきが出始めたとき
 - レビュー工程を自動化したいとき
 
+## Instructions
+
+以下の手順でスキルを検証する:
+
+1. `~/.claude/skills/` 配下の全スキルディレクトリを列挙する
+2. 各スキルの `SKILL.md` を読み込む
+3. 下記 Validation Rules の各ルール（1〜7）で検証する
+4. Judgment Levels に基づき PASS / WARNING / FAIL を判定する
+5. Output Format に従いレポートを出力する
+6. 全スキルの検証完了後、総合サマリを出力する
+
 ## Check Targets
 
 このスキルは、以下を対象にチェックを行う：
@@ -154,6 +165,28 @@ Skill Check Result: {PASS | WARNING | FAIL}
   - [LEVEL] 内容
 - Suggested Fixes:
   - 修正案
+```
+
+## Examples
+
+### 検証結果の例
+
+```
+Skill Check Result: WARNING
+
+- Skill Name: my-skill
+- Issues:
+  - [WARNING] `## Instructions` セクションが存在しない
+  - [WARNING] `## Examples` セクションが存在しない
+- Suggested Fixes:
+  - 具体的な手順を番号付きで記述した `## Instructions` セクションを追加する
+  - 入力例と出力例のペアを含む `## Examples` セクションを追加する
+```
+
+### 総合サマリの例
+
+```
+合計: 11 件中 3 件 PASS / 8 件 WARNING / 0 件 FAIL
 ```
 
 ## Guidelines

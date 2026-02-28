@@ -10,22 +10,32 @@ user-invocable: false
 
 # 環境設定検証
 
+## Overview
+
 dotfiles のシンボリックリンクが正しく張られているか、リンク先が存在するかを検証する。
 install スクリプト実行後の確認や、設定が反映されない問題の切り分けに使用する。
 
-## OS 判定
+## When to Use
+
+- dotfiles の install スクリプト実行後の動作確認
+- シンボリックリンクに起因する問題（設定が反映されない、ファイルが見つからない等）の切り分け
+- 環境セットアップの健全性チェック
+
+## Instructions
+
+### OS 判定
 
 Bash ツールで `uname -s` を実行し、OS を判定する。
 
 - `Linux` → Linux/WSL 検証項目を実行
 - それ以外（Windows 上の Claude Code）→ Windows 検証項目を実行
 
-## Linux/WSL 検証項目
+### Linux/WSL 検証項目
 
 `install.sh` で定義されているシンボリックリンクを検証する。
 `DOTDIR` は dotfiles リポジトリのルートディレクトリ。
 
-### ホームディレクトリ直下
+#### ホームディレクトリ直下
 
 | リンクパス | リンク先 |
 |---|---|
@@ -37,7 +47,7 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 | `~/.ripgreprc` | `$DOTDIR/.ripgreprc` |
 | `~/.tmux.conf` | `$DOTDIR/.tmux.conf` |
 
-### `~/.config/` 配下
+#### `~/.config/` 配下
 
 `~/.config` 自体が `$DOTDIR/.config` へのシンボリックリンクになっている場合、
 個別のシンボリックリンクは不要（install.sh が作成する個別リンクは `~/.config` が通常ディレクトリの場合のみ有効）。
@@ -54,7 +64,7 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 | `~/.config/mise` | `$DOTDIR/.config/mise` |
 | `~/.config/nvim` | `$DOTDIR/.config/nvim` |
 
-### `~/.claude/` 配下
+#### `~/.claude/` 配下
 
 | リンクパス | リンク先 |
 |---|---|
@@ -62,14 +72,14 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 | `~/.claude/rules` | `$DOTDIR/.config/claude-code/rules` |
 | `~/.claude/skills` | `$DOTDIR/.config/claude-code/skills` |
 
-### その他
+#### その他
 
 | リンクパス | リンク先 |
 |---|---|
 | `~/.bin` | `$DOTDIR/.bin` |
 | `~/.sound` | `$DOTDIR/sound` |
 
-## Windows 検証項目
+### Windows 検証項目
 
 `install.ps1` で定義されているシンボリックリンクを検証する。
 `$dotdir` は dotfiles リポジトリのルートディレクトリ。
@@ -86,11 +96,11 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 | `$HOME\.bin` | `$dotdir\.bin` |
 | `$LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` | `$dotdir\WindowsTerminal\settings.json` |
 
-## 検証ロジック
+### 検証ロジック
 
 各リンクについて、以下の 3 点を検証する。
 
-### Linux/WSL の場合
+#### Linux/WSL の場合
 
 Bash ツールで以下のスクリプトを実行する（`$LINK` はリンクパス、`$EXPECTED_TARGET` は期待されるリンク先）:
 
@@ -105,7 +115,7 @@ readlink -f "$LINK"
 [ -e "$LINK" ]
 ```
 
-### Windows の場合
+#### Windows の場合
 
 Bash ツール経由で PowerShell コマンドを実行する:
 
@@ -120,7 +130,7 @@ Bash ツール経由で PowerShell コマンドを実行する:
 Test-Path (Get-Item $Link -Force).Target
 ```
 
-## 結果報告フォーマット
+## Examples
 
 検証結果を以下の形式で報告する。
 
@@ -142,7 +152,7 @@ NG の種類:
 - **dangling** - シンボリックリンクだがリンク先が存在しない
 - **missing** - パス自体が存在しない
 
-## 修復手順
+## Guidelines
 
 NG が検出された場合、以下の手順を提示する。
 

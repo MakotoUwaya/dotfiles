@@ -6,9 +6,17 @@ user-invocable: false
 
 # GitLab API 操作ガイド
 
+## Overview
+
 GitLab の MCP ツールと glab CLI の使い分け、および API 呼び出し時の注意点をまとめる。
 
-## MCP vs glab CLI の使い分け
+## When to Use
+
+- GitLab の MR・Issue・パイプライン等を操作するとき
+- MCP ツールと glab CLI のどちらを使うか判断が必要なとき
+- glab api でドラフトノートやインラインコメントを投稿するとき
+
+## Instructions
 
 ### MCP ツールを使う場面
 
@@ -147,7 +155,41 @@ glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
 
 ---
 
-## API の制限事項
+## Examples
+
+### 一般コメントの投稿
+
+```bash
+glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
+  --method POST --raw-field "note=コメント本文"
+```
+
+### インラインコメントの投稿（JSON ファイル経由）
+
+```bash
+python3 -c "
+import json
+body = {
+    'note': 'コメント本文',
+    'position': {
+        'base_sha': '<base_sha>',
+        'head_sha': '<head_sha>',
+        'start_sha': '<start_sha>',
+        'new_path': 'path/to/file.rb',
+        'old_path': 'path/to/file.rb',
+        'position_type': 'text',
+        'new_line': 42
+    }
+}
+with open('/tmp/api_body.json', 'w') as f:
+    json.dump(body, f, ensure_ascii=False)
+" && glab api "projects/:id/merge_requests/<MR番号>/draft_notes" \
+  --method POST --input /tmp/api_body.json -H "Content-Type: application/json"
+```
+
+## Guidelines
 
 - **Approve / Request Changes**: REST API からはステータス変更できない。コメント本文で意図を伝える
 - **ドラフトノートの確定**: API からは Submit review できない。ユーザーが GUI で確定する必要がある
+- 一覧系の API には `per_page=100` を指定する（デフォルトは 20 件）
+- `--raw-field` ではネストされた JSON を送信できない。JSON ファイル + `--input` を使うこと

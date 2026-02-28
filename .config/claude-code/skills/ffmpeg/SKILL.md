@@ -5,7 +5,9 @@ description: 動画・音声ファイルの変換・編集。「動画」「音�
 
 # FFmpeg
 
-FFmpeg は動画・音声ファイルの変換、編集、ストリーミングを行う強力なツールです。
+## Overview
+
+動画・音声ファイルの変換、編集、ストリーミングのためのコマンドリファレンス。
 
 ## When to Use
 
@@ -220,7 +222,7 @@ ffmpeg -i input.mp4 -vf "transpose=1" output.mp4  # 90度時計回り
 ffmpeg -i input.mp4 -vf "crop=640:480:100:50" output.mp4  # width:height:x:y
 ```
 
-## 注意点
+## Guidelines
 
 - `-y`: 出力ファイルを上書き
 - `-n`: 出力ファイルが存在する場合は終了

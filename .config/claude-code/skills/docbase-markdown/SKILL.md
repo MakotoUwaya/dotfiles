@@ -6,9 +6,18 @@ user-invocable: false
 
 # DocBase Markdown 記法ルール
 
+## Overview
+
+DocBase 固有の Markdown 記法（独自拡張・HTML 装飾・数式・PlantUML・Mermaid）のリファレンス。
+
+## When to Use
+
+- DocBase にメモ・記事を作成・更新・コメントする際
+- MCP ツール（createPost, updatePost, createComment）で本文を組み立てる前
+
 DocBase は CommonMark 準拠 + 独自拡張の Markdown を採用している。
 
-## 基本ルール
+## Guidelines
 
 - 本文の1行目にタイトルと同じ見出しを絶対に書かない
 - 図表はテキスト罫線文字（`┌─┐│└` 等）ではなく Mermaid 記法を使う（DocBase での表示崩れ防止）

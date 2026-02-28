@@ -5,9 +5,11 @@ description: Helps users discover and install agent skills when they ask questio
 
 # Find Skills
 
-This skill helps you discover and install skills from the open agent skills ecosystem.
+## Overview
 
-## When to Use This Skill
+オープンなスキルエコシステムからスキルを検索・インストールする。Skills CLI (`npx skills`) を使用。
+
+## When to Use
 
 Use this skill when the user:
 
@@ -31,7 +33,7 @@ The Skills CLI (`npx skills`) is the package manager for the open agent skills e
 
 **Browse skills at:** https://skills.sh/
 
-## How to Help Users Find Skills
+## Instructions
 
 ### Step 1: Understand What They Need
 
@@ -94,7 +96,31 @@ npx skills add <owner/repo@skill> -g -y
 
 The `-g` flag installs globally (user-level) and `-y` skips confirmation prompts.
 
-## Common Skill Categories
+## Examples
+
+### スキルが見つかった場合
+
+```
+I found a skill that might help! The "vercel-react-best-practices" skill provides
+React and Next.js performance optimization guidelines from Vercel Engineering.
+
+To install it:
+npx skills add vercel-labs/agent-skills@vercel-react-best-practices
+
+Learn more: https://skills.sh/vercel-labs/agent-skills/vercel-react-best-practices
+```
+
+### スキルが見つからなかった場合
+
+```
+I searched for skills related to "xyz" but didn't find any matches.
+I can still help you with this task directly! Would you like me to proceed?
+
+If this is something you do often, you could create your own skill:
+npx skills init my-xyz-skill
+```
+
+### Common Skill Categories
 
 When searching, consider these common categories:
 
@@ -108,7 +134,7 @@ When searching, consider these common categories:
 | Design          | ui, ux, design-system, accessibility     |
 | Productivity    | workflow, automation, git                |
 
-## Tips for Effective Searches
+## Guidelines
 
 1. **Use specific keywords**: "react testing" is better than just "testing"
 2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"

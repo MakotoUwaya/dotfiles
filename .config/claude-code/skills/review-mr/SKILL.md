@@ -6,8 +6,15 @@ argument-hint: "<MR番号> [--issue <Issue番号>]"
 
 # GitLab MR コードレビュー
 
-GitLab Merge Request のコードレビューを行い、レビューコメントをドラフトノートとして投稿するスキルです。
+## Overview
+
+GitLab Merge Request のコードレビューを行い、レビューコメントをドラフトノートとして投稿する。
 GitLab API の操作詳細（ドラフトノートの投稿方法、ページネーション等）は gitlab-api スキルを参照すること。
+
+## When to Use
+
+- GitLab MR のコードレビューを依頼されたとき
+- `/review-mr <MR番号>` で呼び出されたとき
 
 ## 引数
 
@@ -16,7 +23,7 @@ $ARGUMENTS
 - MR 番号は必須（例: `4720`）
 - `--issue` で関連 Issue 番号を指定可能。省略時は MR の説明文から自動検出を試みる
 
-## レビュー手順
+## Instructions
 
 ### 1. 情報収集
 
@@ -104,3 +111,29 @@ MR には他のレビュアーや自動化ツール（PR-Agent 等）が既に�
 1. GitLab の MR ページで **「Review」** タブからドラフトコメントを確認できること
 2. 内容を確認・編集した上で **「Submit review」** で確定すること
 3. 必要に応じてコメントの削除・修正が可能であること
+
+## Examples
+
+### レビューコメントの例
+
+```
+[must] `app/services/user_service.rb:42` - `params[:email]` が未サニタイズのまま
+クエリに渡されています。SQL インジェクションのリスクがあるため、修正が必要です。
+
+修正案:
+User.where(email: sanitize(params[:email]))
+```
+
+```
+[nits] `app/controllers/api/v1/users_controller.rb:15` - `before_action` の
+メソッド名が他のコントローラーと異なるスタイルになっています。
+`authenticate_user!` に統一すると一貫性が向上します。
+```
+
+## Guidelines
+
+- コード修正が必要な場合は、修正案（コード例）を必ず記載する
+- コメントの重要度（`[must]` / `[should]` / `[nits]` / `[question]` / `[praise]`）を必ず明示する
+- コメントは日本語で記述する
+- MR の差分に含まれないファイルについてのコメントは一般コメントとして投稿する
+- レビューコメントの投稿前に、必ずユーザーにコメント内容を提示し承認を得ること
