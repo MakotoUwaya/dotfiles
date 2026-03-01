@@ -27,7 +27,7 @@ GitLab の MCP ツールと glab CLI の使い分け、および API 呼び出�
 | Issue 取得 | `get_issue` |
 | Issue 作成 | `create_issue` |
 | MR 取得 | `get_merge_request` |
-| MR 作成 | `create_merge_request` |
+| MR 作成 | `create_merge_request`（※ 複数行 description は glab CLI 推奨） |
 | MR コミット一覧 | `get_merge_request_commits` |
 | MR 差分 | `get_merge_request_diffs` |
 | MR パイプライン | `get_merge_request_pipelines` |
@@ -52,6 +52,40 @@ GitLab の MCP ツールと glab CLI の使い分け、および API 呼び出�
 1. MCP ツールで実現できるならまず MCP を使う（ツール呼び出しの方が構造化データを扱いやすい）
 2. MCP で不足する場合は `glab` CLI にフォールバック
 3. 単純な確認や一覧取得は `glab` の方が速い場合もあるので柔軟に判断
+
+### MCP ツールの制限事項: 複数行テキスト
+
+**MCP ツールの文字列パラメータでは `\n` がリテラル文字列として扱われ、実際の改行にならない。**
+
+以下の操作では **`glab` CLI + ヒアドキュメント** を使うこと:
+
+- MR 作成・更新（`description` に Markdown を含む場合）
+- Issue 作成・更新（`description` に Markdown を含む場合）
+- 複数行のコメント投稿
+
+```bash
+# MR 作成（正しい方法）
+glab mr create --title "タイトル" --description "$(cat <<'EOF'
+## Summary
+
+変更の概要をここに記述。
+
+## 変更内容
+- 項目1
+- 項目2
+EOF
+)"
+
+# MR description の更新
+glab mr update <MR番号> --description "$(cat <<'EOF'
+## Summary
+
+更新後の説明文。
+EOF
+)"
+```
+
+**注意**: 単一行の description であれば MCP ツールでも問題ない。
 
 ---
 
