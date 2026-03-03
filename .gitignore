@@ -33,6 +33,7 @@
 !/.config/nvim/**
 !/.config/claude-code/
 !/.config/claude-code/**
+.config/claude-code/skills/difit
 !/.config/starship.toml
 !/.config/systemd/
 !/.config/systemd/user/
