@@ -68,6 +68,7 @@
 !/WindowsTerminal/
 /WindowsTerminal/**
 !/WindowsTerminal/settings.json
+!/WindowsTerminal/note.md
 !/winget/
 /winget/**
 !/winget/settings.json
