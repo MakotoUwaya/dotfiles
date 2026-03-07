@@ -6,7 +6,16 @@
   "general": {
     "preferredEditor": "vscode",
     "previewFeatures": true,
-    "vimMode": false
+    "vimMode": false,
+    "sessionRetention": {
+      "warningAcknowledged": true,
+      "enabled": true,
+      "maxAge": "30d"
+    },
+    "plan": {
+      "modelRouting": true,
+      "directory": "plan"
+    }
   },
   "security": {
     "auth": {
@@ -18,5 +27,8 @@
   },
   "ui": {
     "showModelInfoInChat": true
+  },
+  "experimental": {
+    "plan": true
   }
 }
