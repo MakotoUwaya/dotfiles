@@ -31,8 +31,6 @@
 !/.config/mise/config.toml
 !/.config/nvim/
 !/.config/nvim/**
-!/.config/ccstatusline/
-!/.config/ccstatusline/settings.json
 !/.config/claude-code/
 !/.config/claude-code/**
 .config/claude-code/skills/difit
