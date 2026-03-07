@@ -19,5 +19,6 @@
   },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
-  "autoUpdatesChannel": "latest"
+  "autoUpdatesChannel": "latest",
+  "effortLevel": "high"
 }
