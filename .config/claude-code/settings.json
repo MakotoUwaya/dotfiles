@@ -1,10 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "statusLine": {
-    "type": "command",
-    "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.bin','claude-statusline.mjs')).href)\"",
-    "padding": 0
-  },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
@@ -20,5 +15,10 @@
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
   "autoUpdatesChannel": "latest",
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  }
 }
