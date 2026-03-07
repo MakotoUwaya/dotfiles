@@ -29,4 +29,6 @@ uv = "latest"
 bun = "latest"
 rust = "latest"
 "npm:difit" = "latest"
+"npm:@googleworkspace/cli" = "latest"
+"npm:@google/gemini-cli" = "latest"
 
