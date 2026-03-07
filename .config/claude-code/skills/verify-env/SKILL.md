@@ -30,79 +30,42 @@ Bash ツールで `uname -s` を実行し、OS を判定する。
 - `Linux` → Linux/WSL 検証項目を実行
 - それ以外（Windows 上の Claude Code）→ Windows 検証項目を実行
 
-### Linux/WSL 検証項目
+### 検証対象の取得（重要）
 
-`install.sh` で定義されているシンボリックリンクを検証する。
-`DOTDIR` は dotfiles リポジトリのルートディレクトリ。
+**install スクリプトを唯一の正（Single Source of Truth）とする。** SKILL.md に静的リストを持たない。
 
-#### ホームディレクトリ直下
+#### Linux/WSL の場合
 
-| リンクパス | リンク先 |
-|---|---|
-| `~/.bashrc` | `$DOTDIR/.bashrc` |
-| `~/.bash_aliases` | `$DOTDIR/.bash_aliases` |
-| `~/.bash_logout` | `$DOTDIR/.bash_logout` |
-| `~/.profile` | `$DOTDIR/.profile` |
-| `~/.gitconfig` | `$DOTDIR/.gitconfig` |
-| `~/.ripgreprc` | `$DOTDIR/.ripgreprc` |
-| `~/.tmux.conf` | `$DOTDIR/.tmux.conf` |
+`$DOTDIR/.bin/install.sh` から `make_symlink` 呼び出しを抽出する。
 
-#### `~/.config/` 配下
+```bash
+grep 'make_symlink ' "$DOTDIR/.bin/install.sh" | sed 's/.*make_symlink //' | tr -d '"'
+```
+
+各行は `<link_path> <target_path>` の形式。`$HOME` と `$DOTDIR` を実際のパスに展開して使用する。
+
+#### Windows の場合
+
+`$DOTDIR/.bin/install.ps1` から `New-SymLink -LinkPath ... -TargetPath ...` 呼び出しを抽出する。
+PowerShell の `Join-Path` や行継続（バッククォート）を考慮してパースする。
+
+**注意:** `install.ps1` にはシンボリックリンク以外の処理（`Copy-Item` 等）も含まれる。`New-SymLink` 呼び出しのみを検証対象とすること。
+
+### `~/.config/` 配下の特殊処理（Linux/WSL のみ）
 
 `~/.config` 自体が `$DOTDIR/.config` へのシンボリックリンクになっている場合、
-個別のシンボリックリンクは不要（install.sh が作成する個別リンクは `~/.config` が通常ディレクトリの場合のみ有効）。
+`~/.config/` 配下の個別リンクは実質的に同一パスを指すため `make_symlink` 側で skip される。
 
 **検証順序:**
 1. まず `~/.config` 自体がシンボリックリンクかを確認
-2. シンボリックリンクの場合 → リンク先が `$DOTDIR/.config` であり、配下のファイルにアクセスできれば OK
-3. 通常ディレクトリの場合 → 以下の個別リンクを検証
-
-| リンクパス | リンク先 |
-|---|---|
-| `~/.config/starship.toml` | `$DOTDIR/.config/starship.toml` |
-| `~/.config/lazygit` | `$DOTDIR/.config/lazygit` |
-| `~/.config/mise` | `$DOTDIR/.config/mise` |
-| `~/.config/nvim` | `$DOTDIR/.config/nvim` |
-
-#### `~/.claude/` 配下
-
-| リンクパス | リンク先 |
-|---|---|
-| `~/.claude/settings.json` | `$DOTDIR/.config/claude-code/settings.json` |
-| `~/.claude/rules` | `$DOTDIR/.config/claude-code/rules` |
-| `~/.claude/skills` | `$DOTDIR/.config/claude-code/skills` |
-
-#### その他
-
-| リンクパス | リンク先 |
-|---|---|
-| `~/.bin` | `$DOTDIR/.bin` |
-| `~/.sound` | `$DOTDIR/sound` |
-
-### Windows 検証項目
-
-`install.ps1` で定義されているシンボリックリンクを検証する。
-`$dotdir` は dotfiles リポジトリのルートディレクトリ。
-
-| リンクパス | リンク先 |
-|---|---|
-| `$HOME\Documents\PowerShell` | `$dotdir\PowerShell` |
-| `$LOCALAPPDATA\nvim` | `$dotdir\.config\nvim` |
-| `$HOME\.config\mise` | `$dotdir\.config\mise` |
-| `$HOME\.ripgreprc` | `$dotdir\.ripgreprc` |
-| `$HOME\.claude\settings.json` | `$dotdir\.config\claude-code\settings.json` |
-| `$HOME\.claude\rules` | `$dotdir\.config\claude-code\rules` |
-| `$HOME\.claude\skills` | `$dotdir\.config\claude-code\skills` |
-| `$HOME\.bin` | `$dotdir\.bin` |
-| `$LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` | `$dotdir\WindowsTerminal\settings.json` |
+2. シンボリックリンクの場合 → リンク先が `$DOTDIR/.config` であり、配下のファイルにアクセスできれば OK。個別リンクは「Skipped (same path)」として報告
+3. 通常ディレクトリの場合 → install.sh から抽出した個別リンクを検証
 
 ### 検証ロジック
 
 各リンクについて、以下の 3 点を検証する。
 
 #### Linux/WSL の場合
-
-Bash ツールで以下のスクリプトを実行する（`$LINK` はリンクパス、`$EXPECTED_TARGET` は期待されるリンク先）:
 
 ```bash
 # 1. シンボリックリンクであること
@@ -116,8 +79,6 @@ readlink -f "$LINK"
 ```
 
 #### Windows の場合
-
-Bash ツール経由で PowerShell コマンドを実行する:
 
 ```powershell
 # 1. シンボリックリンク (ReparsePoint) であること
@@ -140,10 +101,10 @@ Test-Path (Get-Item $Link -Force).Target
 | # | リンクパス | 状態 | 詳細 |
 |---|---|---|---|
 | 1 | ~/.bashrc | OK | -> ~/ghq/.../dotfiles/.bashrc |
-| 2 | ~/.config/nvim | NG | シンボリックリンクではなく通常ディレクトリ |
-| 3 | ~/.claude/skills | NG | シンボリックリンクが存在しない |
+| 2 | ~/.config/nvim | Skipped | ~/.config 自体がシンボリックリンクのため個別リンク不要 |
+| 3 | ~/.claude/CLAUDE.md | NG | missing: パス自体が存在しない |
 
-**合計: 15 件中 13 件 OK / 2 件 NG**
+**合計: 15 件中 13 件 OK / 1 件 Skipped / 1 件 NG**
 ```
 
 NG の種類:
