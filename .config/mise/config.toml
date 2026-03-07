@@ -28,4 +28,5 @@ glab = "latest"
 uv = "latest"
 bun = "latest"
 rust = "latest"
+"npm:difit" = "latest"
 
