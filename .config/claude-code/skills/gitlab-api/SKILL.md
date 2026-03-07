@@ -221,6 +221,32 @@ with open('/tmp/api_body.json', 'w') as f:
   --method POST --input /tmp/api_body.json -H "Content-Type: application/json"
 ```
 
+## バッククォート・Markdown を含む body の投稿
+
+`glab api -f "body=..."` や `--raw-field` で body にバッククォート（`` ` ``）を含めると、bash のエスケープで壊れる。
+**Python subprocess 経由で投稿すること。**
+
+```bash
+python -c "
+import subprocess, json
+
+notes = [
+    {'discussion': '<discussion_id>', 'body': 'バッククォート \`code\` を含む本文'},
+]
+
+for n in notes:
+    url = f'projects/:id/merge_requests/<MR番号>/discussions/{n[\"discussion\"]}/notes'
+    result = subprocess.run(
+        ['glab', 'api', url, '-X', 'POST', '-f', f'body={n[\"body\"]}'],
+        capture_output=True, text=True
+    )
+    resp = json.loads(result.stdout)
+    print(f'Note {resp[\"id\"]}: OK')
+"
+```
+
+ドラフトノートの場合も同様に `draft_notes` エンドポイントで Python 経由で投稿する。
+
 ## Guidelines
 
 - **Approve / Request Changes**: REST API からはステータス変更できない。コメント本文で意図を伝える
