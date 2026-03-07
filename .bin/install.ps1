@@ -89,6 +89,10 @@ New-SymLink -LinkPath (Join-Path $HOME '.config\mise') `
 New-SymLink -LinkPath (Join-Path $HOME '.ripgreprc') `
             -TargetPath (Join-Path $dotdir '.ripgreprc')
 
+# Symlink: Claude Code CLAUDE.md (global)
+New-SymLink -LinkPath (Join-Path $HOME '.claude\CLAUDE.md') `
+            -TargetPath (Join-Path $dotdir '.config\claude-code\CLAUDE.md')
+
 # Symlink: Claude Code settings
 New-SymLink -LinkPath (Join-Path $HOME '.claude\settings.json') `
             -TargetPath (Join-Path $dotdir '.config\claude-code\settings.json')

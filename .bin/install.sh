@@ -110,6 +110,7 @@ make_symlink "$HOME/.sound"              "$DOTDIR/sound"
 # 2. Claude Code settings
 print_step "Linking Claude Code settings..."
 command mkdir -p "$HOME/.claude"
+make_symlink "$HOME/.claude/CLAUDE.md"     "$DOTDIR/.config/claude-code/CLAUDE.md"
 make_symlink "$HOME/.claude/settings.json" "$DOTDIR/.config/claude-code/settings.json"
 make_symlink "$HOME/.claude/rules"         "$DOTDIR/.config/claude-code/rules"
 make_symlink "$HOME/.claude/skills"        "$DOTDIR/.config/claude-code/skills"
