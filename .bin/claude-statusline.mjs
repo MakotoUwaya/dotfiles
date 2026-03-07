@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const chunks = [];
 for await (const chunk of process.stdin) {
@@ -9,7 +9,6 @@ const data = JSON.parse(
   Buffer.concat(chunks).toString("utf8").replace(/^\uFEFF/, ""),
 );
 
-const model = data.model?.display_name ?? "Unknown";
 const cwd = data.workspace?.current_dir ?? process.cwd();
 const dirName = cwd.replace(/\\/g, "/").split("/").pop();
 
@@ -20,40 +19,37 @@ let ahead = 0;
 let behind = 0;
 
 try {
-  branch = execSync("git rev-parse --abbrev-ref HEAD", {
+  branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
     cwd,
     stdio: ["ignore", "pipe", "ignore"],
     encoding: "utf8",
   }).trim();
 
-  commitHash = execSync("git rev-parse --short=7 HEAD", {
+  commitHash = execFileSync("git", ["rev-parse", "--short=7", "HEAD"], {
     cwd,
     stdio: ["ignore", "pipe", "ignore"],
     encoding: "utf8",
   }).trim();
 
-  const status = execSync("git status --porcelain", {
+  const status = execFileSync("git", ["status", "--porcelain"], {
     cwd,
     stdio: ["ignore", "pipe", "ignore"],
     encoding: "utf8",
   }).trim();
-  if (status.length > 0) {
-    dirty = "*";
-  }
+  if (status.length > 0) dirty = "*";
 
-  const ab = execSync("git rev-list --left-right --count HEAD...@{upstream}", {
-    cwd,
-    stdio: ["ignore", "pipe", "ignore"],
-    encoding: "utf8",
-  }).trim();
+  const ab = execFileSync(
+    "git",
+    ["rev-list", "--left-right", "--count", "HEAD...@{upstream}"],
+    { cwd, stdio: ["ignore", "pipe", "ignore"], encoding: "utf8" },
+  ).trim();
   const parts = ab.split(/\s+/);
   ahead = parseInt(parts[0], 10) || 0;
   behind = parseInt(parts[1], 10) || 0;
 } catch {
-  // not a git repo or no upstream — silently ignore
+  // not a git repo or no upstream
 }
 
-const yellow = "\x1b[33m";
 const cyan = "\x1b[36m";
 const reset = "\x1b[0m";
 
@@ -64,11 +60,7 @@ if (branch) {
 const arrows = [];
 if (ahead > 0) arrows.push(`\u2191${ahead}`);
 if (behind > 0) arrows.push(`\u2193${behind}`);
-if (arrows.length > 0) {
-  line += ` ${arrows.join("")}`;
-}
-
-line += ` ${yellow}[${model}]${reset}`;
+if (arrows.length > 0) line += ` ${arrows.join("")}`;
 
 const ctx = data.context_window;
 if (ctx && ctx.used_percentage != null) {
