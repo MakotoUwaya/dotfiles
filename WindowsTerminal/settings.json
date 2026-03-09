@@ -80,7 +80,105 @@
             },
             "opacity": 85
         },
-        "list": []
+        "list":         [
+            {
+                "commandline": "%PROGRAMFILES%\\PowerShell\\7\\pwsh.exe",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+                "hidden": true,
+                "name": "PowerShell",
+                "source": "Windows.Terminal.PowershellCore"
+            },
+            {
+                "adjustIndistinguishableColors": "never",
+                "experimental.retroTerminalEffect": false,
+                "font":
+                {
+                    "builtinGlyphs": true,
+                    "colorGlyphs": true,
+                    "face": "JetBrainsMonoNL Nerd Font Mono",
+                    "weight": "normal"
+                },
+                "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+                "hidden": false,
+                "intenseTextStyle": "bright",
+                "name": "Ubuntu 24.04.1 LTS",
+                "pathTranslationStyle": "wsl",
+                "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc",
+                "suppressApplicationTitle": true,
+                "useAcrylic": false
+            },
+            {
+                "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
+                "hidden": true,
+                "name": "Ubuntu-24.04",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "commandline": "cmd.exe /K \"cd /d %CD%\"",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "\u30b3\u30de\u30f3\u30c9 \u30d7\u30ed\u30f3\u30d7\u30c8"
+            },
+            {
+                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+                "hidden": false,
+                "name": "Git Bash",
+                "source": "Git"
+            },
+            {
+                "guid": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
+                "hidden": false,
+                "name": "Nushell",
+                "source": "nu"
+            },
+            {
+                "guid": "{ca6f1ed3-3f30-5566-ae64-4f8b86dfac65}",
+                "hidden": true,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{208461e0-8502-5258-a467-9a80a653b9f1}",
+                "hidden": true,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": true,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            },
+            {
+                "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
+                "hidden": true,
+                "name": "Visual Studio Debug Console",
+                "source": "VSDebugConsole"
+            },
+            {
+                "guid": "{61a98280-a064-5797-90bb-7272cea1382b}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{f40ce840-28d1-59ec-b642-9f1592c8b7af}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{485ec2aa-44d9-5d37-9575-183296c0de9d}",
+                "hidden": false,
+                "name": "podman-machine-default",
+                "source": "Microsoft.WSL"
+            }
+        ]
     },
     "schemes": [],
     "themes": [],
