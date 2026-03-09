@@ -73,6 +73,8 @@
 /winget/**
 !/winget/settings.json
 
+!/.github/
+!/.github/copilot-instructions.md
 !/CLAUDE.md
 !/GEMINI.md
 !/RULES.md
