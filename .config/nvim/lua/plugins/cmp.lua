@@ -10,6 +10,7 @@ return {
     'hrsh7th/cmp-path',
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
+    'zbirenbaum/copilot-cmp',
   },
   -- opts を関数にすることで、設定が必要になった瞬間までモジュールのロードを遅延できます
   opts = function()
@@ -48,6 +49,7 @@ return {
         end, { 'i', 's' }),
       }),
       sources = cmp.config.sources({
+        { name = 'copilot' },
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
       }, {
