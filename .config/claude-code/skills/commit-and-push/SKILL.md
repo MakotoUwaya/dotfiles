@@ -1,0 +1,66 @@
+---
+name: commit-and-push
+description: コード変更のコミットとプッシュを一括実行する。「commit & push」「コミットして」「push して」等の指示で使用。
+---
+
+# Commit and Push
+
+## Overview
+
+変更内容を確認し、適切なコミットメッセージを生成してコミット・プッシュまで一括で行う。
+
+## Instructions
+
+以下の手順を **順番に** 実行する。`git add` と `git commit` は必ず別々の Bash 呼び出しで実行すること。
+
+### 1. 状態確認（並列実行可）
+
+- `git status` — 変更・未追跡ファイルの確認
+- `git diff` — staged / unstaged の差分確認
+- `git log --oneline -5` — 直近のコミットメッセージスタイル確認
+
+### 2. コミット対象の判断
+
+- 今回のタスクに関連するファイルのみをステージングする
+- タスクと無関係な既存の変更は含めない
+- `.env`、認証情報など秘密情報を含むファイルは除外する
+
+### 3. ステージング
+
+```bash
+git add <対象ファイル1> <対象ファイル2> ...
+```
+
+- `git add -A` や `git add .` は使わない
+- 結果を確認してから次へ進む
+
+### 4. コミット
+
+- `git log` の直近コミットに合わせたスタイルでメッセージを作成する
+- 「何を変えたか」より「なぜ変えたか」を重視する
+
+```bash
+git commit -m "$(cat <<'EOF'
+<簡潔な要約>
+
+<必要に応じて補足説明>
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+EOF
+)"
+```
+
+### 5. プッシュ
+
+```bash
+git push
+```
+
+- リモートブランチが未設定の場合は `git push -u origin <branch>` を使う
+- force push は行わない（ユーザーが明示的に指示した場合のみ）
+
+## Guidelines
+
+- `git add` と `git commit` を `&&` で繋げない
+- CWD のリポジトリに対して `git -C` を使わない
+- 変更がない場合は空コミットせず、その旨を伝える
