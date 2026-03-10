@@ -1,6 +1,6 @@
 ---
 name: scripting-guide
-description: ワンライナーや小規模スクリプトでのデータ処理方法を解説するガイド。Python等で小規模なスクリプトを実行しようとする場合には、必ずこのスキルを参照して従ってください。
+description: ワンライナーや小規模スクリプトでのデータ処理方法を解説するガイド。Python・Ruby・bash スクリプト等でデータ処理や計算・ファイル生成を行おうとする場合には、必ずこのスキルを参照し、C# file-based apps で実行すること。
 ---
 
 # データ処理スクリプト作成ガイド（C# file-based apps）
@@ -122,6 +122,32 @@ foreach (var row in worksheet.RowsUsed())
 | JSON処理 | （不要） | `System.Text.Json` が標準で利用可能 |
 | CSV処理 | `#:package CsvHelper` | |
 | Excel処理 | `#:package ClosedXML` | |
+
+## ファイル出力の注意点
+
+`dotnet run -`（パイプ実行）は一時ディレクトリで実行される。
+コード内で `StreamWriter` や `File.WriteAllText` を使うと、**CWD ではなく一時ディレクトリにファイルが作られる**。
+
+### NG: コード内でファイル書き込み
+
+```bash
+# data.txt は一時ディレクトリに作られ、CWD には残らない
+dotnet run - << 'EOF'
+using var writer = new StreamWriter("data.txt");
+writer.WriteLine("hello");
+EOF
+```
+
+### OK: stdout に出力してシェルでリダイレクト
+
+```bash
+# CWD の data.txt に正しく書き込まれる
+dotnet run - << 'EOF' > data.txt
+Console.WriteLine("hello");
+EOF
+```
+
+**原則: ファイル出力は `Console.WriteLine` + シェルリダイレクト (`>`) を使う。**
 
 ## 実用パターン
 
