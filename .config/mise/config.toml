@@ -32,5 +32,5 @@ rust = "latest"
 "npm:@googleworkspace/cli" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@github/copilot" = "latest"
-dotnet-core = "10"
+dotnet = "10"
 
