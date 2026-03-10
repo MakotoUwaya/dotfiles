@@ -3,7 +3,8 @@
   "permissions": {
     "allow": [
       "Write",
-      "Bash(python ~/.config/claude-code/skills/redmine-api/parse_issue.py:*)"
+      "Bash(python ~/.config/claude-code/skills/redmine-api/parse_issue.py:*)",
+      "mcp__pencil"
     ]
   },
   "statusLine": {

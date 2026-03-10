@@ -30,5 +30,15 @@
   },
   "experimental": {
     "plan": true
+  },
+  "mcpServers": {
+    "pencil": {
+      "command": "/home/m-uwaya/.vscode-server/extensions/highagency.pencildev-0.6.30/out/mcp-server-linux-x64",
+      "args": [
+        "--app",
+        "visual_studio_code"
+      ],
+      "env": {}
+    }
   }
 }
