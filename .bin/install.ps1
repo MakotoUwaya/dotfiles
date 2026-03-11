@@ -112,16 +112,6 @@ New-SymLink -LinkPath (Join-Path $HOME '.bin') `
             -TargetPath (Join-Path $dotdir '.bin') `
             -IsDirectory
 
-# Copy: Windows Terminal settings (template, not symlink)
-$wtSettingsDest = Join-Path $env:LOCALAPPDATA 'Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json'
-$wtSettingsSrc  = Join-Path $dotdir 'WindowsTerminal\settings.json'
-if (-not (Test-Path $wtSettingsDest)) {
-    Copy-Item -Path $wtSettingsSrc -Destination $wtSettingsDest
-    Write-Step "  Copied: $wtSettingsSrc -> $wtSettingsDest"
-} else {
-    Write-Step "  Skipped (already exists): $wtSettingsDest"
-}
-
 # winget import
 Write-Step 'Importing winget packages...'
 $wingetFile = Join-Path $dotdir 'winget\settings.json'
