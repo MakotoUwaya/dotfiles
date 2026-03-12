@@ -5,5 +5,5 @@
 WSL2 環境ではエイリアスが使えないため、以下のコマンドを直接使うこと：
 
 ```sh
-echo "コピーしたい内容" | iconv -t utf16 | /mnt/c/Windows/System32/clip.exe
+echo "コピーしたい内容" | iconv -t utf-16le | /mnt/c/Windows/System32/clip.exe
 ```
