@@ -1,4 +1,5 @@
 ---
+name: gws
 description: Google Workspace リソース（Gmail, Calendar, Drive 等）を gws CLI で操作する際のリファレンス。「gws」「gmail」「calendar」「メール」で自動呼び出し
 ---
 
