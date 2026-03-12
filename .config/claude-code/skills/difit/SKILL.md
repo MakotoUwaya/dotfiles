@@ -11,8 +11,8 @@ If the server is shut down without comments, treat it as "no review comments wer
 
 # Commands
 
-- Review the HEAD commit: `difit`
-- Review uncommitted changes before commit: `difit .`
+- Review the HEAD commit: `difit --clean`
+- Review uncommitted changes before commit: `difit . --clean`
 
 ## Basic Usage
 
