@@ -32,11 +32,15 @@ JSON 出力の `status` フィールドを確認する。
 
 ### 3. 監視開始
 
+Claude Code の **現在の作業ディレクトリ（CWD）** 配下の `.md` ファイルを対象にする。
+
 ```bash
-mo -w '**/*.md'
+cd <CWD> && mo -w '**/*.md'
 ```
 
-`node_modules` などを除外したい場合は `-w` を複数指定して対象ディレクトリを絞る。
+- `<CWD>` は Claude Code セッションの primary working directory に置き換える
+- `node_modules` などを除外したい場合は `-w` を複数指定して対象ディレクトリを絞る
+- 特定ファイルのみプレビューしたい場合はファイル引数で渡す: `mo path/to/file.md`
 
 ## Constraints
 
