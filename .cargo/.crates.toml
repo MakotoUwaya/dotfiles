@@ -1,4 +1,6 @@
 [v1]
+"cargo-insta 1.46.3 (registry+https://github.com/rust-lang/crates.io-index)" = ["cargo-insta"]
+"diesel_cli 2.3.7 (registry+https://github.com/rust-lang/crates.io-index)" = ["diesel"]
 "gitui 0.27.0 (registry+https://github.com/rust-lang/crates.io-index)" = ["gitui"]
 "jnv 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = ["jnv"]
 "starship 1.22.1 (registry+https://github.com/rust-lang/crates.io-index)" = ["starship"]
