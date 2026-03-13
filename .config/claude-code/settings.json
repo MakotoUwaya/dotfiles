@@ -26,6 +26,7 @@
   },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
+  "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
-  "effortLevel": "high"
+  "voiceEnabled": true
 }
