@@ -116,6 +116,10 @@ fi
 # mise
 eval "$(/usr/bin/mise activate bash)"
 
+# General Shell
+export EDITOR=nvim
+export COLORTERM=truecolor
+
 # aws-vault
 export AWS_VAULT_BACKEND=pass
 export AWS_VAULT_PASS_PREFIX=aws-vault
@@ -136,8 +140,6 @@ esac
 export FZF_DEFAULT_OPTS="--prompt='QUERY> ' --height 60% --layout reverse --border=rounded --style full"
 export FZF_CTRL_T_COMMAND=""
 export FZF_ALT_C_OPTS="--height 100% --preview 'eza {} -h -T -F --no-user --no-time --no-filesize --no-permissions --long | head -200'"
-export EDITOR=nvim
-
 eval "$($HOME/.local/share/mise/shims/fzf --bash)"
 bind '"\C-f": " \C-e\C-u tfz -m\C-m"'
 
