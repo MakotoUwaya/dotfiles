@@ -11,6 +11,8 @@ description: ワンライナーや小規模スクリプトでのデータ処理�
 
 ## 基本方針
 
+スクリプト実行前に `dotnet --version` で .NET 10 以降がインストールされていることを確認してください。
+
 コードは **必ずパイプで `dotnet run -` に渡して実行** してください。
 `Set-Content` や `Out-File` 等で `.cs` ファイルを新規作成してから実行する方法は **禁止** です。
 
@@ -76,15 +78,48 @@ Console.WriteLine(doc.RootElement.GetProperty("name"));
 '{"name":"太郎"}' | dotnet json.cs
 ```
 
+### Native AOT に関する注意
+
+file-based apps はデフォルトで **Native AOT** が有効です。
+`JsonSerializer.Serialize<T>()` / `Deserialize<T>()` はリフレクション依存のため、**実行時に失敗** します。
+
+**安全パターン:**
+- **`JsonDocument`（DOM アクセス）を推奨**（上記の例を参照）
+- POCO へのデシリアライズが必要な場合は `JsonSerializerContext` ソース生成版を使う
+
+```csharp
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+var json = """{"name":"太郎","age":30}""";
+var person = JsonSerializer.Deserialize(json, AppJsonContext.Default.Person)!;
+Console.WriteLine($"{person.Name} ({person.Age})");
+
+record Person(string Name, int Age);
+
+[JsonSerializable(typeof(Person))]
+partial class AppJsonContext : JsonSerializerContext { }
+```
+
 ## 外部ライブラリを使う場合
 
 `#:package` ディレクティブが必要な場合も、パイプで実行します。ファイルを作成しないでください。
+
+**バージョン指定は必須です。** 再現性を確保するため `#:package <名前>@<バージョン>` の形式で記述してください。
+
+```
+# NG: バージョンなし（ビルドごとに異なるバージョンが解決される可能性あり）
+#:package CsvHelper
+
+# OK: バージョン固定
+#:package CsvHelper@33.0.1
+```
 
 ### CSV処理
 
 ```powershell
 @'
-#:package CsvHelper
+#:package CsvHelper@33.0.1
 
 using CsvHelper;
 using System.Globalization;
@@ -101,7 +136,7 @@ Console.WriteLine($"レコード数: {count}");
 
 ```powershell
 @'
-#:package ClosedXML
+#:package ClosedXML@0.104.1
 
 using ClosedXML.Excel;
 
@@ -120,8 +155,8 @@ foreach (var row in worksheet.RowsUsed())
 | 用途 | ディレクティブ | 備考 |
 |------|---------------|------|
 | JSON処理 | （不要） | `System.Text.Json` が標準で利用可能 |
-| CSV処理 | `#:package CsvHelper` | |
-| Excel処理 | `#:package ClosedXML` | |
+| CSV処理 | `#:package CsvHelper@33.0.1` | |
+| Excel処理 | `#:package ClosedXML@0.104.1` | |
 
 ## ファイル出力の注意点
 
@@ -182,6 +217,26 @@ catch (Exception ex)
     Console.Error.WriteLine($"エラー: {ex.Message}");
     return 1;
 }
+```
+
+## トラブルシューティング
+
+### .csproj との競合
+
+既存の `.csproj` があるディレクトリ内で `dotnet run <file>.cs` を実行すると、プロジェクトとの競合が発生します。
+パイプ実行（`... | dotnet run -`）は一時ディレクトリで動くため、この問題は発生しません。
+
+### 継承設定ファイルに注意
+
+`global.json`、`Directory.Build.props`、`Directory.Build.targets` などが親ディレクトリに存在すると、file-based apps にも継承されます。
+予期しないビルドエラーが出た場合は、これらのファイルの影響を確認してください。
+
+### キャッシュクリア
+
+file-based apps のビルドキャッシュをクリアするには:
+
+```bash
+dotnet clean <file>.cs
 ```
 
 ## 参考資料
