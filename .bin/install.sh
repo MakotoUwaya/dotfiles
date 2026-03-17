@@ -114,6 +114,7 @@ make_symlink "$HOME/.claude/CLAUDE.md"     "$DOTDIR/.config/claude-code/CLAUDE.m
 make_symlink "$HOME/.claude/settings.json" "$DOTDIR/.config/claude-code/settings.json"
 make_symlink "$HOME/.claude/rules"         "$DOTDIR/.config/claude-code/rules"
 make_symlink "$HOME/.claude/skills"        "$DOTDIR/.config/claude-code/skills"
+make_symlink "$HOME/.claude/hooks"         "$DOTDIR/.config/claude-code/hooks"
 
 # 3. Git config
 print_step "Configuring git..."
