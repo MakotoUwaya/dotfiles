@@ -21,7 +21,7 @@ then generates an interactive HTML report.
 
 ## Prerequisites
 
-- `pip install tiktoken` (optional — falls back to character-based estimation)
+- SharpToken NuGet パッケージ（C# スクリプト内で `#:package SharpToken@2.0.3` として自動取得。フォールバックあり）
 - No external API keys required. Analysis uses Claude sub-agents.
 
 ## Workflow
@@ -48,13 +48,13 @@ For current-project mode, use `--cwd "$(pwd)"`.
 
 If cross-project mode was selected:
 ```bash
-python3 scripts/collect_transcripts.py all --days 14 \
+dotnet scripts/collect-transcripts.cs all --days 14 \
   --output <workspace>/transcripts.json --verbose
 ```
 
 If current-project mode:
 ```bash
-python3 scripts/collect_transcripts.py --cwd "$(pwd)" --days 14 \
+dotnet scripts/collect-transcripts.cs --cwd "$(pwd)" --days 14 \
   --output <workspace>/transcripts.json --verbose
 ```
 
@@ -84,7 +84,7 @@ Run both scripts. They produce the input files for analysis.
 ```bash
 # Transcripts already collected in Step 1
 
-python3 scripts/collect_skills.py \
+dotnet scripts/collect-skills.cs \
   --output <workspace>/skill-manifest.json --verbose
 ```
 
@@ -271,7 +271,7 @@ Agent tool (general-purpose):
 ### Step 7: Generate HTML Report
 
 ```bash
-python3 scripts/generate_report.py \
+dotnet scripts/generate-report.cs \
   --workspace <workspace>
 ```
 
@@ -312,7 +312,7 @@ before/after diff and cascade risk. Let the user approve or reject each.
 For approved patches:
 
 ```bash
-python3 scripts/apply_patches.py \
+dotnet scripts/apply-patches.cs \
   --patches <workspace>/patches/ --confirm \
   --output <workspace>/changelog.md
 ```
@@ -386,8 +386,8 @@ listed separately in the report as "explicit-only" skills.
 
 - **"No project found"**: Run with `--cwd` pointing to the project root, or
   use `--list` to see available projects.
-- **tiktoken not installed**: Token counts will use character-based approximation.
-  Install with `pip install tiktoken` for accuracy.
+- **SharpToken not available**: Token counts will use character-based approximation.
+  NuGet パッケージは `#:package` ディレクティブで自動取得される。
 - **Large project (100+ sessions)**: Sessions are batched automatically. Multiple
   sub-agents run in parallel.
 - **Sub-agent produces invalid JSON**: Re-run the specific sub-agent step. The

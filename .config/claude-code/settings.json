@@ -6,12 +6,12 @@
   "permissions": {
     "allow": [
       "Write",
-      "Bash(python ~/.config/claude-code/skills/redmine-api/parse_issue.py:*)",
+      "Bash(dotnet ~/.config/claude-code/skills/redmine-api/parse-issue.cs:*)",
       "Bash(dotnet ~/.config/claude-code/skills/review-mr/extract-redmine-issue.cs:*)",
-      "Bash(python3 .claude/skills/summarize-visit-reports/fetch_reports.py:*)",
-      "Bash(python3 .claude/skills/summarize-visit-reports/show_overview.py:*)",
-      "Bash(python3 .claude/skills/summarize-visit-reports/extract_day_data.py:*)",
-      "Bash(python3 .claude/skills/summarize-visit-reports/extract_message_ids.py:*)",
+      "Bash(dotnet .claude/skills/summarize-visit-reports/fetch-reports.cs:*)",
+      "Bash(dotnet .claude/skills/summarize-visit-reports/show-overview.cs:*)",
+      "Bash(dotnet .claude/skills/summarize-visit-reports/extract-day-data.cs:*)",
+      "Bash(dotnet .claude/skills/summarize-visit-reports/extract-message-ids.cs:*)",
       "Bash(mo :*)",
       "mcp__pencil"
     ]
