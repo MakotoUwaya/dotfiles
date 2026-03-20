@@ -33,24 +33,24 @@ mcp__redmine__updateIssue  →  uploads[] に token を指定して説明欄に 
 ## レスポンスがファイルに保存された場合
 
 MCP レスポンスが大きい場合、Claude Code がローカルファイルに保存する。
-同梱の `parse_issue.py` でパースする。
+同梱の `parse-issue.cs` でパースする。
 
 ```bash
 # 基本情報 + description
-python ~/.config/claude-code/skills/redmine-api/parse_issue.py <保存先ファイルパス>
+dotnet ~/.config/claude-code/skills/redmine-api/parse-issue.cs <保存先ファイルパス>
 
-# journals（コメント履歴）も含める
-python ~/.config/claude-code/skills/redmine-api/parse_issue.py <保存先ファイルパス> --journals
+# journals（コメント履歴）も含める（C# 版は journals があれば自動表示）
+dotnet ~/.config/claude-code/skills/redmine-api/parse-issue.cs <保存先ファイルパス>
 ```
 
 ### JSON 構造
 
 ```
 [{type: "text", text: "<JSON string>"}]
-  → json.loads(data[0]['text'])['data']['issue']
+  → JsonDocument.Parse(array[0].text).RootElement.GetProperty("data").GetProperty("issue")
 ```
 
-`text` は JSON 文字列なので `json.loads()` で二重パースが必要。
+`text` は JSON 文字列なので `JsonDocument.Parse()` で二重パースが必要。
 
 ## Guidelines
 
