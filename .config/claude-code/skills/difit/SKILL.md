@@ -13,6 +13,9 @@ If the server is shut down without comments, treat it as "no review comments wer
 
 - Review the HEAD commit: `difit --clean`
 - Review uncommitted changes before commit: `difit . --clean`
+- Untracked ファイルがある場合: `echo "y" | difit . --clean`
+  - difit は untracked ファイルを検出すると対話プロンプト (Y/n) を表示する
+  - `echo "y" |` でパイプすることで自動応答し、untracked ファイルも含めてレビューする
 
 ## Basic Usage
 
