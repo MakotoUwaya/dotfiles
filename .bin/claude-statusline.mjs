@@ -82,24 +82,29 @@ if (ahead > 0) arrows.push(`\u2191${ahead}`);
 if (behind > 0) arrows.push(`\u2193${behind}`);
 if (arrows.length > 0) left += ` ${arrows.join("")}`;
 
+// 小数点以下1桁に切り上げてフォーマット
+function fmtPct(pct) {
+  return (Math.ceil(pct * 10) / 10).toFixed(1);
+}
+
 // --- Ring Meter (コンテキスト / レートリミット) ---
 const meters = [];
 
 const ctx = data.context_window;
 if (ctx && ctx.used_percentage != null) {
   const pct = ctx.used_percentage;
-  meters.push(`ctx:${ringMeter(pct)}${pct}%`);
+  meters.push(`${ringMeter(pct)} ${fmtPct(pct)}%(ctx)`);
 }
 
 const rl = data.rate_limits;
 if (rl) {
   if (rl.five_hour?.used_percentage != null) {
     const pct = rl.five_hour.used_percentage;
-    meters.push(`5h:${ringMeter(pct)}${pct}%`);
+    meters.push(`${ringMeter(pct)} ${fmtPct(pct)}%(5h)`);
   }
   if (rl.seven_day?.used_percentage != null) {
     const pct = rl.seven_day.used_percentage;
-    meters.push(`7d:${ringMeter(pct)}${pct}%`);
+    meters.push(`${ringMeter(pct)} ${fmtPct(pct)}%(7d)`);
   }
 }
 
