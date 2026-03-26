@@ -168,3 +168,11 @@ bind '"\C-h": backward-kill-word'
 
 # Starship
 eval "$(starship init bash)"
+
+# pnpm
+export PNPM_HOME="/home/m-uwaya/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
