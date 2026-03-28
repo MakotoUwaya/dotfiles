@@ -4,6 +4,7 @@ alias clip='iconv -t utf16 | /mnt/c/Windows/System32/clip.exe'
 alias explorer='/mnt/c/Windows/explorer.exe'
 alias fd=fdfind
 alias gg=lazygit
+alias dbproxy-tui='bun run ~/.bin/dbproxy-tui/index.ts'
 
 # Voice alert alias for long running commands
 alias beep='aplay -q -D pulse ~/.sound/voice_終わりました_ロザリア・ガーネット.wav'
