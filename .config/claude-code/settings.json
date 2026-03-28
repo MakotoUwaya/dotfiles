@@ -50,7 +50,16 @@
     "claude-md-management@claude-plugins-official": true,
     "csharp-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true
+    "ralph-loop@claude-plugins-official": true,
+    "tsumiki@tsumiki": true
+  },
+  "extraKnownMarketplaces": {
+    "tsumiki": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/classmethod/tsumiki.git"
+      }
+    }
   },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
