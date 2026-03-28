@@ -88,6 +88,15 @@
             "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.config/claude-code/hooks/docbase-edit-guard.sh"
+          }
+        ]
       }
     ]
   },
