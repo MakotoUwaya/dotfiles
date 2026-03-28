@@ -1,7 +1,6 @@
 import {
   BoxRenderable,
   TextRenderable,
-  ScrollBoxRenderable,
   type CliRenderer,
   type KeyEvent,
 } from "@opentui/core";
@@ -100,8 +99,16 @@ export async function showMultiSelect(
   let visibleItems = allItems;
   const selected = new Set<string>();
   let cursor = 0;
+  let scrollOffset = 0;
   let filterMode = false;
   let filterText = "";
+
+  // ヘッダ(1) + ヘルプ(1) + フィルタ(1) + ボーダー(2) + カウント(1) + ステータスライン等余白(2) = 8行分
+  const CHROME_LINES = 8;
+
+  function getViewportHeight(): number {
+    return Math.max(5, renderer.terminalHeight - CHROME_LINES);
+  }
 
   function adjustCursor() {
     while (
@@ -120,6 +127,26 @@ export async function showMultiSelect(
     }
   }
 
+  function adjustScroll() {
+    const vh = getViewportHeight();
+    // カーソルがビューポートより下にある場合、スクロールダウン
+    if (cursor >= scrollOffset + vh) {
+      scrollOffset = cursor - vh + 1;
+    }
+    // カーソルがビューポートより上にある場合、スクロールアップ
+    if (cursor < scrollOffset) {
+      scrollOffset = cursor;
+    }
+    // ヘッダ行がカーソルの直前にある場合、ヘッダも表示する
+    if (cursor > 0 && visibleItems[cursor - 1]?.type === "header" && cursor - 1 < scrollOffset) {
+      scrollOffset = cursor - 1;
+    }
+    // scrollOffset の上限
+    const maxOffset = Math.max(0, visibleItems.length - vh);
+    scrollOffset = Math.min(scrollOffset, maxOffset);
+    scrollOffset = Math.max(0, scrollOffset);
+  }
+
   function getSelectableItems(): FlatItem[] {
     return visibleItems.filter((i) => i.type === "item");
   }
@@ -136,6 +163,7 @@ export async function showMultiSelect(
     if (next >= 0 && next < visibleItems.length) {
       cursor = next;
     }
+    adjustScroll();
   }
 
   function toggleCurrent() {
@@ -168,18 +196,108 @@ export async function showMultiSelect(
   function applyFilter() {
     visibleItems = filterItems(allItems, filterText);
     cursor = 0;
+    scrollOffset = 0;
     adjustCursor();
+    adjustScroll();
+  }
+
+  // 全角文字を考慮した表示幅を計算
+  function displayWidth(str: string): number {
+    let w = 0;
+    for (const ch of str) {
+      const cp = ch.codePointAt(0) ?? 0;
+      // CJK統合漢字、ひらがな、カタカナ、全角記号、CJK記号等
+      if (
+        (cp >= 0x1100 && cp <= 0x115f) || // Hangul Jamo
+        (cp >= 0x2e80 && cp <= 0x303e) || // CJK Radicals, Kangxi, CJK Symbols
+        (cp >= 0x3040 && cp <= 0x33bf) || // Hiragana, Katakana, CJK Compat
+        (cp >= 0x3400 && cp <= 0x4dbf) || // CJK Unified Ext A
+        (cp >= 0x4e00 && cp <= 0xa4cf) || // CJK Unified, Yi
+        (cp >= 0xac00 && cp <= 0xd7af) || // Hangul Syllables
+        (cp >= 0xf900 && cp <= 0xfaff) || // CJK Compat Ideographs
+        (cp >= 0xfe30 && cp <= 0xfe6f) || // CJK Compat Forms
+        (cp >= 0xff01 && cp <= 0xff60) || // Fullwidth Forms
+        (cp >= 0xffe0 && cp <= 0xffe6) || // Fullwidth Signs
+        (cp >= 0x20000 && cp <= 0x2ffff)  // CJK Ext B-F
+      ) {
+        w += 2;
+      } else {
+        w += 1;
+      }
+    }
+    return w;
+  }
+
+  // 表示幅ベースで切り詰め
+  function truncate(str: string, maxCols: number): string {
+    let w = 0;
+    let i = 0;
+    for (const ch of str) {
+      const cp = ch.codePointAt(0) ?? 0;
+      const cw =
+        (cp >= 0x1100 && cp <= 0x115f) ||
+        (cp >= 0x2e80 && cp <= 0x303e) ||
+        (cp >= 0x3040 && cp <= 0x33bf) ||
+        (cp >= 0x3400 && cp <= 0x4dbf) ||
+        (cp >= 0x4e00 && cp <= 0xa4cf) ||
+        (cp >= 0xac00 && cp <= 0xd7af) ||
+        (cp >= 0xf900 && cp <= 0xfaff) ||
+        (cp >= 0xfe30 && cp <= 0xfe6f) ||
+        (cp >= 0xff01 && cp <= 0xff60) ||
+        (cp >= 0xffe0 && cp <= 0xffe6) ||
+        (cp >= 0x20000 && cp <= 0x2ffff)
+          ? 2
+          : 1;
+      if (w + cw > maxCols - 1) {
+        return str.slice(0, i) + "…";
+      }
+      w += cw;
+      i += ch.length;
+    }
+    return str;
+  }
+
+  // 表示幅ベースでパディング
+  function padEndCols(str: string, cols: number): string {
+    const w = displayWidth(str);
+    const pad = Math.max(0, cols - w);
+    return str + " ".repeat(pad);
+  }
+
+  function buildScrollbar(viewportLines: number): string[] {
+    const total = visibleItems.length;
+    if (total <= viewportLines) {
+      return Array(viewportLines).fill(" ");
+    }
+    const thumbSize = Math.max(1, Math.round((viewportLines / total) * viewportLines));
+    const maxOffset = total - viewportLines;
+    const thumbPos = Math.round((scrollOffset / maxOffset) * (viewportLines - thumbSize));
+    return Array.from({ length: viewportLines }, (_, i) =>
+      i >= thumbPos && i < thumbPos + thumbSize ? "█" : "│"
+    );
   }
 
   function renderList(): string {
+    const vh = getViewportHeight();
+    const tw = renderer.terminalWidth;
+    const hasScrollbar = visibleItems.length > vh;
+    // スクロールバー分 (2文字: スペース + バー) を確保
+    const contentWidth = hasScrollbar ? tw - 2 : tw;
     const lines: string[] = [];
-    const nameWidth = 30;
-    const portWidth = 7;
+    const end = Math.min(scrollOffset + vh, visibleItems.length);
 
-    for (let i = 0; i < visibleItems.length; i++) {
+    // 幅に応じて DB 名のカラム幅を調整
+    const nameWidth = Math.max(15, Math.min(30, contentWidth - 25));
+    const portWidth = 7;
+    // API リスト表示に使える残り幅
+    const fixedCols = 2 + 3 + 1 + nameWidth + 1 + portWidth; // "> [x] name port"
+    const apiMaxLen = Math.max(0, contentWidth - fixedCols - 1);
+
+    const rawLines: string[] = [];
+    for (let i = scrollOffset; i < end; i++) {
       const item = visibleItems[i];
       if (item.type === "header") {
-        lines.push(`  ${item.label}`);
+        rawLines.push(truncate(`  ${item.label}`, contentWidth));
         continue;
       }
       const isSelected =
@@ -187,15 +305,32 @@ export async function showMultiSelect(
       const isCursor = i === cursor;
       const checkbox = isSelected ? "[x]" : "[ ]";
       const pointer = isCursor ? ">" : " ";
-      const name = item.label.padEnd(nameWidth);
+      const name = item.label.padEnd(nameWidth).slice(0, nameWidth);
       const port = String(item.port ?? "").padStart(portWidth);
-      const api = item.apiInfo ? ` ${item.apiInfo}` : "";
-      lines.push(`${pointer} ${checkbox} ${name} ${port}${api}`);
+      const base = `${pointer} ${checkbox} ${name} ${port}`;
+      const api =
+        item.apiInfo && apiMaxLen > 3
+          ? ` ${truncate(item.apiInfo, apiMaxLen)}`
+          : "";
+      rawLines.push(truncate(`${base}${api}`, contentWidth));
     }
+
+    if (hasScrollbar) {
+      const scrollbar = buildScrollbar(vh);
+      for (let i = 0; i < vh; i++) {
+        const bar = scrollbar[i] ?? "│";
+        const raw = rawLines[i] ?? "";
+        lines.push(`${padEndCols(raw, contentWidth)} ${bar}`);
+      }
+    } else {
+      lines.push(...rawLines);
+    }
+
     return lines.join("\n");
   }
 
   adjustCursor();
+  adjustScroll();
 
   return new Promise<MultiSelectResult>((resolve) => {
     const container = new BoxRenderable(renderer, {
@@ -209,9 +344,11 @@ export async function showMultiSelect(
       fg: "#00FF00",
     });
 
+    const helpFull =
+      "↑↓/jk:移動  Space:選択  a:全選択  /:フィルタ  Enter:確定  q:終了";
+    const helpShort = "↑↓:移動 Space:選択 a:全 /:検索 Enter:確定 q:終了";
     const helpText = new TextRenderable(renderer, {
-      content:
-        "↑↓/jk:移動  Space:選択  a:全選択  /:フィルタ  Enter:確定  q:終了",
+      content: renderer.terminalWidth < 65 ? helpShort : helpFull,
       fg: "#888888",
     });
 
@@ -230,19 +367,10 @@ export async function showMultiSelect(
       fg: "#00CCFF",
     });
 
-    const scrollBox = new ScrollBoxRenderable(renderer, {
-      flexGrow: 1,
-      scrollY: true,
-      border: true,
-      borderStyle: "rounded",
-      borderColor: "#444444",
-    });
-    scrollBox.add(listText);
-
     container.add(title);
     container.add(helpText);
     container.add(filterDisplay);
-    container.add(scrollBox);
+    container.add(listText);
     container.add(countText);
     renderer.root.add(container);
 
