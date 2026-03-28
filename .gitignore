@@ -47,6 +47,8 @@
 !/.claude/settings.json
 !/.claude/rules/
 !/.claude/rules/**
+!/.claude/agents/
+!/.claude/agents/**
 !/.gemini/
 /.gemini/**
 !/.gemini/GEMINI.md
