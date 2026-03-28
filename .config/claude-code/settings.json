@@ -18,6 +18,19 @@
       "mcp__pencil"
     ]
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.bin','claude-statusline.mjs')).href)\"",
@@ -35,20 +48,9 @@
     "playground@claude-plugins-official": true,
     "figma@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
-    "csharp-lsp@claude-plugins-official": true
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh"
-          }
-        ]
-      }
-    ]
+    "csharp-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true
   },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
@@ -56,4 +58,3 @@
   "autoUpdatesChannel": "latest",
   "voiceEnabled": true
 }
-
