@@ -15,6 +15,7 @@
 - `.config/nvim/`: Neovim 設定（Lua, lazy.nvim ベース）
 - `.config/mise/config.toml`: ツールバージョン管理（node, pnpm, fzf, bat, lazygit, delta 等）
 - `.config/starship.toml`: プロンプトテーマ
+- `.config/claude-code/`: Claude Code グローバル設定（settings.json, rules/, skills/）
 - `.config/lazygit/`: lazygit TUI 設定
 - `.bin/`: インストールスクリプト、apt パッケージリスト
 - `etc/apt/`: APT ソースリスト・鍵ファイル

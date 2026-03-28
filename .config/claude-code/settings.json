@@ -51,7 +51,9 @@
     "csharp-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
-    "tsumiki@tsumiki": true
+    "tsumiki@tsumiki": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "tsumiki": {
