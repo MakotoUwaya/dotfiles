@@ -15,23 +15,27 @@ if [[ -n "$FILTER" ]]; then
 fi
 
 total=0
-success=0
-errors=()
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
 
 while IFS= read -r repo; do
   [[ -z "$repo" ]] && continue
   total=$((total + 1))
+  idx=$total
 
-  # バックグラウンドで fetch し、並列数を制御
   (
-    if ! output=$(git -C "$repo" fetch --prune origin 2>&1); then
-      echo "ERROR:${repo}:${output}" >&2
+    output=$(git -C "$repo" fetch --prune origin 2>&1) || true
+    if echo "$output" | grep -q "^fatal:\|^error:"; then
+      echo "$repo" > "$tmpdir/${idx}.repo"
+      echo "ERROR" > "$tmpdir/${idx}.status"
+      echo "$output" > "$tmpdir/${idx}.output"
     elif [[ -n "$output" ]]; then
-      echo "UPDATED:${repo}:${output}"
+      echo "$repo" > "$tmpdir/${idx}.repo"
+      echo "UPDATED" > "$tmpdir/${idx}.status"
+      echo "$output" > "$tmpdir/${idx}.output"
     fi
   ) &
 
-  # 並列数に達したら待機
   if (( total % PARALLEL == 0 )); then
     wait
   fi
@@ -39,5 +43,42 @@ done <<< "$repos"
 
 wait
 
-echo "---"
+# --- サマリ出力 ---
 echo "Total: $total repos fetched"
+echo ""
+
+shopt -s nullglob
+for repo_file in "$tmpdir"/*.repo; do
+  idx=$(basename "$repo_file" .repo)
+  repo_path=$(cat "$repo_file")
+  status=$(cat "$tmpdir/${idx}.status")
+  output_file="$tmpdir/${idx}.output"
+
+  if [[ "$status" == "ERROR" ]]; then
+    echo "ERROR:${repo_path}"
+    cat "$output_file"
+    echo ""
+    continue
+  fi
+
+  echo "REPO:${repo_path}"
+  while IFS= read -r line; do
+    if echo "$line" | grep -q '^\s*\* \[new branch\]'; then
+      branch=$(echo "$line" | sed 's/.*-> origin\///')
+      echo "  NEW:${branch}"
+    elif echo "$line" | grep -q '^\s*\* \[new tag\]'; then
+      tag=$(echo "$line" | sed 's/.*\* \[new tag\]\s*//' | sed 's/\s*->.*//')
+      echo "  TAG:${tag}"
+    elif echo "$line" | grep -q '^\s*- \[deleted\]'; then
+      branch=$(echo "$line" | sed 's/.*-> origin\///')
+      echo "  DEL:${branch}"
+    elif echo "$line" | grep -q '(forced update)'; then
+      branch=$(echo "$line" | sed 's/.*-> origin\///' | sed 's/\s*(forced update)//')
+      echo "  FORCE:${branch}"
+    elif echo "$line" | grep -q '^\s\+[0-9a-f]'; then
+      branch=$(echo "$line" | sed 's/.*-> origin\///')
+      echo "  UPD:${branch}"
+    fi
+  done < "$output_file"
+  echo ""
+done
