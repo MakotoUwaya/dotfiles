@@ -11,19 +11,21 @@ description: ghq で管理している全リポジトリの remote を一括 fet
 
 ## Instructions
 
-以下のコマンドを実行する:
+以下のスクリプトを実行する:
 
 ```bash
-ghq list --full-path | xargs -P8 -I{} git -C {} fetch --prune origin
+bash ~/.claude/skills/git-fetch-all/fetch-all.sh
 ```
 
-### オプション
+### オプション（引数）
 
-- `-P8` の数値はネットワーク帯域に応じて調整可能（デフォルト 8 並列）
-- ユーザーが特定のホスト（github.com, gitlab.com 等）に絞りたい場合:
-  ```bash
-  ghq list --full-path | grep github.com | xargs -P8 -I{} git -C {} fetch --prune origin
-  ```
+- 第1引数: grep パターンでリポジトリを絞り込む（例: `github.com`）
+- 第2引数: 並列数（デフォルト: 8）
+
+```bash
+# github.com のリポジトリのみ、4並列で fetch
+bash ~/.claude/skills/git-fetch-all/fetch-all.sh github.com 4
+```
 
 ## Guidelines
 

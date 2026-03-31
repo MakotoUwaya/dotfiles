@@ -9,6 +9,10 @@
       "WebSearch",
       "Skill(build)",
 
+      "Bash(bash ~/.claude/skills/*/*.sh:*)",
+      "Bash(node ~/.claude/skills/*/*.js:*)",
+      "Bash(python3 ~/.claude/skills/*/*.py:*)",
+      "Bash(dotnet script ~/.claude/skills/*/*.cs:*)",
       "Bash(bun:*)",
       "Bash(cat:*)",
       "Bash(curl:*)",
