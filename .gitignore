@@ -37,6 +37,8 @@
 !/.config/claude-code/
 !/.config/claude-code/**
 !/.config/starship.toml
+!/.config/uv/
+!/.config/uv/uv.toml
 !/.config/systemd/
 !/.config/systemd/user/
 !/.config/systemd/user/default.target.wants/
@@ -61,6 +63,8 @@
 !/.bashrc
 !/.gitconfig
 !/.profile
+!/.npmrc
+!/.bunfig.toml
 !/.ripgreprc
 !/.tmux.conf
 

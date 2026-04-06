@@ -85,6 +85,18 @@ New-SymLink -LinkPath (Join-Path $HOME '.config\mise') `
             -TargetPath (Join-Path $dotdir '.config\mise') `
             -IsDirectory
 
+# Symlink: npmrc (npm + pnpm cooldown)
+New-SymLink -LinkPath (Join-Path $HOME '.npmrc') `
+            -TargetPath (Join-Path $dotdir '.npmrc')
+
+# Symlink: bunfig.toml (bun cooldown)
+New-SymLink -LinkPath (Join-Path $HOME '.bunfig.toml') `
+            -TargetPath (Join-Path $dotdir '.bunfig.toml')
+
+# Symlink: uv config (uv cooldown)
+New-SymLink -LinkPath (Join-Path $env:APPDATA 'uv\uv.toml') `
+            -TargetPath (Join-Path $dotdir '.config\uv\uv.toml')
+
 # Symlink: ripgreprc
 New-SymLink -LinkPath (Join-Path $HOME '.ripgreprc') `
             -TargetPath (Join-Path $dotdir '.ripgreprc')

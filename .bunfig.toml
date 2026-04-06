@@ -1,0 +1,4 @@
+[install]
+# Supply chain security: cooldown period (seconds) for newly published packages
+# Requires bun v1.3+
+minimumReleaseAge = 604800
