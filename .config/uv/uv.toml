@@ -1,2 +1,0 @@
-# Supply chain security: cooldown period for newly published packages
-exclude-newer = "7 days"
