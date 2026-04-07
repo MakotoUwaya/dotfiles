@@ -41,3 +41,4 @@ bash ~/.claude/skills/git-fetch-all/fetch-all.sh github.com 4
     - `TAG:` → 新規タグ
   - 更新なしのリポジトリは報告不要
   - 所見（renovate ブランチの大量強制更新、リリースブランチの作成など）があればコメントを添える
+- 報告完了後、セッションリネーム用コマンドを提示する: `/rename git-fetch-yyyymmdd`（日付は当日）
