@@ -1,14 +1,17 @@
 ---
 name: gws
-description: Google Workspace リソース（Gmail, Calendar, Drive 等）を gws CLI で操作する際のリファレンス。「gws」「gmail」「calendar」「メール」で自動呼び出し
+description: Gmail を gws CLI で操作する際のリファレンス。「gws」「gmail」「メール」で自動呼び出し。Google Calendar は MCP ツール (gcal_list_events 等) を使用すること。
 ---
 
 # gws CLI リファレンス
 
+> **注意**: Google Calendar は `mcp__claude_ai_Google_Calendar__gcal_list_events` 等の MCP ツールに移行済み。`gws calendar` は使わないこと。
+
 ## 認証
 
 - `gws auth login` で OAuth2 認証（`gcloud auth` とは別管理）
-- サービス追加: `gws auth login -s gmail,calendar --readonly`
+- サービス追加: `gws auth login -s gmail --readonly`
+- 書き込み権限が必要な場合: `gws auth login -s gmail`（`--readonly` なし）
 - 認証状態確認: `gws auth status`
 - トークンキャッシュの問題時: `~/.config/gws/token_cache.json` を削除して再認証
 
@@ -28,6 +31,16 @@ gws gmail users messages list --params '{"userId": "me", "q": "label:xxx is:unre
 gws gmail users messages get --params '{"userId": "me", "id": "<message_id>", "format": "full"}'
 ```
 
+### メール既読化（batchModify）
+
+```sh
+# UNREAD ラベルを一括除去して既読にする
+gws gmail users messages batchModify --params '{"userId": "me"}' --json '{"ids": ["id1", "id2"], "removeLabelIds": ["UNREAD"]}'
+```
+
+- **`--json` フラグを使うこと**（`--body` は存在しない）
+- 書き込み権限が必要（`--readonly` 認証では失敗する）
+
 ### ヘルパーコマンド
 
 ```sh
@@ -40,19 +53,6 @@ gws gmail +triage
 - `labelIds` パラメータは配列が文字列化されるバグがある → `q` パラメータでラベル検索すること
 - `format: "metadata"` + `metadataHeaders` ではヘッダーが空になる場合がある → `format: "full"` を使う
 - `resultSizeEstimate` は概算値で正確ではない → 正確な件数は全件取得して数える
-
-## Calendar
-
-```sh
-# 予定取得
-gws calendar events list --params '{
-  "calendarId": "primary",
-  "timeMin": "2026-03-07T00:00:00+09:00",
-  "timeMax": "2026-03-07T23:59:59+09:00",
-  "singleEvents": true,
-  "orderBy": "startTime"
-}'
-```
 
 ## API スキーマ確認
 
