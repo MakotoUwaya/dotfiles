@@ -35,4 +35,5 @@ rust = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@github/copilot" = "latest"
 dotnet = "10"
+just = "latest"
 
