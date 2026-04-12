@@ -44,7 +44,6 @@
       "Bash(zv:*)",
       "Bash(/mnt/c/Windows/System32/clip.exe:*)",
 
-      "mcp__pencil",
       "mcp__docbase__getPost",
       "mcp__docbaseMcp__*",
       "mcp__redmine__get*",
