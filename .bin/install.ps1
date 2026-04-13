@@ -5,7 +5,9 @@ param()
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$dotdir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$binDir = Get-Item (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$realBinPath = $binDir.LinkTarget ?? $binDir.FullName
+$dotdir = Split-Path -Parent $realBinPath
 $backupDir = Join-Path $HOME '.dotbackup'
 
 function Write-Step {
