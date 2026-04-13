@@ -105,6 +105,7 @@ make_symlink "$HOME/.config/starship.toml" "$DOTDIR/.config/starship.toml"
 make_symlink "$HOME/.config/lazygit"      "$DOTDIR/.config/lazygit"
 make_symlink "$HOME/.config/mise"         "$DOTDIR/.config/mise"
 make_symlink "$HOME/.config/nvim"         "$DOTDIR/.config/nvim"
+make_symlink "$HOME/.config/nushell"      "$DOTDIR/.config/nushell"
 make_symlink "$HOME/.bin"                 "$DOTDIR/.bin"
 make_symlink "$HOME/.sound"              "$DOTDIR/sound"
 

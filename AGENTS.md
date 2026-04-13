@@ -16,6 +16,7 @@
 - `.config/mise/config.toml`: ツールバージョン管理（node, pnpm, fzf, bat, lazygit, delta 等）
 - `.config/starship.toml`: プロンプトテーマ
 - `.config/claude-code/`: Claude Code グローバル設定（settings.json, rules/, skills/）
+- `.config/nushell/`: Nushell シェル設定（env.nu, config.nu）
 - `.config/lazygit/`: lazygit TUI 設定
 - `.bin/`: インストールスクリプト、apt パッケージリスト
 - `etc/apt/`: APT ソースリスト・鍵ファイル
@@ -24,8 +25,10 @@
 - `.bashrc`, `.zshrc` 等: シェル初期化ファイル
 
 ### シェル初期化チェーン
-`.profile` → `.bashrc` → `.bash_aliases`
+**bash**: `.profile` → `.bashrc` → `.bash_aliases`
 `.bashrc` で `mise`, `keychain`, `cargo`, `fzf`, `direnv`, `starship` を順に初期化します。
+
+**Nushell**: `env.nu`（環境変数・PATH・starship/mise 生成）→ `vendor/autoload/*.nu`（自動読込）→ `config.nu`（エイリアス・コマンド・キーバインド）
 
 ### Neovim プラグイン構成
 `init.lua` → `lua/config/lazy.lua`（lazy.nvim ブートストラップ）→ `lua/plugins/*.lua`

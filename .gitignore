@@ -37,6 +37,9 @@
 !/.config/claude-code/
 !/.config/claude-code/**
 !/.config/starship.toml
+!/.config/nushell/
+!/.config/nushell/env.nu
+!/.config/nushell/config.nu
 !/.config/systemd/
 !/.config/systemd/user/
 !/.config/systemd/user/default.target.wants/

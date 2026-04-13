@@ -82,6 +82,11 @@ New-SymLink -LinkPath (Join-Path $env:LOCALAPPDATA 'nvim') `
             -TargetPath (Join-Path $dotdir '.config\nvim') `
             -IsDirectory
 
+# Symlink: Nushell config
+New-SymLink -LinkPath (Join-Path $env:APPDATA 'nushell') `
+            -TargetPath (Join-Path $dotdir '.config\nushell') `
+            -IsDirectory
+
 # Symlink: mise config
 New-SymLink -LinkPath (Join-Path $HOME '.config\mise') `
             -TargetPath (Join-Path $dotdir '.config\mise') `
