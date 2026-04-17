@@ -123,6 +123,10 @@ New-SymLink -LinkPath (Join-Path $HOME '.bin') `
             -TargetPath (Join-Path $dotdir '.bin') `
             -IsDirectory
 
+# Symlink: .wslconfig (WSL2 resource settings)
+New-SymLink -LinkPath (Join-Path $HOME '.wslconfig') `
+            -TargetPath (Join-Path $dotdir '.wslconfig')
+
 # winget import
 Write-Step 'Importing winget packages...'
 $wingetFile = Join-Path $dotdir 'winget\settings.json'

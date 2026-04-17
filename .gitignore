@@ -67,6 +67,7 @@
 !/.bunfig.toml
 !/.ripgreprc
 !/.tmux.conf
+!/.wslconfig
 
 !/PowerShell/
 /PowerShell/**
