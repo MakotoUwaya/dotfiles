@@ -9,7 +9,6 @@
       "Write(/tmp/*)",
       "WebSearch",
       "Skill(build)",
-
       "Bash(bash ~/.claude/skills/*/*.sh:*)",
       "Bash(node ~/.claude/skills/*/*.js:*)",
       "Bash(python3 ~/.claude/skills/*/*.py:*)",
@@ -43,7 +42,6 @@
       "Bash(yes:*)",
       "Bash(zv:*)",
       "Bash(/mnt/c/Windows/System32/clip.exe:*)",
-
       "mcp__docbase__getPost",
       "mcp__docbaseMcp__*",
       "mcp__redmine__get*",
@@ -58,7 +56,6 @@
       "mcp__claude_ai_Slack__slack_*",
       "mcp__plugin_playwright_playwright__*",
       "mcp__chrome-devtools__*",
-
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:docs.sentry.io)",
       "WebFetch(domain:docs.slack.dev)",
@@ -136,5 +133,6 @@
   "syntaxHighlightingDisabled": false,
   "effortLevel": "medium",
   "autoUpdatesChannel": "latest",
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "skipDangerousModePermissionPrompt": true
 }
