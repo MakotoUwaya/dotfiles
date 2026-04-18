@@ -28,7 +28,6 @@ description: >
 - WebFetch ドメイン: `WebFetch(domain:*)`
 - WebSearch
 - dotnet スキルスクリプト: `Bash(dotnet ~/.config/claude-code/skills/...)`, `Bash(dotnet .claude/skills/...)`
-- mo コマンド（ワイルドカード版）: `Bash(mo:*)`
 - difit コマンド: `Bash(difit .:*)`
 - gws コマンド: `Bash(gws *:*)`
 - Read パターン: `Read(//home/.../**)`
@@ -46,8 +45,6 @@ description: >
 - 特定の JSON キーを操作する `Bash(jq ...)` コマンド
 - 特定ファイルパスを含む `Bash(dotnet-script ...)` コマンド
 - `/tmp/` ファイルを操作する `Bash(mv /tmp/...)` コマンド
-- 特定フラグ付きの mo コマンド（`Bash(mo:*)` があれば不要）:
-  `Bash(mo --status --json)`, `Bash(mo --shutdown)`, `Bash(mo -w '...' ...)` 等
 
 #### MALFORMED（削除推奨）
 
@@ -60,8 +57,8 @@ description: >
 
 #### DUPLICATE（統合候補）
 
-- `Bash(mo:*)` が存在する場合、個別の mo コマンドバリエーションは全て不要
-- `Bash(yes | mo --clear)` と `Bash(yes | mo --clear 2>&1)` のような微小差異
+- ワイルドカード版と個別フラグ付きエントリが両方ある場合は個別版を削除
+- 例: `Bash(cmd --flag1)` と `Bash(cmd --flag2)` は `Bash(cmd:*)` で統合可能
 
 ### Step 2: 分類結果の表示
 
@@ -88,7 +85,7 @@ description: >
 ### DUPLICATE（統合候補: N件）
 | # | エントリ | 統合先 |
 |---|---------|--------|
-| 1 | Bash(mo --shutdown) | Bash(mo:*) |
+| 1 | Bash(foo --flag) | Bash(foo:*) |
 
 **Before**: XXX 件 → **After**: YYY 件（ZZZ 件削除予定）
 ```
