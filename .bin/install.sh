@@ -118,11 +118,35 @@ make_symlink "$HOME/.claude/rules"         "$DOTDIR/.config/claude-code/rules"
 make_symlink "$HOME/.claude/skills"        "$DOTDIR/.config/claude-code/skills"
 make_symlink "$HOME/.claude/hooks"         "$DOTDIR/.config/claude-code/hooks"
 
-# 3. Git config
+# 3. WSL2: route xdg-open to the default Windows browser
+if [ -x /mnt/c/Windows/System32/cmd.exe ] && command -v xdg-settings > /dev/null 2>&1; then
+  print_step "Installing wsl-browser.desktop..."
+  command mkdir -p "$HOME/.local/share/applications"
+  command rm -f "$HOME/.local/share/applications/wsl-browser.desktop"
+  cat > "$HOME/.local/share/applications/wsl-browser.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=WSL Browser
+Comment=Open URL in the default Windows browser from WSL2
+Exec=$HOME/.bin/wsl-browser %u
+NoDisplay=true
+MimeType=x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/about;x-scheme-handler/unknown;text/html;
+EOF
+  xdg-settings set default-web-browser wsl-browser.desktop
+  if command -v xdg-mime > /dev/null 2>&1; then
+    xdg-mime default wsl-browser.desktop \
+      text/html \
+      x-scheme-handler/about \
+      x-scheme-handler/unknown
+  fi
+  print_step "  default-web-browser -> $(xdg-settings get default-web-browser)"
+fi
+
+# 4. Git config
 print_step "Configuring git..."
 git config --global include.path "~/.gitconfig_shared"
 
-# 4. apt sources.list.d symlink + PGP keys (requires sudo)
+# 5. apt sources.list.d symlink + PGP keys (requires sudo)
 if command -v apt-get > /dev/null 2>&1; then
   print_step "Setting up apt sources and PGP keys..."
   echo "This step requires sudo privileges."
@@ -155,7 +179,7 @@ if command -v apt-get > /dev/null 2>&1; then
   fi
 fi
 
-# 5. apt package restore (requires dselect)
+# 6. apt package restore (requires dselect)
 if command -v dselect > /dev/null 2>&1; then
   local_list="$DOTDIR/.bin/apt-installed.list"
   if [ -f "$local_list" ]; then
@@ -170,7 +194,7 @@ if command -v dselect > /dev/null 2>&1; then
   fi
 fi
 
-# 6. tmux plugin manager
+# 7. tmux plugin manager
 print_step "Setting up tmux plugin manager..."
 if [ -d "$HOME/.tmux/plugins/tpm" ]; then
   echo "  tpm already installed, skipping."
@@ -178,6 +202,6 @@ else
   git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 fi
 
-# 7. Done
+# 8. Done
 print_step ""
 print_step " Install completed!!!! "

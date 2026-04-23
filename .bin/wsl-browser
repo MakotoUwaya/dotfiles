@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Open a URL in the default Windows browser from WSL2.
+# Invoked by ~/.local/share/applications/wsl-browser.desktop via xdg-open.
+# rundll32 bypasses cmd.exe so '&' in query strings is not split into commands.
+set -eu
+exec /mnt/c/Windows/System32/rundll32.exe url.dll,FileProtocolHandler "$1"
