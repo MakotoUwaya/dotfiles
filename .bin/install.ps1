@@ -127,6 +127,15 @@ New-SymLink -LinkPath (Join-Path $HOME '.bin') `
 New-SymLink -LinkPath (Join-Path $HOME '.wslconfig') `
             -TargetPath (Join-Path $dotdir '.wslconfig')
 
+# Symlink: Warp keybindings
+New-SymLink -LinkPath (Join-Path $env:LOCALAPPDATA 'warp\Warp\config\keybindings.yaml') `
+            -TargetPath (Join-Path $dotdir 'warp\keybindings.yaml')
+
+# Symlink: Warp workflows
+New-SymLink -LinkPath (Join-Path $env:APPDATA 'warp\Warp\data\workflows') `
+            -TargetPath (Join-Path $dotdir 'warp\workflows') `
+            -IsDirectory
+
 # winget import
 Write-Step 'Importing winget packages...'
 $wingetFile = Join-Path $dotdir 'winget\settings.json'

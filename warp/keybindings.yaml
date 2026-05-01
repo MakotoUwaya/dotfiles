@@ -1,0 +1,4 @@
+---
+# Warp の Ctrl+G が "Add Selection for Next Occurrence" に割り当たっており、
+# bash/PowerShell/Nushell の Ctrl+G (ghq -> fzf) と競合するため無効化する
+"editor_view:add_next_occurrence": none

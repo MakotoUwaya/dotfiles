@@ -1,0 +1,10 @@
+---
+name: gitdir
+command: gitdir
+tags:
+  - ghq
+  - cd
+description: ghq で管理しているリポジトリを fzf で選択して cd する
+shells:
+  - bash
+  - zsh
