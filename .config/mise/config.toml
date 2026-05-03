@@ -2,7 +2,7 @@
 go_set_gobin = false
 
 [tools]
-node = "24.11.1"
+node = "24"
 pnpm = "10"
 npm = "latest"
 
