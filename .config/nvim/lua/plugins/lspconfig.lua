@@ -3,7 +3,7 @@ return {
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     {
-      'williamboman/mason.nvim',
+      'mason-org/mason.nvim',
       cmd = { 'Mason', 'MasonInstall', 'MasonUninstall', 'MasonLog' },
       opts = {
         registries = {
@@ -12,38 +12,11 @@ return {
         },
       },
     },
-    'williamboman/mason-lspconfig.nvim',
+    'mason-org/mason-lspconfig.nvim',
     'hrsh7th/cmp-nvim-lsp',
     { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
   },
-  opts = {
-    servers = {
-      eslint = {
-        settings = { workingDirectories = { mode = 'auto' } },
-      },
-      -- 警告回避のため、余計な設定を削除して空にします
-      lua_ls = {},
-      ts_ls = {},
-      html = {},
-      cssls = {},
-      lemminx = {
-        filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'xaml' },
-      },
-      yamlls = {},
-      dockerls = {},
-      docker_compose_language_service = {},
-      gopls = {},
-      rust_analyzer = {},
-      bashls = {},
-      sqlls = {},
-      basedpyright = {},
-      ruff = {},
-    },
-  },
-  config = function(_, opts)
-    local lspconfig = require('lspconfig')
-    local util = require('lspconfig.util')
-
+  config = function()
     vim.api.nvim_create_autocmd('LspAttach', {
       callback = function(args)
         local bufnr = args.buf
@@ -52,13 +25,10 @@ return {
           vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
         end
 
-        -- 【最新の診断情報ジャンプ】
-        -- 非推奨の goto_prev / goto_next を jump に変更
         keymap('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, 'Go to previous diagnostic')
         keymap('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, 'Go to next diagnostic')
         keymap('n', 'gl', vim.diagnostic.open_float, 'Show diagnostic error')
 
-        -- 【LSP基本操作】
         keymap('n', 'gd', vim.lsp.buf.definition, 'Go to definition')
         keymap('n', 'K', vim.lsp.buf.hover, 'Show hover documentation')
         keymap('n', '<leader>rn', vim.lsp.buf.rename, 'Rename symbol')
@@ -68,7 +38,6 @@ return {
           vim.api.nvim_create_autocmd('BufWritePre', {
             buffer = bufnr,
             callback = function()
-              -- pcall を使うことで、エラーが発生しても無視して保存を続行します
               pcall(function()
                 vim.cmd('EslintFixAll')
               end)
@@ -79,31 +48,32 @@ return {
     })
 
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    vim.lsp.config('*', { capabilities = capabilities })
 
-    -- JS 向け root_dir フォールバックを適用しないサーバー（lspconfig のデフォルトを使用）
-    local skip_root_fallback = {
-      basedpyright = true,
-      ruff = true,
-      gopls = true,
-      rust_analyzer = true,
-      bashls = true,
-      sqlls = true,
+    local util = require('lspconfig.util')
+    local js_root = util.root_pattern('package.json', '.eslintrc.js', '.eslintrc.json', '.git')
+    local js_root_servers = {
+      'eslint', 'lua_ls', 'ts_ls', 'html', 'cssls', 'lemminx',
+      'yamlls', 'dockerls', 'docker_compose_language_service',
     }
+    for _, name in ipairs(js_root_servers) do
+      vim.lsp.config(name, { root_dir = js_root })
+    end
+
+    vim.lsp.config('eslint', {
+      settings = { workingDirectories = { mode = 'auto' } },
+    })
+    vim.lsp.config('lemminx', {
+      filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'xaml' },
+    })
 
     require('mason-lspconfig').setup({
-      ensure_installed = vim.tbl_keys(opts.servers),
-      handlers = {
-        function(server_name)
-          local server_opts = opts.servers[server_name] or {}
-          server_opts.capabilities = vim.deepcopy(capabilities)
-          if not skip_root_fallback[server_name] then
-            server_opts.root_dir = server_opts.root_dir or util.root_pattern(
-              'package.json', '.eslintrc.js', '.eslintrc.json', '.git'
-            )
-          end
-          lspconfig[server_name].setup(server_opts)
-        end,
+      ensure_installed = {
+        'eslint', 'lua_ls', 'ts_ls', 'html', 'cssls', 'lemminx',
+        'yamlls', 'dockerls', 'docker_compose_language_service',
+        'gopls', 'rust_analyzer', 'bashls', 'sqlls', 'basedpyright', 'ruff',
       },
+      automatic_enable = true,
     })
   end,
 }
