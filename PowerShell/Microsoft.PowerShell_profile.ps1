@@ -53,6 +53,9 @@ $env:FZF_ALT_C_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF
 # ripgrep
 $env:RIPGREP_CONFIG_PATH="$HOME\.ripgreprc"
 
+# everything-claude-code: hook 厳密度（minimal | standard | strict）
+$env:ECC_HOOK_PROFILE = "minimal"
+
 # ghq
 function Set-GhqLocation {
     $ghqRoot = ghq root

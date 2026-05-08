@@ -12,6 +12,9 @@ $env.FZF_DEFAULT_OPTS = "--prompt='QUERY> ' --height 60% --layout reverse --bord
 $env.FZF_CTRL_T_COMMAND = ""
 $env.FZF_ALT_C_OPTS = "--height 100% --preview 'eza {} -h -T -F --no-user --no-time --no-filesize --no-permissions --long | head -200'"
 
+# everything-claude-code: hook 厳密度（minimal | standard | strict）
+$env.ECC_HOOK_PROFILE = "minimal"
+
 # PATH 追加
 $env.PATH = ($env.PATH | prepend ($env.HOME | path join "go" "bin"))
 $env.PATH = ($env.PATH | prepend ($env.HOME | path join ".local" "bin"))
