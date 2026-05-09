@@ -119,7 +119,8 @@
     "tsumiki@tsumiki": true,
     "claude-code-setup@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "warp@claude-code-warp": true
+    "warp@claude-code-warp": true,
+    "everything-claude-code@everything-claude-code": true
   },
   "extraKnownMarketplaces": {
     "tsumiki": {
@@ -133,6 +134,12 @@
         "source": "github",
         "repo": "warpdotdev/claude-code-warp"
       }
+    },
+    "everything-claude-code": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/affaan-m/everything-claude-code.git"
+      }
     }
   },
   "language": "japanese",
@@ -140,6 +147,6 @@
   "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
