@@ -176,6 +176,21 @@ JSON ファイル経由で投稿（前述「ネストされたパラメータの
 - `new_line`: 追加行（`+` 行）にコメントする場合
 - `old_line`: 削除行（`-` 行）にコメントする場合
 
+**新規ファイル (new file) への投稿**: `old_path` は `new_path` と同じパスを指定する（省略しても受理される）。`old_line` は `null` のままで良い。GitLab API はどちらでも valid な position として受理し、`line_code` を生成する。
+
+### インラインドラフトが UI で見えないとき
+
+投稿が API レスポンスで成功 (200) し、`line_code` が生成されていても、GitLab の Changes タブで対象行にドラフトが表示されないことがある（`.claude/` 配下、`*.lock`、生成物ディレクトリ等の auto-collapse 対象ファイル）。**Submit review 一覧（右上のレビューパネル）には表示されるので、投稿自体は成立している。**
+
+対処は以下の順で試す。**最初から一般ドラフトに退避しないこと**:
+
+1. **API で position が valid か確認**: `glab api .../draft_notes/<id>` で `line_code` が生成されているかチェック
+2. **Submit review 一覧で見えているか確認**: 表示されていれば投稿は成立。ユーザーに Changes タブの **ファイル展開** と **ハードリロード (Ctrl+Shift+R)** を依頼する
+3. **同じ position で DELETE → POST**: GitLab 側のキャッシュ更新を狙う
+4. **最終手段としてのみ一般ドラフトに切り替え**: 本文冒頭に `` `path/to/file:LINE` `` を明記して再投稿する
+
+**「見えない＝間違っている」と早合点して退避しない**。退避すると Author 側で対象行が ambiguous になり、結局 Author が GUI でインラインに付け直す手間が発生する。
+
 ### 既存ディスカッションへの返信
 
 通常の `discussions/:id/notes` API ではなく、ドラフトノートの `in_reply_to_discussion_id` パラメータを使う:
