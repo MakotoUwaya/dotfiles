@@ -13,9 +13,9 @@ If the server is shut down without comments, treat it as "no review comments wer
 
 - Review the HEAD commit: `difit --clean`
 - Review uncommitted changes before commit: `difit . --clean`
-- Untracked ファイルがある場合: `echo "y" | difit . --clean`
-  - difit は untracked ファイルを検出すると対話プロンプト (Y/n) を表示する
-  - `echo "y" |` でパイプすることで自動応答し、untracked ファイルも含めてレビューする
+- Untracked ファイルがある場合: `difit . --clean --include-untracked`
+  - `--include-untracked` で untracked ファイルも自動的に diff に含める
+  - 対象引数が `.` または `working` のときのみ有効
 
 ## Basic Usage
 
@@ -48,6 +48,38 @@ difit supports special keywords for common diff scenarios:
 difit .        # All uncommitted changes (staging area + unstaged)
 difit staged   # Staging area changes
 difit working  # Unstaged changes only
+```
+
+## Useful Options
+
+| Option | 用途 |
+|--------|------|
+| `--clean` | 既存コメント・viewed 状態をクリアして起動（レビュー依頼の基本） |
+| `--include-untracked` | untracked ファイルも diff に含める（`.` / `working` のみ） |
+| `--keep-alive` | ブラウザを閉じてもサーバーを継続（手動 Ctrl+C で停止） |
+| `--mode <split\|unified>` | 差分表示モード（デフォルト `split`） |
+| `--merge-base` | 比較ベースを `git merge-base` で解決して diff（Git revision モードのみ） |
+| `--context <lines>` | 差分前後のコンテキスト行数を制限（`0` で変更行のみ） |
+| `--pr <url>` | GitHub PR レビュー（`gh pr diff --patch` 経由、未解決の inline thread も取り込み） |
+| `--comment <json>` | 起動時に初期レビューコメントを注入（thread / reply、繰り返し指定可） |
+| `--tui` | Web UI ではなく端末上の TUI で表示 |
+
+### 例: PR レビュー
+
+```bash
+difit --pr https://github.com/owner/repo/pull/123 --clean
+```
+
+### 例: feature ブランチを main からの分岐点で比較
+
+```bash
+difit feature main --merge-base
+```
+
+### 例: 初期コメント付きで起動
+
+```bash
+difit --comment '{"type":"thread","filePath":"src/example.ts","position":{"side":"new","line":10},"body":"この変更の背景は..."}'
 ```
 
 # Constraints
