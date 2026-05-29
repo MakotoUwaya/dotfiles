@@ -10,6 +10,8 @@
       "WebSearch",
       "Skill(build)",
       "Bash(bash ~/.claude/skills/*/*.sh:*)",
+      "Bash(bash ~/.claude/skills/storage-cleanup/scripts/*.sh:*)",
+      "PowerShell(pwsh -NoProfile -File ~/.claude/skills/storage-cleanup/scripts/*.ps1:*)",
       "Bash(node ~/.claude/skills/*/*.js:*)",
       "Bash(python3 ~/.claude/skills/*/*.py:*)",
       "Bash(dotnet script ~/.claude/skills/*/*.cs:*)",
