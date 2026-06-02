@@ -1,7 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "ECC_DISABLED_HOOKS": "pre:bash:gateguard-fact-force"
   },
   "permissions": {
     "allow": [
@@ -33,6 +34,7 @@
       "Bash(jq:*)",
       "Bash(ls:*)",
       "Bash(mise:*)",
+      "Bash(mo:*)",
       "Bash(node:*)",
       "Bash(npm:*)",
       "Bash(printf:*)",
@@ -121,8 +123,8 @@
     "tsumiki@tsumiki": true,
     "claude-code-setup@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "warp@claude-code-warp": true,
-    "everything-claude-code@everything-claude-code": true
+    "everything-claude-code@everything-claude-code": true,
+    "warp@claude-code-warp": true
   },
   "extraKnownMarketplaces": {
     "tsumiki": {
@@ -131,16 +133,16 @@
         "url": "https://github.com/classmethod/tsumiki.git"
       }
     },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    },
     "everything-claude-code": {
       "source": {
         "source": "git",
         "url": "https://github.com/affaan-m/everything-claude-code.git"
+      }
+    },
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
       }
     }
   },

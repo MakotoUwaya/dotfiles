@@ -1,30 +1,35 @@
 ## GateGuard 対応ルール
 
-`everything-claude-code` プラグインの GateGuard フックが `[Fact-Forcing Gate]` エラーで Bash / Edit / Write をブロックすることがある。**ゲートを止めず、要求された事実を先に提示して通すこと。**
+`everything-claude-code` プラグインの GateGuard フックは `[Fact-Forcing Gate]` エラーで Edit / Write / Destructive Bash をブロックすることがある。**ゲートを止めず、要求された事実を先に提示して通すこと。**
 
-`ECC_GATEGUARD=off` や `ECC_DISABLED_HOOKS` で抑制してはいけない。ゲートは「重要な事実確認」を強制する仕組みであり、止めると本来検出されるべき設計ミス・破壊的操作のリスクが埋もれる。
+### 現在の有効範囲（2026-05-23 方針転換）
+
+`~/.claude/settings.json` の `env.ECC_DISABLED_HOOKS` で **Routine Bash の Gate のみ無効化済み** (`pre:bash:gateguard-fact-force`)。鬱陶しさのトレードオフ。
+残る以下の Gate は **維持する**（事故予防価値が高い）:
+
+- **Edit / Write / MultiEdit** — ファイルごと初回 1 回。変更影響範囲を context に書き込ませる
+- **Destructive Bash** — `rm -rf` / `git reset --hard` / `git push --force` / `drop table` 等、毎コマンド初回
+
+それ以外の全面無効化（`ECC_GATEGUARD=off`、Edit/Write Gate の無効化）は **してはいけない**。+2.25 ポイントの品質優位を失う。
 
 ### 動作原理
 
-GateGuard は 3 段階構造（deny → force → allow on retry）。初回ツール呼び出しは事実を事前提示していても **必ず 1 回 deny される**。同じ操作をリトライすれば通過する。エラーメッセージ末尾の "Present the facts, then retry the same operation" がこれを示している。
+GateGuard は 3 段階構造（deny → force → allow on retry）。Edit/Write/Destructive Bash の初回ツール呼び出しは事実を事前提示していても **必ず 1 回 deny される**。同じ操作をリトライすれば通過する。エラーメッセージ末尾の "Present the facts, then retry the same operation" がこれを示している。
 
-### 発火タイミング（限定的、頻発しない）
+実装上 `~/.claude/settings*.json` への Edit/Write は除外されているが、**symlink の実体パスが `.config/claude-code/settings.json` 等の場合は除外パターンにマッチせず deny される**。御屋形様の dotfiles 構成では実体パスを直接 Edit する都合上、事実提示が必要になる。
+
+### 発火タイミング
 
 | Gate | 発火 |
 |------|------|
-| Routine Bash | セッション初回 1 回のみ |
+| ~~Routine Bash~~ | ~~セッション初回 1 回のみ~~ → **無効化済み** |
 | Edit / MultiEdit | ファイルごとに初回 1 回 |
 | Write | 新規ファイル作成の初回 1 回 |
 | Destructive Bash | `rm -rf` / `git reset --hard` / `git push --force` / `drop table` 等は毎回 |
 
-「頻発しているように見える」場合、事実を提示せずに同じ操作をリトライしている可能性が高い。
+「Edit/Write が頻発しているように見える」場合、事実を提示せずに同じ操作をリトライしている可能性が高い。
 
 ### 各 Gate の提示テンプレ
-
-**Routine Bash（セッション初回）**
-
-1. 現在のユーザー依頼を 1 文で
-2. このコマンドが検証 / 生成するもの
 
 **Write（新規ファイル作成）**
 
