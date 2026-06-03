@@ -1,7 +1,7 @@
 ---
 name: review-mr
 description: GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。ユーザーが GUI で確認・確定する運用。
-argument-hint: "<MR番号> [--issue <Issue番号>]"
+argument-hint: "<MR番号> [--issue <Issue番号>] [--team]"
 ---
 
 # GitLab MR コードレビュー
@@ -22,6 +22,7 @@ $ARGUMENTS
 
 - MR 番号は必須（例: `4720`）
 - `--issue` で関連 Issue 番号を指定可能。省略時は MR の説明文から自動検出を試みる
+- `--team` で 6 視点の Agent Team レビュー（チームモード）を実施する。巨大 MR や横断的な観点が必要なときに使う
 
 ## Instructions
 
@@ -119,6 +120,62 @@ MR には他のレビュアーや自動化ツール（PR-Agent 等）が既に�
 #### インラインドラフトが UI で見えないと言われたとき
 
 ユーザー（Author 含む）が「インラインドラフトが Changes タブで見えない」と報告してきても、**安易に一般ドラフトに退避しないこと**。Submit review 一覧に表示されていれば投稿自体は成立しており、UI 表示の問題である可能性が高い。具体的な対処フロー（position 確認 → リロード依頼 → 再投稿 → 最終手段として一般ドラフト）は `gitlab-api` スキルの「インラインドラフトが UI で見えないとき」セクションを参照する。
+
+## チームモード（--team）
+
+巨大 MR を 6 視点のサブエージェントで分担レビューする。通常モードの手順 3〜5（コメント作成・投稿・案内）は共通で、手順 1〜2 を以下に置き換える。
+
+### T-1. 情報収集と共有コンテキストの準備
+
+通常モードの「1. 情報収集」を実施した上で、サブエージェントと共有するファイルを作成する:
+
+- `/tmp/review-mr-<MR番号>-diff.txt` — `glab mr diff` の出力
+- `/tmp/review-mr-<MR番号>-issue.txt` — 関連 Issue 本文
+- `/tmp/review-mr-<MR番号>-desc.txt` — MR description（PR-Agent 自動生成の場合、過去ブランチの内容が混入している可能性をプロンプトで明示する）
+
+### T-2. worktree の作成（メインエージェントのみ）
+
+```sh
+git fetch origin <source_branch> <target_branch>
+git worktree add /tmp/review-mr-<MR番号> <head_sha>
+```
+
+git 操作はメインエージェントが直列で行う。サブエージェントには git 操作禁止（読み取り・検索・テスト実行のみ）を明示する。
+
+### T-3. 6 視点エージェントの並列起動
+
+1 メッセージ内で 6 つの Agent を同時起動する。各プロンプトには共有コンテキスト（worktree パス、diff/issue/desc ファイル）、制約（git 操作禁止・GitLab 投稿禁止）、出力形式（`[must|should|nits|question|praise] file:line - 指摘 + 修正案`）を含める。
+
+| 視点 | subagent_type | レビュー観点 |
+|------|---------------|--------------|
+| PdM | general-purpose | Issue の設計判断・チェックリストとの 1 項目ずつの照合（✅/❌/⚠️ 表）、スコープクリープ、ユースケース充足（導線・空状態・エラー時）、Issue 記載の必要十分性、MR description の正確性 |
+| QA | general-purpose | 仕様に基づくテスト観点の体系的列挙（正常/異常/境界値/認可/プライバシー）、既存テストのカバレッジギャップ評価、worktree でのテスト実施と結果記録（実行不能は「未実施（理由）」で明記）、手動確認依頼事項の整理 |
+| PO | general-purpose | 技術的負債の判定（増加/変化無し/減少 + 根拠の棚卸し表）、設計妥当性（スキーマ・レイヤ分割・既存 API との対称性）、効率性、別 issue 送り項目の後回しリスク評価 |
+| FE | everything-claude-code:typescript-reviewer | React ベストプラクティス（hooks 依存配列・メモ化・分割責務）、既存パターン（対応する既存フック・コンポーネント）との親和性、テスト品質（snapshot 偏重の検出） |
+| BE | everything-claude-code:rust-reviewer | Rust ベストプラクティス（エラー処理・clone 過剰・クエリ効率）、既存パターン（レイヤ責務・認証分岐・DDL 整合）との親和性、レスポンス型のプライバシー絞り込み |
+| 外部境界 | general-purpose | Auth0 / OneAPI 等の外部リソース境界の責務分割（層への隔離、テナント/クライアント取り違え防止、エラー変換）、トークン境界の集約、外部 ID の局所化、モック境界、将来の分離計画への影響 |
+
+### T-4. 裏取り工程（必須）
+
+サブエージェントの `[must]` 指摘は鵜呑みにせず、メインエージェントが実コードで検証して severity を調整する。よくある誤検知:
+
+- インデント崩れを構造破壊と誤認（JSX のネストはタグで決まる）
+- 「既存パターンと異なる」という主張が実は既存パターンの誤認（既存コードを rg で確認する）
+
+### T-5. 統合・重複排除と提示
+
+- 複数視点で収束した指摘は 1 コメントに統合し、収束した旨を付記する（説得力の根拠になる）
+- 視点別サマリ表 + 統合指摘一覧（must/should/nits/question/praise）でユーザーに提示する
+- 投稿範囲を AskUserQuestion で確認する（推奨: must+should+question を投稿、nits は省略してノイズを減らす。praise は投稿せず口頭共有）
+
+### T-6. 後片付け
+
+投稿完了後、worktree と共有コンテキストファイルを削除する:
+
+```sh
+git worktree remove --force /tmp/review-mr-<MR番号>   # QA のビルド成果物が残るため --force
+rm -f /tmp/review-mr-<MR番号>-*.txt
+```
 
 ## Examples
 
