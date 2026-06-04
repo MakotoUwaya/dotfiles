@@ -82,6 +82,12 @@ $claudeTmp = Get-ChildItem "$temp\claude" -Force | Where-Object { $_.LastWriteTi
 $ctSz = ($claudeTmp | ForEach-Object { Get-Size $_.FullName } | Measure-Object -Sum).Sum
 $report['claude-temp'] = ($ctSz ?? 0)
 
+# --- 7) Claude Desktop vm_bundles (claudevm のローカル VM イメージ / Windows 専用) ---
+# ローカルコード実行サンドボックスの .vhdx 等。再蓄積し十数GB規模に膨らむ。削除は clean.ps1 -Targets vm_bundles で明示指定時のみ。
+$vmb = "$env:APPDATA\Claude\vm_bundles"
+$vmbSz = if (Test-Path $vmb) { Get-Size $vmb } else { 0 }
+$report['vm_bundles'] = $vmbSz
+
 Write-Output "`n[2] カテゴリ別 回収見込み"
 $total = 0
 foreach ($k in $report.Keys) {

@@ -1,6 +1,6 @@
 ---
 name: storage-cleanup
-description: ディスク空き容量を回収するためのストレージ整理。Claude Code の旧バージョン溜まり（.local/share/claude/versions）、RDP トレースログ、インストーラ/Updater 残骸、古い一時ファイルを安全に点検・削除する。Windows ネイティブと WSL2 の両方に対応。「ストレージ整理」「容量」「ディスク空き」「Claude 旧バージョン」「Temp 掃除」「Updater ゴミ」で使用。
+description: ディスク空き容量を回収するためのストレージ整理。Claude Code の旧バージョン溜まり（.local/share/claude/versions）、Claude Desktop の VM イメージ（vm_bundles / claudevm の .vhdx・数十GB規模）、RDP トレースログ、インストーラ/Updater 残骸、古い一時ファイルを安全に点検・削除する。Windows ネイティブと WSL2 の両方に対応。「ストレージ整理」「容量」「ディスク空き」「Claude 旧バージョン」「Claude Desktop 肥大化」「Temp 掃除」「Updater ゴミ」で使用。
 ---
 
 # Storage Cleanup
@@ -52,6 +52,7 @@ scan は以下を表示する（削除は一切しない）:
 - **インストーラ自己展開残骸** (Windows): `%TEMP%` 直下の `xxxxxxxx.xxx` 形式 DIR
 - **Updater 残骸**: WinGet / VSCode updater / inno ログ など
 - **古い一時ファイル**: 指定日数より前の `*.tmp`
+- **Claude Desktop vm_bundles** (Windows): `%APPDATA%\Claude\vm_bundles`（claudevm のローカル VM イメージ `.vhdx` 等・数十GB規模に膨らむ）
 - **未分類の大物 TOP**: 上記に当てはまらない大きい DIR/FILE（手動判断用）
 - 各カテゴリの回収見込み MB とディスク空き容量
 
@@ -65,9 +66,16 @@ scan 結果を提示し、**どのカテゴリを削除するか** `AskUserQuest
 選ばれたカテゴリだけを `-Targets` で渡して削除する。`-WhatIf` で事前確認も可能。
 
 ```powershell
-# Windows: 例) 旧バージョン + RDPトレース + Updater残骸を削除
-pwsh -NoProfile -File "$env:USERPROFILE\.claude\skills\storage-cleanup\scripts\clean.ps1" `
-  -Targets versions,rdp-trace,installer-cache,updater,old-tmp,claude-temp -TmpOlderThanDays 1
+# Windows: 例) all で一括削除（versions/rdp-trace/installer-cache/updater/old-tmp/claude-temp）
+pwsh -NoProfile -File "$env:USERPROFILE\.claude\skills\storage-cleanup\scripts\clean.ps1" -Targets all -TmpOlderThanDays 1
+
+# 個別指定は「スペース区切り」で渡す（重要: -File 経由では `a,b,c` のカンマ区切りは
+# 1個の文字列扱いになり -contains が効かず「0件」になる。スペース区切りなら配列になる）
+pwsh -NoProfile -File "$env:USERPROFILE\.claude\skills\storage-cleanup\scripts\clean.ps1" -Targets versions rdp-trace updater
+
+# Claude Desktop の VM イメージ(大物・再DLコストあり)は all に含めず明示指定時のみ。
+# vhdx ロック時(claudevm VM 起動中)は自動スキップ＝Desktop 完全終了後に再実行する。
+pwsh -NoProfile -File "$env:USERPROFILE\.claude\skills\storage-cleanup\scripts\clean.ps1" -Targets vm_bundles
 ```
 
 ```bash
@@ -129,9 +137,11 @@ $ bash clean.sh --versions
 - **現セッション・使用中ファイルは除外**: Claude の一時キャッシュは「今日 0:00 以降に更新されたもの」を残す。Outlook など起動中アプリのログは対象カテゴリに含めない。使用中でロックされたファイルは自動スキップ（`-ErrorAction SilentlyContinue` / `2>/dev/null`）。
 - **未分類の大物は自動削除しない**: scan で提示し、中身を確認してからユーザー判断で個別削除する。
 - **削除は冪等・安全側**: 既に無いパスはスキップ。`-WhatIf`（PowerShell）/ `--dry-run`（bash）で必ず事前確認できる。
-- 定期メンテとして、RDP トレースログ（使うたびに増える）と Claude 旧バージョンは再蓄積するため、繰り返し実行する想定。
+- **vm_bundles は明示指定のみ・自セッション保護**: Claude Desktop の VM イメージは大物かつ再DLコストがあるため `all` に含めず `-Targets vm_bundles` 指定時のみ削除する。clean は削除前に `.vhdx` を排他オープンしてロック判定し、ロック中（claudevm VM 起動中）なら削除せず警告する。Claude Desktop を終了すると **Desktop 内蔵 Claude Code（このセッション）ごと落ちる**ため、終了は自殺になる。VM が起動していなければ vhdx は UNLOCKED で、Desktop を起動したままでも削除できる。
+- 定期メンテとして、RDP トレースログ（使うたびに増える）・Claude 旧バージョン・vm_bundles は再蓄積するため、繰り返し実行する想定。
 
 ## Notes
 
-- 既知の容量食いランキング（実測例 2026-05）: RDP トレース 2GB > インストーラ残骸15個 1GB > Claude旧バージョン 0.45GB > VS拡張一時 0.3GB。
+- 既知の容量食いランキング（実測例 2026-06）: **Claude Desktop vm_bundles 23GB**（`claudevm.bundle\rootfs.vhdx`+`sessiondata.vhdx` で ~20GB）> RDP トレース 1.2GB > VS インストーラ展開残骸 2GB（`%TEMP%\xxxxxxxx`）> インストーラ残骸 0.5GB > Claude旧バージョン 0.45GB。`%APPDATA%\Claude` が数十GB に膨らむ場合、犯人はほぼ vm_bundles で IndexedDB / Cache 系ではない（実測で IndexedDB は 0GB だった）。
 - Claude Code の旧バージョンは Windows では `~/.local/share/claude/versions/`、`claude.exe` 本体は `~/.local/bin/`。WSL/Linux も `~/.local/share/claude/versions/`。
+- **Claude Desktop（MSIX 版）と内蔵 Claude Code**: Desktop 本体は `C:\Program Files\WindowsApps\Claude_*\app\claude.exe`、内蔵 Claude Code は `%APPDATA%\Claude\claude-code\<ver>\claude.exe`。後者は `~/.local/share/claude/versions/` とは別実体なので、versions 掃除が内蔵版をロックすることはない。

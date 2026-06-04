@@ -3,6 +3,7 @@
   ストレージ整理の削除実行。scan.ps1 のカテゴリ単位で削除する。
 .PARAMETER Targets
   削除カテゴリ: versions, rdp-trace, installer-cache, updater, old-tmp, claude-temp, all
+  vm_bundles (Claude Desktop の claudevm VM イメージ) は大物かつ再DLコストがあるため all に含めず、明示指定時のみ削除する。
 .PARAMETER TmpOlderThanDays
   old-tmp で削除対象とする「N日より前」の閾値（既定 1 = 今日 0:00 より前）。
 .PARAMETER WhatIf
@@ -79,6 +80,27 @@ if ($Targets -contains 'claude-temp') {
   Get-ChildItem "$temp\claude" -Force |
     Where-Object { $_.LastWriteTime -lt $today0 } |
     ForEach-Object { $paths.Add($_.FullName) }
+}
+
+if ($Targets -contains 'vm_bundles') {
+  # Claude Desktop の claudevm ローカル VM イメージ。大物かつ再DLコストがあるため all には含めず、明示指定時のみ。
+  $vmb = "$env:APPDATA\Claude\vm_bundles"
+  if (Test-Path $vmb) {
+    # vhdx がロック中 = claudevm VM 起動中。Desktop 完全終了が必要だが、本スクリプトを
+    # Desktop 内蔵 Claude Code から実行していると Desktop 終了は自セッションを巻き込むため、
+    # ロック検出時は削除せず警告のみとする。
+    $locked = $false
+    Get-ChildItem $vmb -Recurse -File -Force -Filter *.vhdx | ForEach-Object {
+      try { $fs = [System.IO.File]::Open($_.FullName, 'Open', 'ReadWrite', 'None'); $fs.Close() }
+      catch { $locked = $true }
+    }
+    if ($locked) {
+      Write-Output "[vm_bundles] vhdx ロック中(claudevm VM 起動中)。Claude Desktop を完全終了してから再実行してください。今回はスキップ。"
+    } else {
+      $paths.Add($vmb)
+      Write-Output "[vm_bundles] claudevm VM イメージを削除（UNLOCKED 確認済み・再蓄積するキャッシュ）"
+    }
+  }
 }
 
 # 集計
