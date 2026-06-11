@@ -47,16 +47,11 @@
       "Bash(/mnt/c/Windows/System32/clip.exe:*)",
       "mcp__docbase__getPost",
       "mcp__docbaseMcp__*",
-      "mcp__redmine__get*",
-      "mcp__redmine__search",
-      "mcp__redmine__updateIssue",
-      "mcp__redmine__createIssue",
-      "mcp__redmine__*Attachment*",
+      "mcp__redmine__*",
       "mcp__redmineMcp__*",
       "mcp__teamspiritMcp__*",
-      "mcp__plugin_gitlab_gitlab__get_*",
-      "mcp__claude_ai_gitlab__*",
-      "mcp__claude_ai_Slack__slack_*",
+      "mcp__claude_ai_GitLab__*",
+      "mcp__claude_ai_Slack__*",
       "mcp__plugin_playwright_playwright__*",
       "mcp__chrome-devtools__*",
       "WebFetch(domain:docs.anthropic.com)",
@@ -120,32 +115,14 @@
     "csharp-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "ralph-loop@claude-plugins-official": true,
-    "tsumiki@tsumiki": true,
     "claude-code-setup@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "everything-claude-code@everything-claude-code": true,
-    "warp@claude-code-warp": true
+    "context7@claude-plugins-official": true,
+    "desktop-commander@claude-plugins-official": true,
+    "auth0@claude-plugins-official": true,
+    "duckdb-skills@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {
-    "tsumiki": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/classmethod/tsumiki.git"
-      }
-    },
-    "everything-claude-code": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/affaan-m/everything-claude-code.git"
-      }
-    },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
   "effortLevel": "high",
