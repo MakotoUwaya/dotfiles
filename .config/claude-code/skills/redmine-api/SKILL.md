@@ -1,6 +1,6 @@
 ---
 name: redmine-api
-description: Redmine MCP ツール (mcp__redmine__*) を使用する際に自動適用される。Markdown 記法、画像添付、レスポンスパース方法を提供する。
+description: Redmine の操作（チケット取得・更新・画像添付等）を行う際に自動適用される。MCP ツール (mcp__redmine__*) がある環境ではその使い方を、無い環境では curl + REST API のフォールバックを提供する。Markdown 記法、レスポンスパース方法を含む。
 user-invocable: false
 ---
 
@@ -14,6 +14,25 @@ Redmine MCP ツール (`mcp__redmine__*`) 共通の記法・レスポンス処�
 
 - Redmine のチケット情報を取得・更新するとき
 - MCP ツールのレスポンスがファイルに保存されたとき
+
+## MCP が無い環境でのフォールバック（curl + REST API）
+
+Redmine MCP はプロジェクトローカル導入のため、無い環境（例: works リポジトリ）では REST API を `curl` で直接叩く。VPN 接続が必要。
+
+```bash
+# チケット取得（journals 付き）
+curl -s -H "X-Redmine-API-Key: $REDMINE_API_KEY" \
+  "https://<redmine-host>/issues/<id>.json?include=journals"
+
+# チケット更新
+curl -s -X PUT -H "X-Redmine-API-Key: $REDMINE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"issue": {"notes": "コメント本文"}}' \
+  "https://<redmine-host>/issues/<id>.json"
+```
+
+- 後述の Markdown 記法・collapse マクロは MCP / curl 共通で適用される
+- どちらを使うかはプロジェクトの CLAUDE.md と接続済み MCP の有無で判断する
 
 ## Markdown 記法
 

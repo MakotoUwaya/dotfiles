@@ -38,6 +38,12 @@ $ARGUMENTS
 
 MR の説明文やコミットメッセージから Issue 番号（`#1234` 形式）が見つかった場合、自動的に Issue を取得する。
 
+関連 Issue が Redmine チケットで、Redmine MCP のレスポンスが大きくファイルに保存された場合は、同梱のスクリプトでパースする（基本情報 + description + journals を整形表示）:
+
+```bash
+dotnet ~/.config/claude-code/skills/review-mr/extract-redmine-issue.cs <保存先ファイルパス>
+```
+
 #### 既存コメント・ディスカッションの活用
 
 MR には他のレビュアーや自動化ツール（PR-Agent 等）が既にコメントを残している場合がある。

@@ -7,4 +7,6 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 
 Ask the questions one at a time.
 
+If the answer options can be enumerated, present the question with the AskUserQuestion tool (include your recommended option first, labeled "(Recommended)"). Use free-text questions only when the answer cannot be enumerated.
+
 If a question can be answered by exploring the codebase, explore the codebase instead.

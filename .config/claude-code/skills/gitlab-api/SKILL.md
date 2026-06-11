@@ -1,6 +1,6 @@
 ---
 name: gitlab-api
-description: GitLab の操作（MR、Issue、パイプライン等）を行う際に自動適用される。MCP ツール (mcp__plugin_gitlab_gitlab__*) や glab CLI の使い分け、API 呼び出しのパターンと注意点を提供する。
+description: GitLab の操作（MR、Issue、パイプライン等）を行う際に自動適用される。MCP ツール (mcp__claude_ai_GitLab__*) や glab CLI の使い分け、API 呼び出しのパターンと注意点を提供する。
 user-invocable: false
 ---
 

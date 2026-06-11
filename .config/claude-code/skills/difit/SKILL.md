@@ -1,6 +1,7 @@
 ---
 name: difit
 description: |
+  コード・文書の変更後、difit コマンドでユーザーにレビューを依頼する。変更実装の完了時、「レビュー」「difit」「レビュー依頼」で使用。
   After completing the requested implementation, use the difit command to ask the user for a code review.
 ---
 

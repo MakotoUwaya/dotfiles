@@ -24,6 +24,10 @@ then generates an interactive HTML report.
 - SharpToken NuGet パッケージ（C# スクリプト内で `#:package SharpToken@2.0.3` として自動取得。フォールバックあり）
 - No external API keys required. Analysis uses Claude sub-agents.
 
+Design docs (read when modifying this skill, not needed at runtime):
+`references/architecture.md` (system architecture) / `references/methodology.md` (analysis methodology).
+`assets/report_template.html` is auto-detected by `scripts/generate-report.cs` in Step 7.
+
 ## Workflow
 
 Run all steps sequentially. The coordinator (you) manages data flow between

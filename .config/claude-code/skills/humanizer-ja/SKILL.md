@@ -7,13 +7,7 @@ description: |
   LLMが生成する日本語特有の不自然なパターン30種を検出し、
   実務で「AIに書かせたな」と見抜かれない文章に仕上げる。
   blader/humanizer の構造を参考に、日本語ビジネス文書向けに再設計。
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - AskUserQuestion
+allowed-tools: Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
 # Humanizer-JA: 日本語AI文体パターンの検出と除去
