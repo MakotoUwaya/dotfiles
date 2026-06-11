@@ -38,4 +38,7 @@ just = "latest"
 "npm:@playwright/cli" = "0.1.12"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 "npm:bats" = "latest"
+"cargo:cargo-sweep" = "latest"
+"pipx:sqlfluff" = "3.4.0"
+"cargo:cargo-watch" = "latest"
 
