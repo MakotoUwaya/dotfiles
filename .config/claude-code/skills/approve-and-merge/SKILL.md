@@ -17,7 +17,7 @@ GitLab MR の Approve → Merge → 関連 Issue のステータスラベル更�
 ## 引数
 
 - MR 番号または MR URL（必須）
-- `--status <label>`: Issue に付与するステータスラベル（デフォルト: `status::ステージングアップ待ち`）
+- `--status <label>`: Issue に付与するステータスラベル（デフォルト: `status::StgReady`）
 - `--no-issue`: Issue のステータス更新をスキップ
 
 ## Instructions
@@ -81,7 +81,7 @@ glab api -X PUT "projects/<issue_project_path>/issues/<Issue番号>" \
 /approve-and-merge 1533
 ```
 
-→ MR !1533 を Approve & Merge し、関連 Issue のステータスを `status::ステージングアップ待ち` に更新
+→ MR !1533 を Approve & Merge し、関連 Issue のステータスを `status::StgReady` に更新
 
 ### ステータスを指定
 
