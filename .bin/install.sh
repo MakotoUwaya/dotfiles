@@ -119,6 +119,16 @@ make_symlink "$HOME/.claude/rules"         "$DOTDIR/.config/claude-code/rules"
 make_symlink "$HOME/.claude/skills"        "$DOTDIR/.config/claude-code/skills"
 make_symlink "$HOME/.claude/hooks"         "$DOTDIR/.config/claude-code/hooks"
 
+# External skills (symlinks to ghq-managed repos, not tracked in dotfiles)
+YAML_TO_HTML_SKILL="$HOME/ghq/github.com/hirokita117/yaml-to-html-skill/skills"
+if [ -d "$YAML_TO_HTML_SKILL" ]; then
+  make_symlink "$DOTDIR/.config/claude-code/skills/generate-explainer"      "$YAML_TO_HTML_SKILL/generate-explainer"
+  make_symlink "$DOTDIR/.config/claude-code/skills/generate-explainer-html" "$YAML_TO_HTML_SKILL/generate-explainer-html"
+  make_symlink "$DOTDIR/.config/claude-code/skills/generate-explainer-yaml" "$YAML_TO_HTML_SKILL/generate-explainer-yaml"
+else
+  echo "  Skipping yaml-to-html-skill links (repo not found at $YAML_TO_HTML_SKILL)"
+fi
+
 # 3. WSL2: route xdg-open to the default Windows browser
 if [ -x /mnt/c/Windows/System32/cmd.exe ] && command -v xdg-settings > /dev/null 2>&1; then
   print_step "Installing wsl-browser.desktop..."

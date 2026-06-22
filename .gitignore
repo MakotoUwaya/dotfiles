@@ -36,6 +36,7 @@
 !/.config/nvim/**
 !/.config/claude-code/
 !/.config/claude-code/**
+/.config/claude-code/skills/generate-explainer*
 !/.config/starship.toml
 !/.config/nushell/
 !/.config/nushell/env.nu
