@@ -47,18 +47,31 @@ glab api -X PUT "projects/<project_path>/merge_requests/<MR番号>/merge" \
 
 #### Issue の特定
 
-MR タイトルから `account-service#<番号>` パターンで Issue 番号を抽出する。
+MR タイトルから `<project-short>#<番号>` パターンで Issue 番号を抽出する。
 見つからない場合は MR の description からも検索する。
 それでも見つからない場合はユーザーに確認する。
 
 #### Issue プロジェクトの特定
 
 - `account-service#XXXX` → `eseikatsu/es-account/account-service`
+- `backlog#XXXX` → `eseikatsu/ebone-client/backlog`（Work Item）
 - 他のパターンが出てきた場合はユーザーに確認する
 
 #### ラベル更新
 
-現在の `status::*` ラベルを外し、新しいステータスラベルを付与する:
+現在の `status::*` ラベルを外し、新しいステータスラベルを付与する。
+
+**通常の Issue の場合:**
+
+```bash
+glab api -X PUT "projects/<issue_project_path>/issues/<Issue番号>" \
+  -f "add_labels=<新ステータス>" \
+  -f "remove_labels=<現ステータス>"
+```
+
+**Work Item（backlog 等）の場合:**
+
+Work Item も Issues API で操作可能:
 
 ```bash
 glab api -X PUT "projects/<issue_project_path>/issues/<Issue番号>" \
