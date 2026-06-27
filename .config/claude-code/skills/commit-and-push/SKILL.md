@@ -52,8 +52,6 @@ git commit -m "$(cat <<'EOF'
 <簡潔な要約>
 
 <必要に応じて補足説明>
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -66,6 +64,45 @@ git push
 
 - リモートブランチが未設定の場合は `git push -u origin <branch>` を使う
 - force push は行わない（ユーザーが明示的に指示した場合のみ）
+
+## Examples
+
+### 単一コミット
+
+差分: `works/activity-summary/202606/26.md` を新規追加
+
+```bash
+git add works/activity-summary/202606/26.md
+```
+```bash
+git commit -m "$(cat <<'EOF'
+6/26 アクティビティサマリを追加
+EOF
+)"
+```
+
+### 分割コミット
+
+差分: SKILL.md の修正 + 新規スクリプト追加
+
+```bash
+git add .claude/skills/alert-triage/SKILL.md
+```
+```bash
+git commit -m "$(cat <<'EOF'
+alert-triage: GCP 調査手順にログフィルタ例を追記
+EOF
+)"
+```
+```bash
+git add scripts/fetch_project_monitor.cjs
+```
+```bash
+git commit -m "$(cat <<'EOF'
+Splunk project-monitor 実績取得スクリプトを追加
+EOF
+)"
+```
 
 ## Guidelines
 

@@ -23,10 +23,11 @@ Git 上のバイナリ差分では内容を確認できない Excel ファイル
 MR レビューの場合は、変更前後のファイルをダウンロードする:
 
 ```bash
-# GitLab の例
-mkdir -p /tmp/excel-diff
-glab api "projects/<encoded-path>/repository/files/<encoded-file-path>/raw?ref=<target-branch>" --method GET > /tmp/excel-diff/before.xlsx
-glab api "projects/<encoded-path>/repository/files/<encoded-file-path>/raw?ref=<source-branch>" --method GET > /tmp/excel-diff/after.xlsx
+# GitLab の例（一時ファイルはスクラッチパッドに保存）
+DIFFDIR="$(mktemp -d)/excel-diff"
+mkdir -p "$DIFFDIR"
+glab api "projects/<encoded-path>/repository/files/<encoded-file-path>/raw?ref=<target-branch>" --method GET > "$DIFFDIR/before.xlsx"
+glab api "projects/<encoded-path>/repository/files/<encoded-file-path>/raw?ref=<source-branch>" --method GET > "$DIFFDIR/after.xlsx"
 ```
 
 ### 2. C# スクリプトで差分比較を実行

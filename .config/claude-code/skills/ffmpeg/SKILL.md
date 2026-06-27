@@ -13,21 +13,17 @@ user-invocable: false
 ## When to Use
 
 - 動画フォーマット変換（mov→mp4、avi→mkv など）
+- 動画の圧縮（CRF / ビットレート指定）
 - 動画の切り出し・トリミング
 - 複数動画の結合
+- 音声の抽出・削除・差し替え・音量調整
+- 解像度・フレームレート変更
+- GIF 作成
+- サムネイル・画像シーケンス生成
 
 ## エンコーダー設定
 
-基本的に H.264 エンコードには `h264_videotoolbox`（Mac ハードウェアエンコーダー）を使用してください。
-
-```bash
-# 推奨: Mac(M3 Pro)環境でのエンコード
-ffmpeg -i input.mov -c:v h264_videotoolbox -c:a aac output.mp4
-```
-
-**Mac 以外の環境、または h264_videotoolbox が使用できない場合:**
-
-以下のコマンドで利用可能なエンコーダーを確認してから実行してください:
+H.264 エンコードにはハードウェアエンコーダーが使える場合はそちらを優先する。まず利用可能なエンコーダーを確認する:
 
 ```bash
 ffmpeg -hide_banner -encoders | grep V

@@ -9,6 +9,12 @@ description: ghq で管理している全リポジトリの remote を一括 fet
 
 `ghq list` で管理している全リポジトリに対して `git fetch --prune origin` を並列実行し、リモート追跡ブランチを最新化する。
 
+## When to Use
+
+- 「全リポ fetch」「ghq fetch」「リポジトリ最新化」と指示されたとき
+- 作業開始前にリモートの最新状態を把握したいとき
+- renovate / dependabot のブランチ状況を一括確認したいとき
+
 ## Instructions
 
 以下のスクリプトを実行する:
@@ -26,6 +32,28 @@ bash ~/.claude/skills/git-fetch-all/fetch-all.sh
 # github.com のリポジトリのみ、4並列で fetch
 bash ~/.claude/skills/git-fetch-all/fetch-all.sh github.com 4
 ```
+
+## Examples
+
+### 実行と報告の例
+
+```bash
+bash ~/.claude/skills/git-fetch-all/fetch-all.sh
+```
+
+報告:
+
+> **対象**: 42 リポジトリ
+>
+> **eseikatsu/ebone-client-one/wpf-client**
+> - UPD: origin/develop (abc1234..def5678)
+> - NEW: origin/feature/new-login
+> - DEL: origin/renovate/nuget-updates
+>
+> **MakotoUwaya/dotfiles**
+> - UPD: origin/main (111aaa..222bbb)
+>
+> 所見: wpf-client で renovate ブランチが削除されています（マージ済みの可能性）。
 
 ## Guidelines
 

@@ -9,7 +9,16 @@ description: >
 
 # Settings Cleanup
 
+## Overview
+
 プロジェクトの `.claude/settings.local.json` にある `permissions.allow` エントリを監査・整理する。
+一時的なパス固定エントリやシェルループ断片など、セッション中に自動追加された不要エントリを検出し、ユーザー承認のもとクリーンアップする。
+
+## When to Use
+
+- `settings.local.json` の `permissions.allow` が肥大化してきたとき
+- 「settings cleanup」「パーミッション整理」「settings.local 整理」と指示されたとき
+- 新プロジェクト参加時に前任者のパーミッション設定を引き継いだとき
 
 ## ワークフロー
 
@@ -105,6 +114,33 @@ AskUserQuestion で確認:
 
 - 書き換え後の `settings.local.json` を Read して JSON として valid であることを確認
 - Before/After のエントリ数を報告
+
+## Examples
+
+### 入力（settings.local.json の permissions.allow 抜粋）
+
+```json
+[
+  "Bash(git add:*)",
+  "Bash(git commit:*)",
+  "Bash(while IFS= read -r dir",
+  "Bash(do echo \"=== $dir ===\")",
+  "Bash(done)",
+  "Bash(find /home/user/.claude/projects -name '*.jsonl')",
+  "Bash(dotnet:*)",
+  "Bash(gws gmail:*)"
+]
+```
+
+### 出力（分類結果）
+
+| カテゴリ | エントリ | 理由 |
+|---------|---------|------|
+| PERMANENT | `Bash(git add:*)`, `Bash(git commit:*)`, `Bash(dotnet:*)`, `Bash(gws gmail:*)` | 標準コマンド |
+| MALFORMED | `Bash(while IFS= read -r dir`, `Bash(do echo ...)`, `Bash(done)` | シェルループ断片 |
+| TEMPORARY | `Bash(find /home/user/.claude/projects ...)` | ハードコード絶対パス |
+
+**Before**: 8 件 → **After**: 4 件（4 件削除）
 
 ## 注意事項
 

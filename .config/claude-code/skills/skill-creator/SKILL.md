@@ -78,38 +78,61 @@ description: {いつこのスキルを使うか、具体的なユースケース
    - 判断基準
    - エッジケースの対処
 
-5. 保存
+5. サブディレクトリの判断
+   - `scripts/`: 実行可能なシェルスクリプトや C# コードがある場合に作成。SKILL.md 内でパスを参照すること
+   - `resources/`: 参照用データ（テンプレート、設定例、ソース別手順等）がある場合に作成。SKILL.md 内で用途を明記すること
+   - スキルが SKILL.md 単体で完結するなら、サブディレクトリは作らない
+
+6. 保存
    - パス: ~/.claude/skills/{skill-name}/
    - 既存スキルと名前が被らないか確認
 
 ## Examples
 
-### Example 1: API Response Handler
-
-```markdown
----
-name: api-response-handler
-description: REST APIのレスポンス処理パターン。エラーハンドリング、リトライロジック、レスポンス正規化を含む。API統合作業時に使用。
----
-```
-
-### Example 2: Meeting Notes Formatter
+### Example 1: SKILL.md 単体で完結するスキル
 
 ```markdown
 ---
 name: meeting-notes-formatter
 description: 議事録を標準フォーマットに変換する。参加者、決定事項、アクションアイテムを抽出・整理。会議後のドキュメント作成時に使用。
 ---
+
+# Meeting Notes Formatter
+
+## Overview
+会議の生メモや音声書き起こしから、標準フォーマットの議事録を生成する。
+
+## When to Use
+- 会議後に議事録を作成するとき
+- 「議事録」「meeting notes」で呼び出し
+
+## Instructions
+1. 入力テキストから参加者・日時・議題を抽出する
+2. 決定事項とアクションアイテムを分離する
+3. 標準テンプレートに整形して出力する
+
+## Examples
+（入力→出力の具体例）
+
+## Guidelines
+- アクションアイテムには必ず担当者と期限を付ける
 ```
 
-### Example 3: Data Validation Rules
+### Example 2: scripts/ を持つスキル
 
-```markdown
----
-name: data-validation-rules
-description: 入力データのバリデーションパターン集。メール、電話番号、日付、金額などの検証ルール。フォーム処理やデータインポート時に使用。
----
 ```
+excel-diff/
+├── SKILL.md        # C# コードをインライン記述、scripts/ は不要
+```
+
+```
+storage-cleanup/
+├── SKILL.md        # scan/clean の呼び出し手順
+└── scripts/        # scan.ps1, clean.ps1, scan.sh, clean.sh
+    └── (SKILL.md で参照)
+```
+
+scripts/ を作る判断基準: コードが 50 行超、または bash/PowerShell 両対応で分岐が複雑な場合。短いコードは SKILL.md にインライン記述で十分。
 
 ## Guidelines
 
