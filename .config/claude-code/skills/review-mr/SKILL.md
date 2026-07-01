@@ -1,7 +1,7 @@
 ---
 name: review-mr
 description: "GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。/code-review の完全上位互換: コードレベルのバグ・品質チェック + Issue 整合性検証 + GitLab 投稿を一括で行う。"
-argument-hint: "<MR番号> [--effort <low|medium|high|max>] [--issue <Issue番号>]"
+argument-hint: "<MR番号> [--effort <low|medium|high|xhigh|max>] [--issue <Issue番号>]"
 ---
 
 # GitLab MR コードレビュー
@@ -26,6 +26,7 @@ $ARGUMENTS
 - `--effort` でコードレビューの深さを指定（デフォルト: `high`）
   - `low` / `medium`: 高確信度の指摘のみ。小さな MR やクイックチェック向け
   - `high`: 標準。8 アングル並列探索 + 検証（デフォルト）
+  - `xhigh`: high より広い探索 + 多角的検証。重要な変更向け
   - `max`: 最大網羅。大規模変更や重要なリリース前のレビュー向け
 - `--issue` で関連 Issue 番号を指定可能。省略時は MR の説明文から自動検出を試みる
 
@@ -87,6 +88,7 @@ Agent({
 effort に応じて `/code-review` の探索深度が変わる:
 - `low` / `medium`: finder アングル数・候補数を絞り、高確信度のみ報告
 - `high`: 8 アングル × 6 候補 → 1-vote 検証（標準）
+- `xhigh`: 8 アングル × 6 候補 → 多角的検証、出力上限拡大
 - `max`: 8 アングル × 6 候補 → 多数決検証、出力上限拡大
 
 サブエージェントが結果を返したら、Step 4 のドラフトノート投稿対象として保持し、Step 3 に進む。
