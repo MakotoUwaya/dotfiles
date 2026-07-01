@@ -16,7 +16,7 @@ GitLab MR の Approve → Merge → 関連 Issue のステータスラベル更�
 
 ## 引数
 
-- MR 番号または MR URL（必須）
+- MR 番号または MR URL。省略時は同一セッション内で直近に操作（`review-mr` 等）した MR を対象とする。
 - `--status <label>`: Issue に付与するステータスラベル（デフォルト: `status::StgReady`）
 - `--no-issue`: Issue のステータス更新をスキップ
 
