@@ -74,6 +74,50 @@
     "defaultMode": "auto"
   },
   "model": "claude-opus-4-6[1M]",
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Adobe for creativity"
+    },
+    {
+      "serverName": "claude.ai AWS Knowledge"
+    },
+    {
+      "serverName": "claude.ai Figma"
+    },
+    {
+      "serverName": "claude.ai Gmail"
+    },
+    {
+      "serverName": "claude.ai Google Cloud Developer Knowledge"
+    },
+    {
+      "serverName": "claude.ai Microsoft Learn"
+    },
+    {
+      "serverName": "claude.ai Zoho Analytics"
+    },
+    {
+      "serverName": "claude.ai Zoho CRM"
+    },
+    {
+      "serverName": "claude.ai Zoho Desk"
+    },
+    {
+      "serverName": "claude.ai Zoho Sprints"
+    },
+    {
+      "serverName": "claude.ai ZohoDesk Articles"
+    },
+    {
+      "serverName": "claude.ai ZohoProjects Custom"
+    },
+    {
+      "serverName": "claude.ai Zoom for Claude"
+    },
+    {
+      "serverName": "claude.ai Zuora Billing"
+    }
+  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -123,23 +167,15 @@
     "ralph-loop@claude-plugins-official": false,
     "context7@claude-plugins-official": false
   },
-  "deniedMcpServers": [
-    { "serverName": "claude.ai Adobe for creativity" },
-    { "serverName": "claude.ai AWS Knowledge" },
-    { "serverName": "claude.ai Figma" },
-    { "serverName": "claude.ai Gmail" },
-    { "serverName": "claude.ai Google Cloud Developer Knowledge" },
-    { "serverName": "claude.ai Microsoft Learn" },
-    { "serverName": "claude.ai Zoho Analytics" },
-    { "serverName": "claude.ai Zoho CRM" },
-    { "serverName": "claude.ai Zoho Desk" },
-    { "serverName": "claude.ai Zoho Sprints" },
-    { "serverName": "claude.ai ZohoDesk Articles" },
-    { "serverName": "claude.ai ZohoProjects Custom" },
-    { "serverName": "claude.ai Zoom for Claude" },
-    { "serverName": "claude.ai Zuora Billing" }
-  ],
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "eseikatsu-product-docs": {
+      "source": {
+        "source": "git",
+        "url": "https://gitlab.com/eseikatsu/product-docs.git"
+      },
+      "autoUpdate": true
+    }
+  },
   "language": "japanese",
   "syntaxHighlightingDisabled": false,
   "effortLevel": "high",
