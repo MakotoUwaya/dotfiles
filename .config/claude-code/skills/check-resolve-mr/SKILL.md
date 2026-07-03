@@ -1,22 +1,22 @@
 ---
 name: check-resolve-mr
-description: Use when MR review comments have been addressed and need verification and resolution. 「確認して resolve」「resolve して」「修正されたか確認して」で使用。review-mr の後続操作。
+description: Use when MR review comments have been addressed and need verification and resolution. 「確認して resolve」「resolve して」「修正されたか確認して」で使用。code-review-mr の後続操作。
 ---
 
 # check-resolve-mr
 
 ## Overview
 
-GitLab MR の自分が投稿した未解決ディスカッションを最新差分と突き合わせ、対応済みなら Resolve する。`review-mr` の後続操作。
+GitLab MR の自分が投稿した未解決ディスカッションを最新差分と突き合わせ、対応済みなら Resolve する。`code-review-mr` の後続操作。
 
 ## When to Use
 
-- `review-mr` でレビューコメント投稿後、MR に修正コミットが追加されたとき
+- `code-review-mr` でレビューコメント投稿後、MR に修正コミットが追加されたとき
 - 「resolve して」「確認して解決して」「修正されたか確認して」等の指示
 
 ## Arguments
 
-MR 番号または MR URL。省略時は同一セッション内で直近に操作（`review-mr` 等）した MR を対象とする。
+MR 番号または MR URL。省略時は同一セッション内で直近に操作（`code-review-mr` 等）した MR を対象とする。
 
 ## Instructions
 

@@ -1,5 +1,5 @@
 ---
-name: review-mr
+name: code-review-mr
 description: "GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。/code-review の完全上位互換: コードレベルのバグ・品質チェック + Issue 整合性検証 + GitLab 投稿を一括で行う。"
 argument-hint: "<MR番号> [--effort <low|medium|high|xhigh|max>] [--issue <Issue番号>]"
 ---
@@ -15,7 +15,7 @@ GitLab API の操作詳細（ドラフトノートの投稿方法、ページネ
 ## When to Use
 
 - GitLab MR のコードレビューを依頼されたとき
-- `/review-mr <MR番号>` で呼び出されたとき
+- `/code-review-mr <MR番号>` で呼び出されたとき
 - `/code-review` の代わりに MR 単位でレビューしたいとき
 
 ## 引数
@@ -47,7 +47,7 @@ MR の説明文やコミットメッセージから Issue 番号（`#1234` 形�
 関連 Issue が Redmine チケットで、Redmine MCP のレスポンスが大きくファイルに保存された場合は、同梱のスクリプトでパースする:
 
 ```bash
-dotnet ~/.config/claude-code/skills/review-mr/extract-redmine-issue.cs <保存先ファイルパス>
+dotnet ~/.config/claude-code/skills/code-review-mr/extract-redmine-issue.cs <保存先ファイルパス>
 ```
 
 #### 既存コメント・ディスカッションの活用
