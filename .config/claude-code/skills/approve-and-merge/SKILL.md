@@ -16,8 +16,8 @@ GitLab MR の Approve → Merge → 関連 Issue のステータスラベル更�
 
 ## 引数
 
-- MR 番号または MR URL。省略時は同一セッション内で直近に操作（`review-mr` 等）した MR を対象とする。
-- `--status <label>`: Issue に付与するステータスラベル（デフォルト: `status::Stg待ち`）
+- MR 番号または MR URL。省略時は同一セッション内で直近に操作（`code-review-mr` 等）した MR を対象とする。
+- `--status <label>`: Issue に付与するステータスラベル（省略時はリポジトリ別デフォルトを使用）
 - `--no-issue`: Issue のステータス更新をスキップ
 
 ## Instructions
@@ -57,6 +57,17 @@ MR タイトルから `<project-short>#<番号>` パターンで Issue 番号を
 - `backlog#XXXX` → `eseikatsu/ebone-client/backlog`（Work Item）
 - 他のパターンが出てきた場合はユーザーに確認する
 
+#### デフォルトステータスラベルの決定
+
+`--status` が指定されていない場合、Issue プロジェクトに応じたデフォルトを使う:
+
+| Issue プロジェクト | デフォルトステータス |
+|---|---|
+| `eseikatsu/es-account/account-service` | `status::ステージングアップ待ち` |
+| （上記以外） | `status::Stg待ち` |
+
+上記マッピングに該当しない Issue プロジェクトが出てきた場合は、そのプロジェクトの既存 Issue のラベルを確認するか、ユーザーに確認する。
+
 #### ラベル更新
 
 現在の `status::*` ラベルを外し、新しいステータスラベルを付与する。
@@ -94,7 +105,7 @@ glab api -X PUT "projects/<issue_project_path>/issues/<Issue番号>" \
 /approve-and-merge 1533
 ```
 
-→ MR !1533 を Approve & Merge し、関連 Issue のステータスを `status::Stg待ち` に更新
+→ MR !1533 を Approve & Merge し、関連 Issue のステータスを Issue プロジェクト別のデフォルトラベルに更新
 
 ### ステータスを指定
 
