@@ -83,6 +83,9 @@
 !/warp/keybindings.yaml
 !/warp/workflows/
 !/warp/workflows/*.yaml
+!/herdr/
+/herdr/**
+!/herdr/config.toml
 
 !/.github/
 !/.github/copilot-instructions.md

@@ -127,6 +127,10 @@ New-SymLink -LinkPath (Join-Path $HOME '.bin') `
 New-SymLink -LinkPath (Join-Path $HOME '.wslconfig') `
             -TargetPath (Join-Path $dotdir '.wslconfig')
 
+# Symlink: Herdr config
+New-SymLink -LinkPath (Join-Path $env:APPDATA 'herdr\config.toml') `
+            -TargetPath (Join-Path $dotdir 'herdr\config.toml')
+
 # Symlink: Warp keybindings
 New-SymLink -LinkPath (Join-Path $env:LOCALAPPDATA 'warp\Warp\config\keybindings.yaml') `
             -TargetPath (Join-Path $dotdir 'warp\keybindings.yaml')

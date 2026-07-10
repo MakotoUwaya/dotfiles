@@ -1,0 +1,8 @@
+[update]
+channel = "preview"
+
+[ui]
+agent_panel_sort = "priority"
+
+[terminal]
+default_shell = "pwsh.exe"
