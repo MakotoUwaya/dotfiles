@@ -155,7 +155,7 @@
     "pyright-lsp@claude-plugins-official": false,
     "csharp-lsp@claude-plugins-official": false,
     "rust-analyzer-lsp@claude-plugins-official": false,
-    "sentry@claude-plugins-official": false,
+    "sentry@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": false,
     "playwright@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
