@@ -40,5 +40,5 @@ just = "latest"
 "cargo:cargo-sweep" = "latest"
 "pipx:sqlfluff" = "3.4.0"
 "cargo:cargo-watch" = "latest"
-herdr = "latest"
+herdr = { version = "latest", os = ["linux"] }
 
