@@ -1,12 +1,23 @@
+onboarding = false
+
 [update]
 channel = "preview"
-
-[keys]
-previous_workspace = "ctrl+up"
-next_workspace = "ctrl+down"
 
 [ui]
 agent_panel_sort = "priority"
 
 [terminal]
 default_shell = "pwsh.exe"
+
+[keys]
+next_workspace = "ctrl+down"
+previous_workspace = "ctrl+up"
+
+[[keys.command]]
+key = "ctrl+enter"
+type = "shell"
+command = "herdr pane send-keys %HERDR_ACTIVE_PANE_ID% ctrl+j"
+
+[theme]
+name = "catppuccin"
+auto_switch = false
