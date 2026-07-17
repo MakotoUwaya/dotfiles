@@ -1,13 +1,126 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "autoUpdatesChannel": "latest",
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Adobe for creativity"
+    },
+    {
+      "serverName": "claude.ai AWS Knowledge"
+    },
+    {
+      "serverName": "claude.ai Figma"
+    },
+    {
+      "serverName": "claude.ai Gmail"
+    },
+    {
+      "serverName": "claude.ai Google Cloud Developer Knowledge"
+    },
+    {
+      "serverName": "claude.ai Microsoft Learn"
+    },
+    {
+      "serverName": "claude.ai Zoho Analytics"
+    },
+    {
+      "serverName": "claude.ai Zoho CRM"
+    },
+    {
+      "serverName": "claude.ai Zoho Desk"
+    },
+    {
+      "serverName": "claude.ai Zoho Sprints"
+    },
+    {
+      "serverName": "claude.ai ZohoDesk Articles"
+    },
+    {
+      "serverName": "claude.ai ZohoProjects Custom"
+    },
+    {
+      "serverName": "claude.ai Zoom for Claude"
+    },
+    {
+      "serverName": "claude.ai Zuora Billing"
+    }
+  ],
+  "effortLevel": "high",
+  "enabledPlugins": {
+    "auth0@claude-plugins-official": false,
+    "chrome-devtools-mcp@claude-plugins-official": false,
+    "claude-code-setup@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "context7@claude-plugins-official": false,
+    "csharp-lsp@claude-plugins-official": false,
+    "desktop-commander@claude-plugins-official": false,
+    "duckdb-skills@claude-plugins-official": false,
+    "figma@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": false,
+    "playground@claude-plugins-official": false,
+    "playwright@claude-plugins-official": false,
+    "pyright-lsp@claude-plugins-official": false,
+    "ralph-loop@claude-plugins-official": false,
+    "rust-analyzer-lsp@claude-plugins-official": false,
+    "security-guidance@claude-plugins-official": true,
+    "sentry@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": false
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "ECC_DISABLED_HOOKS": "pre:bash:gateguard-fact-force"
   },
+  "extraKnownMarketplaces": {
+    "eseikatsu-product-docs": {
+      "autoUpdate": true,
+      "source": {
+        "source": "git",
+        "url": "https://gitlab.com/eseikatsu/product-docs.git"
+      }
+    }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "command": "bash ~/.config/claude-code/hooks/docbase-edit-guard.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/m-uwaya/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
+  "language": "japanese",
+  "model": "claude-opus-4-6[1M]",
   "permissions": {
     "allow": [
       "Write",
-      "Write(/tmp/*)",
+      "Edit(/tmp/*)",
       "WebSearch",
       "Skill(build)",
       "Bash(bash ~/.claude/skills/*/*.sh:*)",
@@ -73,128 +186,15 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-4-6[1M]",
-  "deniedMcpServers": [
-    {
-      "serverName": "claude.ai Adobe for creativity"
-    },
-    {
-      "serverName": "claude.ai AWS Knowledge"
-    },
-    {
-      "serverName": "claude.ai Figma"
-    },
-    {
-      "serverName": "claude.ai Gmail"
-    },
-    {
-      "serverName": "claude.ai Google Cloud Developer Knowledge"
-    },
-    {
-      "serverName": "claude.ai Microsoft Learn"
-    },
-    {
-      "serverName": "claude.ai Zoho Analytics"
-    },
-    {
-      "serverName": "claude.ai Zoho CRM"
-    },
-    {
-      "serverName": "claude.ai Zoho Desk"
-    },
-    {
-      "serverName": "claude.ai Zoho Sprints"
-    },
-    {
-      "serverName": "claude.ai ZohoDesk Articles"
-    },
-    {
-      "serverName": "claude.ai ZohoProjects Custom"
-    },
-    {
-      "serverName": "claude.ai Zoom for Claude"
-    },
-    {
-      "serverName": "claude.ai Zuora Billing"
-    }
-  ],
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.config/claude-code/hooks/docbase-edit-guard.sh"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/home/m-uwaya/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.bin','claude-statusline.mjs')).href)\"",
-    "padding": 0
-  },
-  "enabledPlugins": {
-    "auth0@claude-plugins-official": false,
-    "chrome-devtools-mcp@claude-plugins-official": false,
-    "claude-code-setup@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "context7@claude-plugins-official": false,
-    "csharp-lsp@claude-plugins-official": false,
-    "desktop-commander@claude-plugins-official": false,
-    "duckdb-skills@claude-plugins-official": false,
-    "figma@claude-plugins-official": false,
-    "frontend-design@claude-plugins-official": false,
-    "playground@claude-plugins-official": false,
-    "playwright@claude-plugins-official": false,
-    "pyright-lsp@claude-plugins-official": false,
-    "ralph-loop@claude-plugins-official": false,
-    "rust-analyzer-lsp@claude-plugins-official": false,
-    "security-guidance@claude-plugins-official": true,
-    "sentry@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": false
-  },
-  "extraKnownMarketplaces": {
-    "eseikatsu-product-docs": {
-      "source": {
-        "source": "git",
-        "url": "https://gitlab.com/eseikatsu/product-docs.git"
-      },
-      "autoUpdate": true
-    }
-  },
-  "language": "japanese",
-  "syntaxHighlightingDisabled": false,
-  "effortLevel": "high",
-  "autoUpdatesChannel": "latest",
-  "tui": "fullscreen",
+  "skipAutoPermissionPrompt": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
-  "skipAutoPermissionPrompt": true,
+  "statusLine": {
+    "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.bin','claude-statusline.mjs')).href)\"",
+    "padding": 0,
+    "type": "command"
+  },
+  "syntaxHighlightingDisabled": false,
+  "tui": "fullscreen",
   "voiceEnabled": true
 }
