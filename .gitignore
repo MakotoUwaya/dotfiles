@@ -37,6 +37,8 @@
 !/.config/claude-code/
 !/.config/claude-code/**
 /.config/claude-code/skills/generate-explainer*
+!/.config/herdr/
+!/.config/herdr/config.toml
 !/.config/starship.toml
 !/.config/nushell/
 !/.config/nushell/env.nu

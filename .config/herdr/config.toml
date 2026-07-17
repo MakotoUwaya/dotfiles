@@ -1,3 +1,5 @@
+onboarding = false
+
 [update]
 channel = "preview"
 
@@ -7,6 +9,3 @@ next_workspace = "ctrl+down"
 
 [ui]
 agent_panel_sort = "priority"
-
-[terminal]
-default_shell = "pwsh.exe"

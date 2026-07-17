@@ -107,6 +107,7 @@ make_symlink "$HOME/.config/mise"         "$DOTDIR/.config/mise"
 make_symlink "$HOME/.config/nvim"         "$DOTDIR/.config/nvim"
 make_symlink "$HOME/.config/nushell"      "$DOTDIR/.config/nushell"
 make_symlink "$HOME/.config/gcloud/configurations" "$DOTDIR/.config/gcloud/configurations"
+make_symlink "$HOME/.config/herdr/config.toml" "$DOTDIR/.config/herdr/config.toml"
 make_symlink "$HOME/.bin"                 "$DOTDIR/.bin"
 make_symlink "$HOME/.sound"              "$DOTDIR/sound"
 
