@@ -190,7 +190,7 @@
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "statusLine": {
-    "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.claude','statusline-command.mjs')).href)\"",
+    "command": "node -e \"import(require('url').pathToFileURL(require('path').join(require('os').homedir(),'.bin','claude-statusline.mjs')).href)\"",
     "padding": 0,
     "type": "command"
   },
