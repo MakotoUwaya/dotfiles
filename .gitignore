@@ -8,6 +8,8 @@
 !/.aws/config
 !/.bin/
 !/.bin/claude-statusline.mjs
+!/.bin/copilot-statusline.mjs
+!/.bin/agy-statusline.mjs
 !/.bin/install.ps1
 !/.bin/dbproxy-tui/
 /.bin/dbproxy-tui/node_modules/
