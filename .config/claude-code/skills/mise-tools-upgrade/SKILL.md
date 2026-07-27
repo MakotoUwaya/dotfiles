@@ -1,11 +1,14 @@
 ---
 name: mise-tools-upgrade
 description: >-
-  mise outdated を起点に dotfiles 管理ツールを安全に更新する。
+  mise outdated を起点に dotfiles 管理ツールを安全に更新し、
+  不要な pin と古いバージョン実体を棚卸しする。
   Neovim メジャーバージョンアップ時のプラグイン互換性確認、
   `mise upgrade --bump` の major 跨ぎ事故を回避する LTS ピン保護、
+  `mise prune` の取りこぼし・巻き添え削除の回避手順、
   Windows / WSL2 Ubuntu 両対応の検証手順を含む。
-  「mise 更新」「ツール更新」「mise upgrade」「neovim アップデート」で使用。
+  「mise 更新」「ツール更新」「mise upgrade」「neovim アップデート」
+  「mise prune」「古いバージョン削除」「バージョン固定をやめたい」で使用。
 ---
 
 # mise tools upgrade
@@ -25,6 +28,8 @@ dotfiles で `mise` 管理しているツール群を、影響範囲を見極め
 - `mise outdated` の結果を見て個別アップデートを進める時
 - Neovim / Node / Python / .NET 等のメジャーアップが含まれる時
 - 別 PC (Windows / WSL2 Ubuntu) で同じ更新を再現したい時
+- 「なぜか古いバージョンで固定されている」「不要な pin をやめたい」と言われた時 → 後述の「棚卸し」
+- `mise prune` でディスクを空けたい時 → 後述の「棚卸し」
 
 ## Instructions
 
@@ -44,8 +49,12 @@ mise outdated
 config の現状を必ず確認:
 
 ```bash
+mise config ls          # どの config が効いているか (dotfiles の config.toml 以外が混ざっていないか)
 cat .config/mise/config.toml
 ```
+
+`mise config ls` に `~/.tool-versions` や `~/.asdf/.tool-versions` が出たら、
+それは dotfiles 管理外の pin であり `mise upgrade` で更新されない (後述の「棚卸し」で処理する)。
 
 ### Step 1: メジャーアップの影響調査
 
@@ -239,6 +248,95 @@ git 操作は **直列**、サブエージェントには委任しない。
 ただし、各 PC ごとに mason インストール済みサーバーが微妙に違う可能性があるため、
 `:Mason` で確認してから運用に戻ること。
 
+## 棚卸し (不要な pin の除去と prune)
+
+「やたら古いバージョンで固定されている」「`mise prune` でディスクを空けたい」系の依頼はこちら。
+**pin の是正 → trust の確認 → prune** の順で行う。順番を逆にすると事故る。
+
+### 棚卸し Step 1: dotfiles 管理外の pin を洗い出す
+
+```bash
+mise config ls
+mise ls | rg -v 'config\.toml'   # config.toml 以外を source にしている行
+```
+
+`~/.tool-versions` が出たら **asdf のグローバル設定の置き土産**を疑う。
+asdf の global config は `~/.tool-versions` そのもので、mise は asdf 互換でこれを読む。
+`~/.asdf/installs/<tool>` に同じバージョンが残っていれば確定。
+
+```bash
+ls ~/.asdf/installs/* 2>/dev/null
+```
+
+**なぜ古いまま固定されるか**: `.tool-versions` 形式は `latest` を書けず必ず具体バージョンになる。
+完全指定の pin は `--bump` なしの `mise upgrade` では動かないため、永久に更新されない。
+`config.toml` 側の `latest` 指定とはこの点が非対称。
+
+### 棚卸し Step 2: pin を dotfiles の config.toml へ移す
+
+`$HOME` 直下で `mise use` を **`-g` なしで**実行すると `~/.tool-versions` に書かれて再発する。
+グローバルに入れるツールは必ず `mise use -g` を使うか、`config.toml` を直接編集する。
+
+移設 → `~/.tool-versions` 削除 → `mise install` の順。
+**先に pin を直さずに prune すると、古い pin が「使用中」扱いで生き残り、新しい版のほうが消える。**
+
+```bash
+# 移設後
+rm ~/.tool-versions
+mise install <tool>...
+mise which <tool>        # 新しい版を指しているか確認
+```
+
+### 棚卸し Step 3: untrusted な tracked config を確認する (重要)
+
+`mise prune` は **untrusted な tracked config を無視する**。
+trust していないリポジトリの `.tool-versions` が参照するツールは「未参照」と判定され、巻き添えで消える。
+
+```bash
+MISE_VERBOSE=1 mise prune --dry-run 2>&1 | rg untrusted
+```
+
+出てきた config のツールを残したいなら trust する:
+
+```bash
+mise trust <path/to/.tool-versions>
+```
+
+判断は `AskUserQuestion` でユーザーに委ねる (trust して残す / prune で消して必要時に再インストール)。
+
+### 棚卸し Step 4: prune 実行
+
+```bash
+mise prune --dry-run | rg uninstall     # 対象の確認・提示
+mise prune --tools -y
+```
+
+**`mise prune` 単独では config リンクの整理しか行わない。**
+バージョン実体の削除には `--tools` が要り、非対話環境では確認プロンプトが通らず
+`mise pruned configuration links` だけ出して無言でスキップされる (`-y` が必要)。
+
+削除後の確認:
+
+```bash
+mise prune --dry-run | rg -c uninstall   # 0 件になるか
+mise which <tool>                        # 主要ツールが解決するか
+```
+
+trust したリポジトリでは、そのディレクトリに `cd` してから `mise which` すること。
+
+### 棚卸し Step 5: asdf 残骸の処理
+
+asdf から移行済みなら `~/.asdf` (数百 MB) は不要。削除前に必ず確認する:
+
+```bash
+rg -n asdf ~/.bashrc ~/.bash_aliases ~/.profile     # シェル設定の参照
+echo "$PATH" | tr ':' '\n' | rg asdf                # PATH に shims が無いか
+ls ~/.asdf/installs/*                               # mise 側に同等物があるか
+```
+
+いずれも問題なければ `rm -rf ~/.asdf`。
+ロールバックは `git clone https://github.com/asdf-vm/asdf.git ~/.asdf`。
+
 ## Examples
 
 ### 典型的なフロー (本スキル初回適用時の実例)
@@ -261,9 +359,33 @@ Claude:
   11. /difit でレビュー → push は保留
 ```
 
+### 棚卸しの実例 (2026-07-27, WSL2)
+
+```
+ユーザー: mise ls でやたら古いバージョンが ~/.tool-versions に保持されている。なぜ?
+         不要なバージョン固定はやめたい。古いバージョンは mise prune で削除したい。
+
+Claude:
+  1. mise config ls → ~/.tool-versions (aws-vault 7.2.0 / duckdb 1.1.3 / kubectl 1.36.0) を発見
+  2. ~/.asdf/installs に aws-vault 7.2.0, duckdb 1.1.3 が現存 → asdf のグローバル設定の置き土産と確定
+     (2025-12-04 の mise 移行時に asdf 時代の pin をそのまま再インストールしていた)
+  3. mise prune --dry-run → 新しい aws-vault 7.10.4 / duckdb 1.5.2 のほうが削除対象と判明 (pin が古いため)
+  4. MISE_VERBOSE=1 で untrusted 6 件を検出 → helm/k9s/kubectx/terraform/terraform-docs/kubectl 1.33.6 が巻き添え対象
+  5. AskUserQuestion: pin は全部 latest で config.toml へ / untrusted 4 リポジトリは trust / asdf はディレクトリごと削除
+  6. config.toml に 3 ツール追加 → ~/.tool-versions 削除 → mise install (7.13.1 / 1.5.5 / 1.36.3)
+  7. mise trust × 4、trust 後に各リポジトリで mise which を確認
+  8. rm -rf ~/.asdf (484MB)
+  9. mise prune → config リンクのみで無言終了 → mise prune --tools -y で 17 件削除 (1,422MB 回収)
+  10. 🔧 コミット 1 件
+```
+
 ## Guidelines
 
 - **`mise upgrade --bump` の前に必ずユーザー確認**。LTS pin 方針 (node, python, dotnet) を質問してから実行する
+- **`mise prune` は `--tools -y` を付ける**。無印は config リンクの整理だけで終わり、非対話環境では確認プロンプトが通らず無言でスキップされる
+- **prune 前に必ず `MISE_VERBOSE=1 mise prune --dry-run | rg untrusted`**。untrusted な tracked config は無視されるため、trust していないリポジトリのツールが巻き添えで消える
+- **pin の是正を prune より先に**。古い pin を残したまま prune すると、新しい版のほうが「未参照」として削除される
+- **グローバルに入れるツールは `mise use -g`**。`$HOME` で `-g` なしの `mise use` を打つと `~/.tool-versions` が生成され、`latest` を書けない形式で固定されて更新から取り残される
 - **major 跨ぎを git diff で目視確認**。意図しない上げを発見したら即戻す
 - **Neovim 更新と Lua 設定修正は同一コミットにしない**。原因切り分けが効くよう分割する
 - **LSP attach の最終確認は対話モード**。ヘッドレスは PATH 反映タイミングで嘘の結果が出ることがある
