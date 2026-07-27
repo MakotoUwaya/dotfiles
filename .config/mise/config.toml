@@ -41,4 +41,7 @@ just = "latest"
 "pipx:sqlfluff" = "3.4.0"
 "cargo:cargo-watch" = "latest"
 herdr = { version = "latest", os = ["linux"] }
+aws-vault = "latest"
+duckdb = "latest"
+kubectl = "latest"
 
