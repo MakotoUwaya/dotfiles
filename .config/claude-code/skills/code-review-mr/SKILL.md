@@ -1,6 +1,6 @@
 ---
 name: code-review-mr
-description: "GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。/code-review の完全上位互換: コードレベルのバグ・品質チェック + Issue 整合性検証 + GitLab 投稿を一括で行う。"
+description: "GitLab MR のコードレビューを実施し、ドラフトノート（Review Mode）でコメントを投稿する。/code-review の完全上位互換: コードレベルのバグ・品質チェック + Issue 整合性検証 + GitLab 投稿を一括で行う。「MR レビュー」「コードレビューして」「/code-review-mr <MR番号>」で使用。レビュー指摘への対応確認と resolve は check-resolve-mr、Approve と Merge は approve-and-merge。"
 argument-hint: "<MR番号> [--effort <low|medium|high|xhigh|max>] [--issue <Issue番号>]"
 ---
 

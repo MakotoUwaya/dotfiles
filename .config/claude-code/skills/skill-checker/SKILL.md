@@ -1,6 +1,6 @@
 ---
 name: skill-checker
-description: Claude Code の SKILL.md を検証し、構文・命名・description の品質をチェックする。スキル追加・修正時のレビュー工程で使用。
+description: Claude Code の SKILL.md を静的検証し、Frontmatter 構文・命名・description 品質・セクション構成を PASS/WARNING/FAIL で判定する。スキル追加・修正時のレビュー工程で「スキルチェック」「SKILL.md 検証」で使用。セッションログからポートフォリオ全体のルーティング競合を分析するのは skill-auditor、実運用で見つかった摩擦を既存スキルに反映するのは skill-refiner。
 ---
 
 # Skill Checker - スキル品質検証
