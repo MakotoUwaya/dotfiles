@@ -2,14 +2,17 @@
 go_set_gobin = false
 
 [tools]
+# バレ名 npm はバージョン解決に失敗する (mise 2026.6.14) ためバックエンドを明示。
+# npm 12 は node ^22.22.2 || ^24.15.0 || >=26.0.0 を要求し、
+# node 20.18.1 / 24.11.1 を pin するリポジトリと衝突するため major 11 に固定。
+# node 同梱の npm に PATH で勝たせるため node より前に宣言する。
+"aqua:npm/cli" = "11"
 node = "24"
 pnpm = "10"
-npm = "latest"
 
 "npm:gitmoji-cli" = "latest"
-"ubi:goreleaser/goreleaser" = "latest"
-"ubi:junegunn/fzf" = "latest"
-"ubi:sharkdp/bat" = "latest"
+goreleaser = "latest"
+bat = "latest"
 "npm:neovim" = "latest"
 "npm:prettier" = "latest"
 "npm:cspell" = "latest"
