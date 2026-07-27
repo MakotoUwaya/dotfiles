@@ -6,7 +6,8 @@ go_set_gobin = false
 # npm 12 は node ^22.22.2 || ^24.15.0 || >=26.0.0 を要求し、
 # node 20.18.1 / 24.11.1 を pin するリポジトリと衝突するため major 11 に固定。
 # node 同梱の npm に PATH で勝たせるため node より前に宣言する。
-"aqua:npm/cli" = "11"
+# aqua:npm/cli は darwin/linux のみ対応のため linux 限定。Windows は node 同梱 npm (11.x) を使う。
+"aqua:npm/cli" = { version = "11", os = ["linux"] }
 node = "24"
 pnpm = "10"
 
