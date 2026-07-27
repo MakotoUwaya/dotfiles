@@ -58,12 +58,17 @@ difit working  # Unstaged changes only
 | `--clean` | 既存コメント・viewed 状態をクリアして起動（レビュー依頼の基本） |
 | `--include-untracked` | untracked ファイルも diff に含める（`.` / `working` のみ） |
 | `--keep-alive` | ブラウザを閉じてもサーバーを継続（手動 Ctrl+C で停止） |
-| `--mode <split\|unified>` | 差分表示モード（デフォルト `split`） |
+| `--background` | サーバーをバックグラウンドで起動し、接続情報を JSON で出力 |
 | `--merge-base` | 比較ベースを `git merge-base` で解決して diff（Git revision モードのみ） |
 | `--context <lines>` | 差分前後のコンテキスト行数を制限（`0` で変更行のみ） |
 | `--pr <url>` | GitHub PR レビュー（`gh pr diff --patch` 経由、未解決の inline thread も取り込み） |
 | `--comment <json>` | 起動時に初期レビューコメントを注入（thread / reply、繰り返し指定可） |
-| `--tui` | Web UI ではなく端末上の TUI で表示 |
+
+起動中のサーバーに対するコメント操作は `difit comment` サブコマンドで行う
+（`add` / `get` / `resolve`）。
+
+**v5.0.0 の Breaking Change**: TUI モード (`--tui`) と `--mode <split|unified>` は削除された。
+表示は Web UI のみ。
 
 ### 例: PR レビュー
 
