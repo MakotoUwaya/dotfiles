@@ -100,6 +100,10 @@ New-SymLink -LinkPath (Join-Path $HOME '.bunfig.toml') `
 New-SymLink -LinkPath (Join-Path $HOME '.ripgreprc') `
             -TargetPath (Join-Path $dotdir '.ripgreprc')
 
+# Symlink: AWS CLI config (SSO profiles). ~/.aws/sso, ~/.aws/cli はローカルのまま残す
+New-SymLink -LinkPath (Join-Path $HOME '.aws\config') `
+            -TargetPath (Join-Path $dotdir '.aws\config')
+
 # Symlink: Claude Code CLAUDE.md (global)
 New-SymLink -LinkPath (Join-Path $HOME '.claude\CLAUDE.md') `
             -TargetPath (Join-Path $dotdir '.config\claude-code\CLAUDE.md')
