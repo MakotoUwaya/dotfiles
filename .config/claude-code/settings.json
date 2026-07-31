@@ -191,7 +191,8 @@
       "source": {
         "source": "git",
         "url": "https://gitlab.com/eseikatsu/es-agent-plugins.git"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "language": "japanese",
