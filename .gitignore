@@ -100,3 +100,6 @@
 !.gitignore
 !.gitkeep
 
+
+# Windows 予約デバイス名
+nul
