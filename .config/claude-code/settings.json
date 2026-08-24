@@ -154,7 +154,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\100508\\.claude\\hooks\\herdr-agent-state.ps1\" session",
+            "command": "bash -c 'command -v powershell >/dev/null 2>&1 && powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\100508\\.claude\\hooks\\herdr-agent-state.ps1\" session || exit 0'",
             "timeout": 10
           }
         ]
