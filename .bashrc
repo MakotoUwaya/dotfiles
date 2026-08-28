@@ -120,6 +120,16 @@ eval "$(/usr/bin/mise activate bash)"
 export EDITOR=nvim
 export COLORTERM=truecolor
 
+# Locale (第1言語: 英語 / 第2言語: 日本語)
+# LANGUAGE はメッセージ翻訳の優先順リスト。英語訳が無い場合のみ日本語にフォールバックする
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:ja
+# 日付・通貨・紙サイズ・単位は日本の書式を維持する
+export LC_TIME=ja_JP.UTF-8
+export LC_MONETARY=ja_JP.UTF-8
+export LC_PAPER=ja_JP.UTF-8
+export LC_MEASUREMENT=ja_JP.UTF-8
+
 # aws-vault
 export AWS_VAULT_BACKEND=pass
 export AWS_VAULT_PASS_PREFIX=aws-vault
