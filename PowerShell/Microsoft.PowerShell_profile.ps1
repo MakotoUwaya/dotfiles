@@ -56,6 +56,16 @@ $env:RIPGREP_CONFIG_PATH="$HOME\.ripgreprc"
 # everything-claude-code: hook 厳密度（minimal | standard | strict）
 $env:ECC_HOOK_PROFILE = "minimal"
 
+# VcXsrv: ssh -X でリモートの GUI アプリを Windows 側に表示する
+## DISPLAY が未設定だと ssh は X11 転送を警告なしでスキップするため必須
+$env:DISPLAY = "localhost:0.0"
+
+# xpra: 高レイテンシ回線でも実用的にリモートの GUI アプリを表示する
+$xpraDir = Join-Path $env:ProgramFiles "Xpra"
+if ((Test-Path $xpraDir) -and ($env:PATH -notlike "*$xpraDir*")) {
+    $env:PATH = "$env:PATH;$xpraDir"
+}
+
 # ghq
 function Set-GhqLocation {
     $ghqRoot = ghq root

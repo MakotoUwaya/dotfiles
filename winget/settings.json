@@ -270,6 +270,9 @@
         },
         {
           "PackageIdentifier": "BrechtSanders.WinLibs.POSIX.UCRT"
+        },
+        {
+          "PackageIdentifier": "marha.VcXsrv"
         }
       ],
       "SourceDetails": {

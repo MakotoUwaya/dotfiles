@@ -50,6 +50,8 @@
 !/.config/systemd/user/default.target.wants/
 !/.config/systemd/user/default.target.wants/wsl-wayland-symlink.service
 !/.config/systemd/user/wsl-wayland-symlink.service
+!/.config/vcxsrv/
+!/.config/vcxsrv/config.xlaunch
 !/.claude/
 /.claude/**
 !/.claude/settings.json
