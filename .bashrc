@@ -146,12 +146,26 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-# tfz
+# fzf
 export FZF_DEFAULT_OPTS="--prompt='QUERY> ' --height 60% --layout reverse --border=rounded --style full"
 export FZF_CTRL_T_COMMAND=""
 export FZF_ALT_C_OPTS="--height 100% --preview 'eza {} -h -T -F --no-user --no-time --no-filesize --no-permissions --long | head -200'"
 eval "$($HOME/.local/share/mise/shims/fzf --bash)"
-bind '"\C-f": " \C-e\C-u tfz -m\C-m"'
+
+# Ctrl-F: rg で全文検索し、選択した行を nvim で開く
+# PowerShell/Microsoft.PowerShell_profile.ps1 の Ctrl+F と同じ挙動を bash 側に用意したもの。
+rgnv() {
+  local result file line
+  result=$(rg --column --line-number --no-heading --color=always --smart-case --hidden --invert-match '^\s*$' . \
+    | fzf --ansi --delimiter : --height 100% --layout reverse --border=rounded \
+        --preview 'bat --style=numbers --color=always --pager=never --highlight-line {2} -- {1}' \
+        --preview-window '+{2}/2')
+  [ -z "$result" ] && return
+  file=${result%%:*}
+  line=$(cut -d: -f2 <<<"$result")
+  nvim "$file" "+$line"
+}
+bind '"\C-f": " \C-e\C-u rgnv\C-m"'
 
 # ripgrep
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
