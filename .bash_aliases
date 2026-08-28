@@ -1,7 +1,13 @@
 # Utility aliases
 alias globalip='curl httpbin.org/ip'
-alias clip='iconv -t utf16 | /mnt/c/Windows/System32/clip.exe'
-alias explorer='/mnt/c/Windows/explorer.exe'
+# クリップボード / ファイラ。WSL2 は Windows 側、ネイティブ Linux は X/Wayland 側に振り分ける。
+if [ -d /mnt/c/Windows ]; then
+  alias clip='iconv -t utf16 | /mnt/c/Windows/System32/clip.exe'
+  alias explorer='/mnt/c/Windows/explorer.exe'
+else
+  alias clip='xclip -selection clipboard'
+  explorer() { xdg-open "${1:-.}"; }
+fi
 alias fd=fdfind
 alias gg=lazygit
 alias dbproxy-tui='bun run ~/.bin/dbproxy-tui/index.ts'
