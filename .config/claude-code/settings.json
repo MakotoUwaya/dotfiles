@@ -124,7 +124,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.config/claude-code/hooks/git-lock-guard.sh"
+            "command": "bash ~/.claude/hooks/git-lock-guard.sh"
           }
         ]
       },
@@ -133,7 +133,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.config/claude-code/hooks/docbase-edit-guard.sh"
+            "command": "bash ~/.claude/hooks/docbase-edit-guard.sh"
           }
         ]
       }
