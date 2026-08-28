@@ -3,5 +3,5 @@ gui:
   expandFocusedSidePanel: true
 git:
   autoFetch: false
-  pagers:
-    - pager: delta --dark --paging=never --side-by-side --line-numbers
+  diffRenderers:
+    - command: delta --dark --paging=never --side-by-side --line-numbers
