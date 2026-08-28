@@ -156,11 +156,40 @@ EOF
 fi
 
 # 4. Git config
+# credential.helper は OS ごとに実体が異なるため ~/.gitconfig.local に切り出す。
+# ~/.gitconfig_shared と ~/.gitconfig.local の include は .gitconfig 側で宣言済み。
 print_step "Configuring git..."
-git config --global include.path "~/.gitconfig_shared"
+GCM_PATH="/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe"
+if [ -x "$GCM_PATH" ]; then
+  credential_helper="\"$GCM_PATH\""
+  echo "  credential.helper: Git Credential Manager (WSL2)"
+elif [ -x /usr/libexec/git-core/git-credential-libsecret ] \
+  || [ -x /usr/lib/git-core/git-credential-libsecret ]; then
+  credential_helper="libsecret"
+  echo "  credential.helper: libsecret (GNOME keyring)"
+else
+  credential_helper="cache --timeout=21600"
+  echo "  credential.helper: cache (6h)  # libsecret 導入で永続化できる"
+fi
+cat > "$HOME/.gitconfig.local" <<EOF
+# このファイルは .bin/install.sh が生成する。手で編集しても再実行で上書きされる。
+[credential]
+	helper = $credential_helper
+EOF
+print_step "  $HOME/.gitconfig.local -> credential.helper = $credential_helper"
 
 # 5. apt sources.list.d symlink + PGP keys (requires sudo)
-if command -v apt-get > /dev/null 2>&1; then
+# リポジトリ内の apt sources は特定 Ubuntu リリース固定。実行中のリリースと食い違う場合、
+# /etc/apt/sources.list.d を symlink すると ubuntu.sources ごと別リリースに差し替わり、
+# ディストリビューション全体のダウングレードを招くため、apt 設定は丸ごと中止する。
+repo_suite="$(awk '/^Suites:/ {print $2; exit}' "$DOTDIR/etc/apt/sources.list.d/ubuntu.sources" 2>/dev/null || true)"
+host_suite="$( . /etc/os-release 2>/dev/null; echo "${UBUNTU_CODENAME:-}" )"
+if [ -n "$repo_suite" ] && [ -n "$host_suite" ] && [ "$repo_suite" != "$host_suite" ]; then
+  print_step "Skipping apt configuration (release mismatch)."
+  echo "  repo の apt sources は '$repo_suite' 固定だが、実行中の Ubuntu は '$host_suite'。"
+  echo "  適用するとシステムが '$repo_suite' にダウングレードされるため中止する。"
+  echo "  '$host_suite' 用のリポジトリ設定は手動で行うこと。"
+elif command -v apt-get > /dev/null 2>&1; then
   print_step "Setting up apt sources and PGP keys..."
   echo "This step requires sudo privileges."
   read -r -p "Proceed with apt configuration? [y/N] " response
@@ -193,13 +222,13 @@ if command -v apt-get > /dev/null 2>&1; then
 fi
 
 # 6. apt package restore (requires dselect)
-if command -v dselect > /dev/null 2>&1; then
-  local_list="$DOTDIR/.bin/apt-installed.list"
-  if [ -f "$local_list" ]; then
+if command -v dselect > /dev/null 2>&1 && [ "${repo_suite:-}" = "${host_suite:-}" ]; then
+  pkg_list="$DOTDIR/.bin/apt-installed.list"
+  if [ -f "$pkg_list" ]; then
     print_step "Restoring apt packages from apt-installed.list..."
     read -r -p "Proceed with package restore? [y/N] " response
     if [[ "$response" =~ ^[Yy]$ ]]; then
-      sudo dpkg --set-selections < "$local_list"
+      sudo dpkg --set-selections < "$pkg_list"
       sudo apt-get dselect-upgrade -y
     else
       echo "Skipping package restore."

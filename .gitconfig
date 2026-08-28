@@ -26,8 +26,6 @@
         rebase = false
 [push]
         default = current
-[credential]
-        helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
 [init]
         defaultBranch = main
 [fetch]
@@ -43,3 +41,6 @@
     	conflictStyle = zdiff3	
 [include]
 	path = ~/.gitconfig_shared
+# credential.helper 等の OS/マシン依存設定。install.sh が生成する。
+[include]
+	path = ~/.gitconfig.local
