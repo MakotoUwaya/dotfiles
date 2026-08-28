@@ -8,7 +8,6 @@ else
   alias clip='xclip -selection clipboard'
   explorer() { xdg-open "${1:-.}"; }
 fi
-alias fd=fdfind
 alias gg=lazygit
 alias dbproxy-tui='bun run ~/.bin/dbproxy-tui/index.ts'
 

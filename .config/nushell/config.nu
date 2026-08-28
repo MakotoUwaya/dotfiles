@@ -20,11 +20,6 @@ alias gg = lazygit
 alias vim = nvim
 alias globalip = curl httpbin.org/ip
 
-# WSL 専用エイリアス
-if $nu.os-info.name == "linux" {
-    alias fd = fdfind
-}
-
 # === Custom Commands ===
 
 # ghq リポジトリ選択 (Ctrl+G)
