@@ -119,11 +119,13 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -ScriptBlock {
         return
     }
 
-    $rgCmd = "rg --column --line-number --no-heading --color=always --smart-case --hidden --invert-match '^\s*$' ."
-    $fzfCmd = "fzf --ansi --delimiter : --height 100% --layout reverse --border rounded"
-
     try {
-        $result = Invoke-Expression "$rgCmd | $fzfCmd"
+        # Invoke-Expression を経由すると --preview のクォートが二重評価されるため直接呼び出す
+        # ({1} = ファイルパス, {2} = 行番号。fzf-preview.ps1 は "path:line" を受けて該当行をハイライトする)
+        $result = rg --column --line-number --no-heading --color=always --smart-case --hidden --invert-match '^\s*$' . |
+            fzf --ansi --delimiter : --height 100% --layout reverse --border rounded `
+                --preview "pwsh -NoProfile -File ""$env:FZF_PREVIEW_SCRIPT_PATH"" {1}:{2}" `
+                --preview-window '+{2}/2'
         if (-not [string]::IsNullOrWhiteSpace($result)) {
             if ($result -match '^(.+?):(\d+):') {
                 $file = $Matches[1]
