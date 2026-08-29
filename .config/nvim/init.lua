@@ -5,7 +5,9 @@ vim.g.loaded_python3_provider = 0
 -- Windows では shim が壊れるため、mise bin-paths で実際のバイナリパスを使う
 local sep = vim.fn.has('win32') == 1 and ';' or ':'
 if vim.fn.has('win32') == 1 then
-  local mise_path = vim.fn.exepath('mise')
+  -- mise activate 済みのシェルから起動された場合は PATH が解決済みなので、
+  -- 起動のたびに mise を1プロセス起こす bin-paths の呼び出しを省く。
+  local mise_path = vim.env.__MISE_ORIG_PATH == nil and vim.fn.exepath('mise') or ''
   if mise_path ~= '' then
     local bin_paths = vim.fn.system('"' .. mise_path .. '" bin-paths')
     if vim.v.shell_error == 0 then
