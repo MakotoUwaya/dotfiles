@@ -10,6 +10,11 @@ if (-not [string]::IsNullOrWhiteSpace($miseInit)) {
     Invoke-Expression $miseInit
 }
 
+# mise の chpwd フックを解除する。
+# activate は Set-Location フックとプロンプトフックの両方に hook-env を仕込むため、
+# cd 1 回で mise が 2 回起動する。環境の同期はプロンプト側だけで足りる。
+$ExecutionContext.SessionState.InvokeCommand.LocationChangedAction = $null
+
 # Starship
 function Invoke-Starship-PreCommand {
   $loc = $executionContext.SessionState.Path.CurrentLocation;
