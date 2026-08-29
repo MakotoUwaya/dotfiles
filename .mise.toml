@@ -1,0 +1,4 @@
+[tools]
+# nvim の telescope-fzf-native の DLL ビルドと treesitter パーサーのコンパイラに使う。
+# .config/nvim/lua/plugins/telescope.lua と treesitter.lua を参照。
+zig = "latest"
