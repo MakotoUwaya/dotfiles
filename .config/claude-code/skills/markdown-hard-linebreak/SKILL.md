@@ -21,7 +21,6 @@ GitLab（GLFM）と GitHub（GFM）の Markdown レンダラーは CommonMark �
 ## Out of Scope
 
 - **DocBase**: soft break でも自動で改行されるため本スキル不要（`docbase-markdown` スキル参照）
-- **Redmine**: 独自フレーバーで soft break が改行扱いのため本スキル不要（`redmine-api` スキル参照）
 
 ## Instructions
 

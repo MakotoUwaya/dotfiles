@@ -8,7 +8,7 @@ description: GitLab Epic のテンプレートセクション（ゴール、背�
 ## Overview
 
 GitLab Epic のテンプレートセクションを、ユーザーとの対話を通じて段階的に埋めていくスキル。
-Slack の会話ログ、Redmine チケット、既存の関連 Epic など複数の情報源を収集し、不明点はユーザーに質問しながら記述する。
+Slack の会話ログ、関連 Issue、既存の関連 Epic など複数の情報源を収集し、不明点はユーザーに質問しながら記述する。
 
 ## When to Use
 
@@ -24,7 +24,7 @@ Slack の会話ログ、Redmine チケット、既存の関連 Epic など複数
 
 - **GitLab Epic**: `glab api "groups/{group}/epics/{iid}"` で現在の description を取得
 - **Slack 会話**: 指定されたスレッドを `slack_read_thread` で取得
-- **Redmine チケット**: 関連チケットがあれば `getIssue` で背景を把握
+- **関連 Issue**: backlog に関連 Work Item があれば `glab api` で背景を把握
 - **関連 Epic**: 同時に作成された Epic があれば取得してスコープの境界を把握
 
 ### 2. 判断が難しい点をユーザーに質問

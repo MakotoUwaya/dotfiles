@@ -15,7 +15,6 @@ description: 既存の SKILL.md を実際の使用経験からブラッシュア
 - `mcp__teamspiritMcp__*` → `mcp__teamspirit__*` への **MCP ツール名更新**
 - `mcp__docbaseMcp__*` → `mcp__docbase-mcp__*` への **DocBase ツール名更新**
 - `gcal_list_events` → `list_events` への **Calendar ツール名更新**
-- Redmine MCP 廃止に伴う **REST API 直接呼び出しへの差し替え**
 - `pkill` → PowerShell `Get-CimInstance + Stop-Process` 併記
 
 ## When to Use
