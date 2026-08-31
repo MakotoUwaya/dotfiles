@@ -122,6 +122,11 @@ New-SymLink -LinkPath (Join-Path $HOME '.claude\skills') `
             -TargetPath (Join-Path $dotdir '.config\claude-code\skills') `
             -IsDirectory
 
+# Symlink: Claude Code hooks
+New-SymLink -LinkPath (Join-Path $HOME '.claude\hooks') `
+            -TargetPath (Join-Path $dotdir '.config\claude-code\hooks') `
+            -IsDirectory
+
 # Symlink: .bin
 New-SymLink -LinkPath (Join-Path $HOME '.bin') `
             -TargetPath (Join-Path $dotdir '.bin') `
