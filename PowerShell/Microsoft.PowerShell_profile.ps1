@@ -25,7 +25,19 @@ function Invoke-Starship-PreCommand {
   }
   $host.ui.Write($prompt)
 }
-Invoke-Expression (&starship init powershell)
+# starship init は starship を 2 回起動したうえで長い文字列を評価するため重い。
+# フル init をキャッシュしてファイルから読み込む。starship 本体が入れ替わったら作り直す。
+$starshipInitCache = Join-Path $env:LOCALAPPDATA 'starship-init.ps1'
+$starshipStampFile = "$starshipInitCache.stamp"
+$starshipExe = (Get-Command starship -ErrorAction SilentlyContinue).Source
+if ($starshipExe) {
+    $starshipStamp = "$starshipExe|$((Get-Item $starshipExe).LastWriteTimeUtc.Ticks)"
+    if ((Get-Content $starshipStampFile -Raw -ErrorAction SilentlyContinue).Trim() -ne $starshipStamp) {
+        & $starshipExe init powershell --print-full-init | Set-Content -Path $starshipInitCache -Encoding UTF8
+        Set-Content -Path $starshipStampFile -Value $starshipStamp -Encoding UTF8
+    }
+    . $starshipInitCache
+}
 
 # base64
 function base64(){
