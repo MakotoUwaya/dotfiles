@@ -50,6 +50,7 @@ require('lazy').setup({
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { 'habamax' } },
-  -- automatically check for plugin updates
-  checker = { enabled = true },
+  -- 更新確認は起動のたびに全プラグイン分の git を起こす。
+  -- プロセス生成が重い環境では背景負荷が無視できないので、:Lazy check を手動で叩く運用にする。
+  checker = { enabled = false },
 })
