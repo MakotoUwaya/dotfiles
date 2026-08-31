@@ -22,9 +22,6 @@ $env.PATH = ($env.PATH | prepend ($env.HOME | path join "bin"))
 
 # OS 別設定（WSL）
 if $nu.os-info.name == "linux" {
-    $env.AWS_VAULT_BACKEND = "pass"
-    $env.AWS_VAULT_PASS_PREFIX = "aws-vault"
-    $env.AWS_SESSION_TOKEN_TTL = "3h"
     $env.GPG_TTY = (^tty)
     $env.PNPM_HOME = ($env.HOME | path join ".local" "share" "pnpm")
     $env.PATH = ($env.PATH | prepend $env.PNPM_HOME)

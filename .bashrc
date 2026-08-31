@@ -130,10 +130,7 @@ export LC_MONETARY=ja_JP.UTF-8
 export LC_PAPER=ja_JP.UTF-8
 export LC_MEASUREMENT=ja_JP.UTF-8
 
-# aws-vault
-export AWS_VAULT_BACKEND=pass
-export AWS_VAULT_PASS_PREFIX=aws-vault
-export AWS_SESSION_TOKEN_TTL=3h
+# gpg (pinentry にカレント tty を渡す)
 export GPG_TTY=$(tty)
 
 # Go
