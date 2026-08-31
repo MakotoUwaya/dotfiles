@@ -85,11 +85,6 @@
 !/winget/
 /winget/**
 !/winget/settings.json
-!/warp/
-/warp/**
-!/warp/keybindings.yaml
-!/warp/workflows/
-!/warp/workflows/*.yaml
 !/herdr/
 /herdr/**
 !/herdr/config.toml
