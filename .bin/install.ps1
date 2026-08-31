@@ -75,6 +75,18 @@ function New-SymLink {
 Write-Step 'Starting Windows dotfiles installation...'
 Write-Step "Dotfiles directory: $dotdir"
 
+# Install: herdr
+# config.toml の symlink 先 (%APPDATA%\herdr) を先に作らせるため symlink より前に実行する
+Write-Step 'Installing herdr...'
+$herdrId = 'Herdr.Herdr.Preview'
+winget list --id $herdrId --exact --disable-interactivity *> $null
+if ($LASTEXITCODE -eq 0) {
+    Write-Step "  Already installed: $herdrId"
+} else {
+    winget install --id $herdrId --exact --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -ne 0) { Write-Warning "herdr install failed (exit $LASTEXITCODE)" }
+}
+
 # Symlink: PowerShell profile
 Write-Step 'Creating symlinks...'
 New-SymLink -LinkPath (Join-Path $HOME 'Documents\PowerShell') `
@@ -143,15 +155,6 @@ New-SymLink -LinkPath (Join-Path $HOME '.wslconfig') `
 # Symlink: Herdr config
 New-SymLink -LinkPath (Join-Path $env:APPDATA 'herdr\config.toml') `
             -TargetPath (Join-Path $dotdir 'herdr\config.toml')
-
-# Symlink: Warp keybindings
-New-SymLink -LinkPath (Join-Path $env:LOCALAPPDATA 'warp\Warp\config\keybindings.yaml') `
-            -TargetPath (Join-Path $dotdir 'warp\keybindings.yaml')
-
-# Symlink: Warp workflows
-New-SymLink -LinkPath (Join-Path $env:APPDATA 'warp\Warp\data\workflows') `
-            -TargetPath (Join-Path $dotdir 'warp\workflows') `
-            -IsDirectory
 
 # Symlink: VcXsrv config
 New-SymLink -LinkPath (Join-Path $HOME '.config\vcxsrv') `
