@@ -1,6 +1,10 @@
 #Requires -RunAsAdministrator
 [CmdletBinding()]
-param()
+param(
+    # winget/settings.json のエクスポート済みパッケージ一覧を一括導入する。
+    # 90 件と規模が大きく端末ごとに要否が異なるため、既定では実行しない。
+    [switch]$ImportWinget
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -154,10 +158,12 @@ New-SymLink -LinkPath (Join-Path $HOME '.config\vcxsrv') `
             -TargetPath (Join-Path $dotdir '.config\vcxsrv') `
             -IsDirectory
 
-# winget import
-Write-Step 'Importing winget packages...'
+# winget import (-ImportWinget 指定時のみ)
 $wingetFile = Join-Path $dotdir 'winget\settings.json'
-if (Test-Path $wingetFile) {
+if (-not $ImportWinget) {
+    Write-Step 'Skipping winget import (pass -ImportWinget to install the exported package list)'
+} elseif (Test-Path $wingetFile) {
+    Write-Step 'Importing winget packages...'
     winget import $wingetFile
 } else {
     Write-Warning "winget settings not found: $wingetFile"
