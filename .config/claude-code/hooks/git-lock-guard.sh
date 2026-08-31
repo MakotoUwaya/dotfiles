@@ -29,8 +29,22 @@ if [ ! -f "$LOCK_FILE" ]; then
   exit 0
 fi
 
+# git プロセスの実行確認。環境によって使える手段が異なる
+# - Linux/WSL: pgrep
+# - Windows (Git Bash): pgrep が無いため tasklist を使う。// は MSYS のパス変換抑止
+# 判定手段が無い場合は「実行中」とみなし、lock を消さない安全側に倒す
+git_is_running() {
+  if command -v pgrep > /dev/null 2>&1; then
+    pgrep -x git > /dev/null 2>&1
+  elif command -v tasklist > /dev/null 2>&1; then
+    tasklist //FI "IMAGENAME eq git.exe" //NH 2>/dev/null | grep -qi '^git\.exe'
+  else
+    return 0
+  fi
+}
+
 # ロックファイルが存在する場合、git プロセスを確認
-if pgrep -x git > /dev/null 2>&1; then
+if git_is_running; then
   echo "BLOCKED: .git/index.lock が存在し、git プロセスが実行中です。完了を待ってください。" >&2
   exit 2
 fi
