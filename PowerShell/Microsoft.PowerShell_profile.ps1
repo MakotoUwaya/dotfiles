@@ -164,9 +164,19 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -ScriptBlock {
 }
 
 ## PSFzf
-Import-Module PSFzf
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t'
-Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
+## モジュールの読み込みが重いので Ctrl+T / Ctrl+R の初回押下まで遅らせる。
+## 初回に Set-PsFzfOption が走ると PSFzf 本来のハンドラへ再バインドされ、以降このラッパーは通らない。
+Set-PSReadLineKeyHandler -Chord 'Ctrl+t' -ScriptBlock {
+    Import-Module PSFzf
+    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+    Invoke-FzfPsReadlineHandlerProvider
+}
+
+Set-PSReadLineKeyHandler -Chord 'Ctrl+r' -ScriptBlock {
+    Import-Module PSFzf
+    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+    Invoke-FzfPsReadlineHandlerHistory
+}
 
 Set-PSReadLineKeyHandler -Chord 'Alt+c' -ScriptBlock {
     $command = "fd --type d --color=never"
