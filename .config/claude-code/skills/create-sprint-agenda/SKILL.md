@@ -64,11 +64,14 @@ Milestone 名は Step 3 で決めた**現スプリント**のもの（次期で�
 | 区分 | 判定 |
 | --- | --- |
 | 却下（未実施） | `却下` ラベルが付いている |
-| 完了 | `state=closed`、または status が `Done` / `本番適用待ち` / `テスト完了` / `品検待ち` / `ステージングアップ待ち` |
-| 進行中 | status が `Doing` / `MR` / `検証中` / `Feedback` |
-| 未着手 | status が `To Do` / `リファインメント済` |
+| 完了 | `state=closed`、または status が `ステージングアップ待ち` / `本番適用待ち` |
+| 進行中 | status が `Doing` |
+| 未着手 | status が `To Do` |
 | 中止・除外 | `prev_iids.txt` にあるが現在 Milestone から外れた、または `status::backlog` へ戻った |
 | 追加・割り込み | `prev_iids.txt` になく現在 Milestone にある |
+
+status は account-service#4373 で 5 種（`backlog` / `To Do` / `Doing` / `ステージングアップ待ち` / `本番適用待ち`）に整理された。  
+旧 status（`Done` / `MR` / `Feedback` / `検証中` / `テスト完了` / `品検待ち` / `リファインメント済`）は `deprecated::` 接頭辞へ退避済みで、open issue には付いていない。
 
 **`却下` を完了に数えない。** 却下した issue は close されるため closed 判定では完了に混ざるが、実施していないのでベロシティには入らない。
 `却下` は `status::` 接頭辞を持たない単独ラベルなので、status ラベルの走査では拾えない。判定順を closed より先に置く。
@@ -110,6 +113,23 @@ glab api "groups/eseikatsu%2Fes-square/milestones?state=active" | jq -r '.[] | "
 ```bash
 jq -rn --arg t "[ESA]2026_09_08" '$t|@uri'   # %5BESA%5D2026_09_08
 ```
+
+**ESA / LS の Milestone 名は `[ESA]YYYY_MM_DD` / `[LS]YYYY_MM_DD` 形式**（例: `[ESA]2026_09_08`）。取得結果をそのまま信用せず、この形式に合っているかを検証する。
+
+```bash
+glab api "$G/milestones?state=active" \
+  | jq -r '.[] | select(.title | test("^\\[(ESA|LS)\\]")) | select(.title | test("^\\[(ESA|LS)\\][0-9]{4}_[0-9]{2}_[0-9]{2}$") | not) | "命名規則違反: \(.title)"'
+```
+
+**規則違反の名前をそのままアジェンダへ運ばない。** 誤った名前で作られた Milestone があると、議事録・ボードリンク・次回の突合まで誤名が伝播する。
+検出したら PO に確認のうえリネームし、正しい名前でアジェンダを組む。Issue の紐付けは milestone id 基準なので、リネームで壊れない。
+
+```bash
+glab api --method PUT "$G/milestones/<milestone id>" -f "title=[ESA]2026_09_29"
+```
+
+2026-09-03 の実行では `[ESA]20260929` / `[LS]20260929` が誤名のまま作られており、08-27 の議事録とボードリンクにもその名前で載っていた。
+「API の結果から取る」だけでは誤名を検出できない。
 
 Square は命名規則が異なる（`[Square]20260826`）。ESA / LS のパターンで推測せず、必ず API の結果から取る。
 
@@ -202,6 +222,7 @@ createPost(
 - 日本語を含むラベルで `glab api "...?labels=..."` を叩くと HTTP 400 になる。`jq -rn '"effort::期日あり"|@uri'` でエンコードする
 - `createPost` は本文をインラインでしか受け取れない。生成物の読み込みと送信で本文がコンテキストに 2 回載るため、明細表を厚くするほど実行コストが上がる
 - 一部だけ直すなら `patchPostBody` を使う。ただし**ローカルのファイルと投稿本文で行番号がずれる**（節を差し替えるスクリプトが空行を 1 行増減させるなど）。`oldContent` が 1 文字でも違うと 409 になるので、**1 行だけを同内容で置換する試験パッチでオフセットを確認してから**本番のパッチを送る
+- ESA / LS の Milestone 名が `[ESA]YYYY_MM_DD` 形式かを検証する。誤名をそのまま運ぶと議事録とボードリンクに伝播する（Step 3）
 - Square の Milestone は命名規則が異なる。API の結果から取る（Step 3）
 - 画像は貼らない。ロードマップも SendGrid も URL リンクにする。前回の議事録を複製する運用では古い画像が残り続けた
 - コスト URL の `startDate` / `from` は年度始まり固定。`endDate` / `to` だけを動かす
