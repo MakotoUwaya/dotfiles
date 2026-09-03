@@ -9,6 +9,7 @@ This skill requests a code review from the user using the difit command.
 If the user leaves review comments, they are printed to stdout when the difit command exits.
 When review comments are returned, continue work and address them.
 If the server is shut down without comments, treat it as "no review comments were provided."
+文書レビューなど時間がかかる見込みの場合は、フォアグラウンド実行を避ける（下記 Commands の該当項目を参照）。
 
 # Commands
 
@@ -17,6 +18,12 @@ If the server is shut down without comments, treat it as "no review comments wer
 - Untracked ファイルがある場合: `difit . --clean --include-untracked`
   - `--include-untracked` で untracked ファイルも自動的に diff に含める
   - 対象引数が `.` または `working` のときのみ有効
+- **レビューに10分以上かかる見込みの場合**: バックグラウンド起動 → コメント取得の2段構えにする
+  - 起動: `difit . --background`（既定ポートは 4966）
+  - 取得: `difit comment get --port 4966`（レビュー完了をユーザーが知らせてから実行）
+  - 停止: TaskStop にバックグラウンドタスク ID を渡す
+  - フォアグラウンド実行は Bash ツールの実行上限（最大 600 秒）で SIGTERM され、レビュー途中でサーバーが落ちる
+  - サーバーが落ちてもコメントは保持されるため、`--clean` を付けずに起動し直せば拾える（`--clean` を付けると消える）
 
 ## Basic Usage
 
@@ -65,7 +72,8 @@ difit working  # Unstaged changes only
 | `--comment <json>` | 起動時に初期レビューコメントを注入（thread / reply、繰り返し指定可） |
 
 起動中のサーバーに対するコメント操作は `difit comment` サブコマンドで行う
-（`add` / `get` / `resolve`）。
+（`add` / `get` / `resolve`）。いずれも `--port <port>` の指定が **必須**（既定ポートは 4966）。
+省略すると `error: required option '--port <port>' not specified` になる。
 
 **v5.0.0 の Breaking Change**: TUI モード (`--tui`) と `--mode <split|unified>` は削除された。
 表示は Web UI のみ。
