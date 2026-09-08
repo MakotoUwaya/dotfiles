@@ -59,7 +59,7 @@ closed は対象外。完了した issue から status ラベルを外す運用�
 
 | 現在の status | 操作 |
 | --- | --- |
-| `backlog` / ラベルなし / `リファインメント済` | `To Do` へ付け替える |
+| `backlog` / ラベルなし | `To Do` へ付け替える |
 | `To Do` 以降（`Doing` 等） | 変更しない |
 
 **前進側への一方向のみ。** 既に着手している issue の状態を巻き戻さない。
@@ -68,7 +68,7 @@ closed は対象外。完了した issue から status ラベルを外す運用�
 glab api --method PUT "projects/$PROJ/issues/$IID" -f "add_labels=status::To Do" -f "remove_labels=status::backlog"
 ```
 
-`labels` パラメータは使わない。全置換になり `type::` や `priority::` が消える。
+`labels` パラメータは使わない。全置換になり `tracker::` や `effort::` が消える。
 
 対象の一覧を提示して承認を得てから実行する。実行後に件数を照合する。
 
