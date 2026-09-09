@@ -214,5 +214,46 @@
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(glab mr create:*)",
+      "Bash(glab issue view:*)",
+      "Bash(glab milestone list:*)",
+      "Bash(cargo insta accept:*)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(git push origin --delete:*)",
+      "Bash(glab api:*)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: eseikatsu (GitLab group `es-account`) — inferred from origin remote `gitlab.com/es-account/esa-apps` and repo docs",
+      "**Cloud provider(s)**: Google Cloud Platform (GCP) — gcloud CLI usage, GCS buckets, appspot.com artifact domains observed in usage",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — gh visibility check not queryable here (org/repo not derivable from origin remote)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: `dev/20260707` (default branch, per repo facts); protected-branch/ruleset check via gh not queryable here — treat `dev/*` and `main` as protected per branch-cleanup skill rules (dev/* protected in GitLab, main hardcoded-excluded from deletion)",
+      "**CI/CD deploy targets**: build:dev / build:stg / build:prod npm scripts indicate dev, stg, prod deploy environments for esa-front/esa-editor/esa-collaborator-front",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
+      "**Source control**: GitLab — trusted repo `gitlab.com/es-account/esa-apps` (origin) only; issue tracking occurs in sibling repo `eseikatsu/es-account/account-service` per create-issue skill, but that repo's contents are not corroborated (repo-file-sourced only) so not adopted as trusted",
+      "**Trusted internal domains**: `gitlab.com` (source control), `api.github.com`, `app.es-account.com`, `esa.es-support.info`, `splunk.es-dev.jp`, `monitoring.googleapis.com`, `status.cloud.google.com` — hosts contacted per usage transcript",
+      "**Trusted cloud buckets**: `esaccount_vector_config`, `asia.artifacts.es-account.appspot.com`, `gcf-sources-505022134460-asia-northeast1`, `us.artifacts.es-account.appspot.com` — usage-corroborated from transcript bucket touches; additionally `esa-front-storage-bucket`, `esa-editor-storage-bucket`, `esa-collaborator-front-storage-bucket`, `dev-esa-front-storage-bucket`, `dev-esa-editor-storage-bucket`, `dev-esa-collaborator-front-storage-bucket`, `stg-esa-front-storage-bucket`, `stg-esa-editor-storage-bucket`, `stg-esa-collaborator-front-storage-bucket` (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
+      "**Key internal services**: esa-api (Rust/Actix Web), esa-front, esa-editor, esa-collaborator-front, esa-batch, GitLab (`glab` CLI, 181× usage), GCP (`gcloud` CLI, 18× usage)",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: `.env`/`.env.*` files across packages (esa-api, esa-collaborator-front, esa-editor, esa-front, takken-api, esa-batch, takken-scraping, esa-cache, esa-db-client, esa-entity, esa-gcp-pubsub, developer-tools-rs, e2e) — share only with audiences cleared for credential-bearing config",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment; explicitly includes `build:prod` deploy target and any `*-prod-*`/`prod-*` bucket or namespace",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (prod/production segment match)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (monorepo — esa-front/esa-editor/esa-collaborator-front TypeScript+React, esa-api/esa-batch Rust+Actix, CI Docker images)",
+      "**Trusted repo**: `gitlab.com/es-account/esa-apps` (this repo's working directory and its `origin` remote)",
+      "**Org-specific CLIs**: `glab` (GitLab CLI, primary tool by far — 181 uses), `gcloud` (GCP CLI, 18 uses)",
+      "**routine under /home/m-uwaya/ghq/gitlab.com/eseikatsu/es-account/esa-apps/ prefix**: git, cargo, pnpm/npm test and lint scripts, and `glab`/`gcloud` read operations are routine within this checkout"
+    ]
+  },
   "voiceEnabled": true
 }
