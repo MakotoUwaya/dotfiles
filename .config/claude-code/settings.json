@@ -49,7 +49,7 @@
       "Bash(/mnt/c/Windows/System32/clip.exe:*)",
       "mcp__docbase__getPost",
       "mcp__docbaseMcp__*",
-      "mcp__teamspiritMcp__*",
+      "mcp__teamspirit__*",
       "mcp__claude_ai_GitLab__*",
       "mcp__claude_ai_Slack__*",
       "mcp__plugin_playwright_playwright__*",
