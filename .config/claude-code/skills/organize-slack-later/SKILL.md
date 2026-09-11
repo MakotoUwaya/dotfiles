@@ -19,8 +19,27 @@ Slack の Later（保存項目）を一括レビューし、自分が今すぐ�
 
 - **Slack MCP には Later（保存項目）を一覧取得する API がない**ため、ユーザーから Later のリンクリストを貼ってもらうのが必須
 - **Later の物理削除はユーザー手作業**。Skill 側は「残す / 外す」リストを出力するに留める
-- 残タスク.md の場所: `C:\Users\100508\OneDrive\OneDrive - 株式会社いい生活\Work\es-obsidian\Daily\残タスク.md`
-- 日報の場所: `C:\Users\100508\OneDrive\OneDrive - 株式会社いい生活\Work\es-obsidian\Daily\YYYY\MM\YYYY-MM-DD.md`
+- ヴォールトルートの解決順（**ヴォールトを操作する各コマンドブロックは、この解決順を使って単体で実行できる形にする。生の `$ES_OBSIDIAN_VAULT` を直接コマンドに書かない。`Bash`/`PowerShell` ツールは呼び出しごとにシェル状態がリセットされるため、前のブロックで解決した `$VAULT` は次の呼び出しに引き継がれない — 各コマンド例は毎回この解決順を再掲した自己完結ブロックにする**）:
+  1. 環境変数 `ES_OBSIDIAN_VAULT`（bash は `$ES_OBSIDIAN_VAULT`、PowerShell は `$env:ES_OBSIDIAN_VAULT`）
+  2. 未設定なら `~/.claude/vault-path.txt` の1行目
+
+  bash での解決（参考。実際にはこれを埋め込んだ下記の自己完結ブロックを使う）:
+  ```sh
+  VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
+  [ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
+  ```
+
+  PowerShell での解決（同上）:
+  ```powershell
+  $Fallback = Get-Content "$HOME\.claude\vault-path.txt" -TotalCount 1 -ErrorAction SilentlyContinue
+  $Vault = if ($env:ES_OBSIDIAN_VAULT) { $env:ES_OBSIDIAN_VAULT } elseif ($Fallback) { $Fallback.Trim() } else { $null }
+  if (-not $Vault -or -not (Test-Path $Vault)) { throw "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください" }
+  ```
+
+- 残タスク.md の場所: `<VAULT>/Daily/残タスク.md`（`Read`/`Write` ツールには上記の解決順で得た絶対パス文字列を渡す。両ツールともシェル変数展開はしないため、`$VAULT` という文字列のままでは渡さないこと）
+- 日報の場所: `<VAULT>/Daily/YYYY/MM/YYYY-MM-DD.md`
+
+> `GIT_SSH_COMMAND` はスキル側で設定しないこと。ヴォールトの remote は `core.sshCommand` を設定済みで、`GIT_SSH_COMMAND` を設定するとそれを上書きして push が失敗する。
 
 ## 残タスク.md の構造
 
@@ -103,9 +122,19 @@ Slack の Later タブでアイテムを選んで「リンクをコピー」で�
 - 既存項目で同じ話題のものがあればマージ（重複させない）
 - 既存項目の中で古い・終了したものがあれば削除候補として提示
 
+### 4.5 ヴォールトを最新化
+
+書き換え前に必ず pull する。他機が同じファイルを更新している可能性があるため。解決からコマンドまでを1回の `Bash` 呼び出しで完結させる:
+
+```sh
+VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
+[ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
+cd "$VAULT" && git pull --rebase
+```
+
 ### 5. 残タスク.md を Write で書き直し
 
-`Write` ツールで全体を書き換える（部分編集ではなく完全書き換えのほうが構造が崩れにくい）。
+`Write` ツールで全体を書き換える（部分編集ではなく完全書き換えのほうが構造が崩れにくい）。`file_path` には 4.5 で解決した `$VAULT` と同じ解決順で得た絶対パス文字列を渡す（`Write` はシェル変数展開をしないため、`$VAULT` という文字列のままでは渡さないこと）。
 
 転記フォーマット:
 ```markdown
@@ -118,6 +147,20 @@ Slack の Later タブでアイテムを選んで「リンクをコピー」で�
 ```markdown
 - [ ] [タスク名](slack-link) 依頼者名
 	- サマリ
+```
+
+書き換え後は即座に反映する。`git add` と `git commit` は別々の `Bash` 呼び出しにするが、それぞれを自己完結ブロックにする:
+
+```sh
+VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
+[ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
+cd "$VAULT" && git add Daily/残タスク.md
+```
+
+```sh
+VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
+[ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
+cd "$VAULT" && git commit -m "残タスク整理: YYYY-MM-DD" && git push
 ```
 
 ### 6. Later 操作リスト出力
