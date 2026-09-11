@@ -19,21 +19,15 @@ Slack の Later（保存項目）を一括レビューし、自分が今すぐ�
 
 - **Slack MCP には Later（保存項目）を一覧取得する API がない**ため、ユーザーから Later のリンクリストを貼ってもらうのが必須
 - **Later の物理削除はユーザー手作業**。Skill 側は「残す / 外す」リストを出力するに留める
-- ヴォールトルートの解決順（**ヴォールトを操作する各コマンドブロックは、この解決順を使って単体で実行できる形にする。生の `$ES_OBSIDIAN_VAULT` を直接コマンドに書かない。`Bash`/`PowerShell` ツールは呼び出しごとにシェル状態がリセットされるため、前のブロックで解決した `$VAULT` は次の呼び出しに引き継がれない — 各コマンド例は毎回この解決順を再掲した自己完結ブロックにする**）:
-  1. 環境変数 `ES_OBSIDIAN_VAULT`（bash は `$ES_OBSIDIAN_VAULT`、PowerShell は `$env:ES_OBSIDIAN_VAULT`）
+- **ヴォールトのパス解決と git 操作は `Bash` ツールで行う。** Windows でも Git Bash 経由で動作することを確認済み。PowerShell 版は検証していないため用意しない
+- ヴォールトルートの解決順（**ヴォールトを操作する各コマンドブロックは、この解決順を使って単体で実行できる形にする。生の `$ES_OBSIDIAN_VAULT` を直接コマンドに書かない。`Bash` ツールは呼び出しごとにシェル状態がリセットされるため、前のブロックで解決した `$VAULT` は次の呼び出しに引き継がれない — 各コマンド例は毎回この解決順を再掲した自己完結ブロックにする**）:
+  1. 環境変数 `ES_OBSIDIAN_VAULT`
   2. 未設定なら `~/.claude/vault-path.txt` の1行目
 
   bash での解決（参考。実際にはこれを埋め込んだ下記の自己完結ブロックを使う）:
   ```sh
   VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
   [ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
-  ```
-
-  PowerShell での解決（同上）:
-  ```powershell
-  $Fallback = Get-Content "$HOME\.claude\vault-path.txt" -TotalCount 1 -ErrorAction SilentlyContinue
-  $Vault = if ($env:ES_OBSIDIAN_VAULT) { $env:ES_OBSIDIAN_VAULT } elseif ($Fallback) { $Fallback.Trim() } else { $null }
-  if (-not $Vault -or -not (Test-Path $Vault)) { throw "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください" }
   ```
 
 - 残タスク.md の場所: `<VAULT>/Daily/残タスク.md`（`Read`/`Write` ツールには上記の解決順で得た絶対パス文字列を渡す。両ツールともシェル変数展開はしないため、`$VAULT` という文字列のままでは渡さないこと）
@@ -78,6 +72,18 @@ Slack の Later（保存項目）を一括レビューし、自分が今すぐ�
 | **削除（残タスクにも入れない）** | 情報共有のみでアクション不要、すでに完了済み |
 
 ## Instructions
+
+### 0. ヴォールト同期の状態を確認
+
+このスキルは `残タスク.md` を全体書き換えする。同期が止まったまま書き込むともう一方の機と食い違うため、冒頭で状態を確認する。**このスキルはユーザーグローバルで、どのリポジトリからでも起動される。** works の SessionStart hook は works のセッションでしか鳴らないので、ここでの確認が唯一の検知経路になることがある:
+
+```sh
+CHECK="$HOME/ghq/gitlab.com/eseikatsu/sandbox/m-uwaya/works/scripts/vault-sync/check-state.sh"
+[ -f "$CHECK" ] && bash "$CHECK" || echo "[警告] check-state.sh が見つかりません: $CHECK"
+```
+
+- **出力が無ければ正常**。そのまま Step 1 へ進む
+- **警告が出たら、その内容をそのままユーザーに提示し、先に進んでよいか確認する。**`conflict` の場合は `/vault-sync-resolve` での解決を先に済ませる
 
 ### 1. 入力受領
 
@@ -131,6 +137,8 @@ VAULT="${ES_OBSIDIAN_VAULT:-$(head -1 ~/.claude/vault-path.txt 2>/dev/null)}"
 [ -n "$VAULT" ] && [ -d "$VAULT" ] || { echo "ヴォールトルートを解決できません。ES_OBSIDIAN_VAULT か ~/.claude/vault-path.txt を確認してください"; exit 1; }
 cd "$VAULT" && git pull --rebase
 ```
+
+**この pull が失敗したら、その場で中断してユーザーに報告する。`残タスク.md` の書き換えには進まない。** 失敗したまま書き込むと、古いベースの上に全体書き換えをかけることになり、もう一方の機の追加項目を丸ごと消す。作業ツリーが汚れている・同期が競合で止まっている等が典型なので、`/vault-sync-resolve` を案内する。
 
 ### 5. 残タスク.md を Write で書き直し
 
