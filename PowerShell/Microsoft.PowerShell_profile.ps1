@@ -32,11 +32,14 @@ $starshipStampFile = "$starshipInitCache.stamp"
 $starshipExe = (Get-Command starship -ErrorAction SilentlyContinue).Source
 if ($starshipExe) {
     $starshipStamp = "$starshipExe|$((Get-Item $starshipExe).LastWriteTimeUtc.Ticks)"
-    if ((Get-Content $starshipStampFile -Raw -ErrorAction SilentlyContinue).Trim() -ne $starshipStamp) {
+    $cachedStamp = if (Test-Path $starshipStampFile) { (Get-Content $starshipStampFile -Raw -ErrorAction SilentlyContinue) } else { $null }
+    if ($null -eq $cachedStamp -or $cachedStamp.Trim() -ne $starshipStamp -or -not (Test-Path $starshipInitCache)) {
         & $starshipExe init powershell --print-full-init | Set-Content -Path $starshipInitCache -Encoding UTF8
         Set-Content -Path $starshipStampFile -Value $starshipStamp -Encoding UTF8
     }
-    . $starshipInitCache
+    if (Test-Path $starshipInitCache) {
+        . $starshipInitCache
+    }
 }
 
 # base64
