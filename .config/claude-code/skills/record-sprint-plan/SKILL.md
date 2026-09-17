@@ -1,6 +1,6 @@
 ---
 name: record-sprint-plan
-description: "スプリントプランニングで決めた担当割り当てを議事録に記録し、Milestone を割り当てた issue の status を To Do に揃える。MTG 直後に実行する"
+description: "スプリントプランニングで決めた担当割り当てを議事録に記録し、会議で決めた status::backlog の棚卸し結果をラベルに反映する。MTG 直後に実行する"
 ---
 
 # スプリントプランニング 計画記録
@@ -8,7 +8,7 @@ description: "スプリントプランニングで決めた担当割り当てを
 ## 概要
 
 会議で決めた担当割り当てを議事録の `# 担当割り当て` 節に書き込み、次回の振り返りの基準にする。
-あわせて Milestone を割り当てた issue の status を `To Do` へ揃える。
+あわせて、アジェンダの棚卸し節で決まった `status::backlog` の扱いをラベルへ反映する。
 
 `create-sprint-agenda` と対で動く。**この記録がなければ次回の達成状況を集計できない。**
 
@@ -51,18 +51,16 @@ jq -r 'group_by(.assignee.username // "未アサイン")[]
   | "\(.[0].assignee.username // "未アサイン")\t\(length)件\tweight=\([.[].weight // 0] | add)"' planned.json
 ```
 
-## Step 3: status を To Do に揃える
+## Step 3: 棚卸しの判断を反映する
 
-Milestone が割り当てられた **open の** issue は着手を決めたものなので、status を `To Do` に統一する。
+アジェンダの `status::backlog の棚卸し` 節にある判断欄を読み、その結果だけをラベルに反映する。
 
-closed は対象外。完了した issue から status ラベルを外す運用のため、ラベルなしの closed に `To Do` を付けると完了済みのものが未着手に見える。
-
-| 現在の status | 操作 |
+| 判断欄 | 操作 |
 | --- | --- |
-| `backlog` / ラベルなし | `To Do` へ付け替える |
-| `To Do` 以降（`Doing` 等） | 変更しない |
-
-**前進側への一方向のみ。** 既に着手している issue の状態を巻き戻さない。
+| `To Do` | `status::backlog` を外して `status::To Do` を付ける |
+| `backlog 維持` | 何もしない |
+| `却下` | `却下` ラベルを付けてクローズする |
+| 空欄 | 何もしない。議論が及ばなかったものとして次回に持ち越す |
 
 ```bash
 glab api --method PUT "projects/$PROJ/issues/$IID" -f "add_labels=status::To Do" -f "remove_labels=status::backlog"
@@ -70,10 +68,16 @@ glab api --method PUT "projects/$PROJ/issues/$IID" -f "add_labels=status::To Do"
 
 `labels` パラメータは使わない。全置換になり `tracker::` や `effort::` が消える。
 
-対象の一覧を提示して承認を得てから実行する。実行後に件数を照合する。
+**Milestone が付いているという理由だけで `To Do` へ上げない。** 2026-09-17 の会議では積み残しが 50 件あり、
+「今回は backlog からピックしない」と決めて 18 件をそのまま残した。Milestone 付き = 着手を決めた、とは限らない。
 
-この処理により、Milestone 付きの `status::backlog` が構造的に発生しなくなる。
-`score-backlog` は採点対象を「Milestone なし」に限定しているため、両者が揃ってはじめてラベルの意味が一意になる。
+closed は対象外。完了した issue から status ラベルを外す運用のため、ラベルなしの closed に `To Do` を付けると完了済みのものが未着手に見える。
+
+**前進側への一方向のみ。** `Doing` 以降を `To Do` に巻き戻さない。
+
+対象の一覧を提示して承認を得てから実行する。実行後に件数を照合する。
+判断欄が全て空だった回は、その旨を Step 4 の記録に 1 行残す。次回のアジェンダで同じ issue がまた棚卸しに並ぶため、
+見送りが続いていることが読み取れるようにする。
 
 ## Step 4: 議事録に記録する
 
@@ -104,6 +108,8 @@ glab api --method PUT "projects/$PROJ/issues/$IID" -f "add_labels=status::To Do"
 - 見出しは `# 担当割り当て` から変えない。次回のパース対象
 - 表の体裁が崩れても `#\d+` さえ残っていれば突合できる。issue リンクを必ず含める
 - status の付け替えは前進側のみ。`Doing` を `To Do` に戻さない（Step 3）
+- Milestone が付いているという理由で `To Do` へ上げない。上げるのは棚卸しの判断欄が `To Do` のものだけ（Step 3）
+- 判断欄が空のものは触らない。次回のアジェンダに再び並び、見送りが続いていることが見える（Step 3）
 - ラベル更新に `labels` を使わない。`add_labels` / `remove_labels` を使う
 - 未アサインの issue も記録する。次回「誰も手を付けなかった」ことが見える
 - 記事が draft のままでも記録してよい。公開は PO の操作
