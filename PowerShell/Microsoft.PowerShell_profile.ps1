@@ -73,9 +73,6 @@ $env:FZF_ALT_C_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF
 # ripgrep
 $env:RIPGREP_CONFIG_PATH="$HOME\.ripgreprc"
 
-# everything-claude-code: hook 厳密度（minimal | standard | strict）
-$env:ECC_HOOK_PROFILE = "minimal"
-
 # VcXsrv: ssh -X でリモートの GUI アプリを Windows 側に表示する
 ## DISPLAY が未設定だと ssh は X11 転送を警告なしでスキップするため必須
 $env:DISPLAY = "localhost:0.0"

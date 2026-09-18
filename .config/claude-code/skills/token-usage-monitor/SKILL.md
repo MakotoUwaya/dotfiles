@@ -1,6 +1,6 @@
 ---
 name: token-usage-monitor
-description: Claude Code のセッションログ (~/.claude/projects/**/*.jsonl) を集計してトークン消費量を観測する。ECC 導入前後の Before/After 比較、週次モニタリング、cache hit 率の確認に使う。「トークン集計」「token usage」「使用量集計」「Claude Code 消費量」で起動。
+description: Claude Code のセッションログ (~/.claude/projects/**/*.jsonl) を集計してトークン消費量を観測する。プラグイン・フック導入前後の Before/After 比較、週次モニタリング、cache hit 率の確認に使う。「トークン集計」「token usage」「使用量集計」「Claude Code 消費量」で起動。
 ---
 
 # token-usage-monitor
@@ -9,7 +9,7 @@ Claude Code がローカルに保存しているセッションログを集計�
 
 ## 用途
 
-- **ECC など大型プラグイン導入前後の Before/After 比較**
+- **大型プラグイン・フック導入前後の Before/After 比較**
 - 週次のトークン消費モニタリング
 - cache 戦略の効果確認（cache_read が支配的になっているか）
 - 仕事 PC / プライベート PC それぞれで個別にベースライン取得
@@ -219,15 +219,20 @@ Avg per turn:    input=3,547, output=674, cache_read=25,578
 
 ## ベースライン記録の運用
 
-ECC 導入前後の比較は以下の手順で行う：
+プラグインやフックを入れる／外すときの比較は以下の手順で行う。`<name>` は対象の識別子に置き換える。
 
-1. **導入前**: このスキルで `--days 7` を実行 → 結果を `~/.claude/projects/<dotfiles>/memory/project_ecc_token_baseline.md` に貼り付け
+1. **導入前**: このスキルで `--days 7` を実行 → 結果を `~/.claude/projects/<dotfiles>/memory/project_<name>_token_baseline.md` に貼り付け
 2. **導入直後**: 新規セッションで `/context` を実行 → 同 memory に「常駐コスト」として追記
-3. **1 週間後**: 再度集計 → `project_ecc_token_after_1week.md` に保存し Before/After を比較
-4. 判断基準（プロジェクト memory `project_ecc_adoption.md` 参照）:
+3. **1 週間後**: 再度集計 → `project_<name>_token_after_1week.md` に保存し Before/After を比較
+4. 判断基準:
    - 平均 input が **+30% 以下**: 継続
-   - **+30〜+60%**: `ECC_HOOK_PROFILE` を `minimal` に戻す等
+   - **+30〜+60%**: プロファイル設定などで機能を絞って再計測
    - **+60% 超**: 部分採用に切り戻し
+
+トークン量だけでは判断できないケースもある。フックを持つプラグインは
+**応答ごと・ツール呼び出しごとの実時間**も効くため、遅さが問題なら
+`claude --debug-file <path> -p "x"` のログで行間の経過時間を見て、
+どのフックが何ミリ秒使っているかを併せて確認する。
 
 ## 注意
 
