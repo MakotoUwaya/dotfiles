@@ -193,14 +193,14 @@
         "source": "git",
         "url": "https://gitlab.com/eseikatsu/product-docs.git"
       },
-      "autoUpdate": true
+      "autoUpdate": false
     },
     "es-agent-plugins": {
       "source": {
         "source": "git",
         "url": "https://gitlab.com/eseikatsu/es-agent-plugins.git"
       },
-      "autoUpdate": true
+      "autoUpdate": false
     }
   },
   "language": "japanese",
