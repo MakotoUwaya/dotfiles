@@ -39,6 +39,9 @@
 !/.config/claude-code/
 !/.config/claude-code/**
 /.config/claude-code/skills/generate-explainer*
+# claude.ai から自動同期されるスキル置き場。~/.claude/skills がこのディレクトリへの
+# symlink のため同期先がリポジトリ内に落ちるが、中身は claude.ai 側が管理する
+/.config/claude-code/skills/synced/
 !/.config/herdr/
 !/.config/herdr/config.toml
 !/.config/starship.toml
