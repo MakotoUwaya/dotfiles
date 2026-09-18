@@ -4,10 +4,23 @@
 # stdin: {"tool_name": "Edit|Write", "tool_input": {"file_path": "..."}}
 # exit 0: 常に許可（リマインドのみ）
 
+# Edit/Write の呼び出しごとに走るため、対象外のケースは外部プロセスを
+# 起こす前にシェル組み込みだけで振り落とす（git-lock-guard.sh と同じ方針）。
+
 set -euo pipefail
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+
+# 対象は works/works 配下のみ。JSON にも CWD にも現れないなら無関係。
+# file_path が相対パスのケースは CWD 側で拾う。
+case "$INPUT$PWD" in
+  *works/works*) ;;
+  *) exit 0 ;;
+esac
+
+TOOL_NAME=""
+FILE_PATH=""
+eval "$(printf '%s' "$INPUT" | jq -r '@sh "TOOL_NAME=\(.tool_name // "") FILE_PATH=\(.tool_input.file_path // "")"' 2>/dev/null || true)"
 
 # Edit/Write 以外は無視
 case "$TOOL_NAME" in
@@ -15,7 +28,6 @@ case "$TOOL_NAME" in
   *) exit 0 ;;
 esac
 
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [ -z "$FILE_PATH" ] && exit 0
 
 # 相対パスを絶対パスに変換

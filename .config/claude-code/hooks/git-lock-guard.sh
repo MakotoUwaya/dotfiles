@@ -3,21 +3,35 @@
 #
 # stdin: {"tool_name": "Bash", "tool_input": {"command": "..."}}
 # exit 0: 許可, exit 2: ブロック
+#
+# このフックは Bash ツールの呼び出しごとに走る。外部プロセスの起動が
+# 1 回あたり 250ms 前後かかる環境（Windows + EDR 常駐）では、jq や grep を
+# 何回呼ぶかがそのまま体感速度になるため、以下の順で足切りする。
+#   1. シェル組み込みのパターンマッチ（プロセス 0 個）
+#   2. jq 1 回で必要な値をまとめて取る
+#   3. git rev-parse 以降は本当に git コマンドだった場合のみ
 
 set -euo pipefail
 
 INPUT=$(cat)
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+
+# JSON 全体に git という文字列が無ければ git コマンドではありえない
+case "$INPUT" in
+  *git*) ;;
+  *) exit 0 ;;
+esac
+
+TOOL_NAME=""
+COMMAND=""
+eval "$(printf '%s' "$INPUT" | jq -r '@sh "TOOL_NAME=\(.tool_name // "") COMMAND=\(.tool_input.command // "")"' 2>/dev/null || true)"
 
 # Bash ツール以外は無視
 if [ "$TOOL_NAME" != "Bash" ]; then
   exit 0
 fi
 
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-
-# git コマンド以外は無視
-if ! echo "$COMMAND" | grep -qE '^\s*git\b'; then
+# git コマンド以外は無視（grep -qE '^\s*git\b' と同じ判定をシェル内で行う）
+if [[ ! "$COMMAND" =~ ^[[:space:]]*git([^[:alnum:]_]|$) ]]; then
   exit 0
 fi
 
