@@ -46,7 +46,7 @@ test -e "$HOME/.bashrc" && echo "OK" || echo "BROKEN"
 
 `.gitignore` で許可されているファイルのうち、`make_symlink` に含まれていないものを検出する。
 ただし以下は例外（symlink 不要）:
-- `CLAUDE.md`, `AGENTS.md`, `README.md`, `.gitignore`
+- `AGENTS.md`, `README.md`, `.gitignore`
 - `PowerShell/`, `winget/`（Windows 用）
 - `etc/`, `usr/`（apt 設定）
 - `.github/`
