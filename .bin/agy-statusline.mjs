@@ -1,10 +1,9 @@
 // Antigravity CLI (agy) Statusline - cross-platform (Node.js ESM)
 // agy が stdin に渡す実際の JSON 構造に対応
-// Display: model, context window, quota, git status, directory, agent state
+// Display: model, context window, quota (Gemini / Claude & GPT), git status, directory, agent state
 
 import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
 
 // stdin からデータを読み取り
 const chunks = [];
@@ -37,16 +36,17 @@ function colorForPct(pct) {
   return GREEN;
 }
 
-// 使用率に対する色（残量ベースの逆色）
+// 残量に対する色（20%以下は赤、50%以下は黄、それ以上は緑）
 function colorForRemaining(remainingPct) {
   if (remainingPct <= 20) return RED;
   if (remainingPct <= 50) return YELLOW;
   return GREEN;
 }
 
-function progressBar(pct, total = 20, color = '') {
+function progressBar(pct, total = 10, color = '') {
   let filled = Math.round((pct * total) / 100);
   if (filled > total) filled = total;
+  if (filled < 0) filled = 0;
   if (!color) color = colorForPct(pct);
 
   let bar = '';
@@ -57,15 +57,22 @@ function progressBar(pct, total = 20, color = '') {
   return bar;
 }
 
-// 時間差分を日本語表示
+// 時間差分を日本語・短縮表示
 function formatDuration(seconds) {
-  if (seconds <= 0) return 'まもなく';
+  if (!seconds || seconds <= 0) return '';
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  if (hours > 0 && minutes > 0) return `あと${hours}時間${minutes}分`;
-  if (hours > 0) return `あと${hours}時間`;
-  if (minutes > 0) return `あと${minutes}分`;
+  if (hours > 0 && minutes > 0) return `あと${hours}h${minutes}m`;
+  if (hours > 0) return `あと${hours}h`;
+  if (minutes > 0) return `あと${minutes}m`;
   return 'まもなく';
+}
+
+// パーセンテージ表示（100%は整数、それ以外は小数点第2位まで表示）
+function formatPct(fraction) {
+  const pct = (fraction ?? 1) * 100;
+  if (pct >= 100) return '100%';
+  return `${pct.toFixed(2)}%`;
 }
 
 // エージェント状態のアイコン
@@ -80,11 +87,9 @@ function agentStateIcon(state) {
 }
 
 // ── Model ──
-// model は { id, display_name } オブジェクト
 const model = input.model?.display_name ?? input.model?.id ?? (typeof input.model === 'string' ? input.model : '');
 
 // ── Context Window ──
-// context_window: { total_input_tokens, total_output_tokens, context_window_size, used_percentage, remaining_percentage }
 const ctxWin = input.context_window;
 const contextPct = ctxWin?.used_percentage ? Math.round(ctxWin.used_percentage) : 0;
 const contextSize = ctxWin?.context_window_size ?? 0;
@@ -165,44 +170,41 @@ if (dirDisplay) {
 }
 
 // ── Line 2: Quota 情報 ──
-// quota: { "3p-5h": { remaining_fraction, reset_time, reset_in_seconds }, "3p-weekly": {...}, "gemini-5h": {...}, "gemini-weekly": {...} }
+// usage の構成に沿って GEMINI MODELS と CLAUDE AND GPT MODELS の両グループを表示
+function formatQuotaItem(name, qData, barLength = 10) {
+  if (!qData) return null;
+  const fraction = qData.remaining_fraction ?? 1;
+  const remainPct = fraction * 100;
+  const color = colorForRemaining(remainPct);
+  // usage の表示に合わせて「残量」をバーで塗りつぶす
+  const bar = progressBar(remainPct, barLength, color);
+  const pctStr = formatPct(fraction);
+
+  let resetStr = '';
+  if (fraction < 0.9999 && qData.reset_in_seconds) {
+    const dur = formatDuration(qData.reset_in_seconds);
+    if (dur) resetStr = ` ${GRAY}(${dur})${RESET}`;
+  }
+
+  return `${color}${name}${RESET} ${bar} ${color}${pctStr}残${RESET}${resetStr}`;
+}
+
 let line2 = '';
 const quota = input.quota;
 if (quota && typeof quota === 'object') {
   const quotaParts = [];
 
-  // 3p (サードパーティモデル) のクォータ表示
-  const tp5h = quota['3p-5h'];
-  const tpWeekly = quota['3p-weekly'];
+  // 1. GEMINI MODELS (Gemini Flash, Gemini Pro)
+  const g5h = formatQuotaItem('💎 Gemini 5h', quota['gemini-5h'], 10);
+  const gWk = formatQuotaItem('💎 Gemini 週', quota['gemini-weekly'], 10);
+  if (g5h) quotaParts.push(g5h);
+  if (gWk) quotaParts.push(gWk);
 
-  if (tp5h) {
-    const remainPct = Math.round((tp5h.remaining_fraction ?? 1) * 100);
-    const usedPct = 100 - remainPct;
-    const color = colorForRemaining(remainPct);
-    const bar = progressBar(usedPct, 20, color);
-    const resetStr = tp5h.reset_in_seconds ? ` ${GRAY}(${formatDuration(tp5h.reset_in_seconds)})${RESET}` : '';
-    quotaParts.push(`${color}🔮 3P-5h${RESET} ${bar} ${color}${remainPct}%残${RESET}${resetStr}`);
-  }
-
-  if (tpWeekly) {
-    const remainPct = Math.round((tpWeekly.remaining_fraction ?? 1) * 100);
-    const usedPct = 100 - remainPct;
-    const color = colorForRemaining(remainPct);
-    const bar = progressBar(usedPct, 10, color);
-    quotaParts.push(`${color}📅 3P-週${RESET} ${bar} ${color}${remainPct}%残${RESET}`);
-  }
-
-  // Gemini モデルのクォータ表示
-  const gm5h = quota['gemini-5h'];
-  const gmWeekly = quota['gemini-weekly'];
-
-  if (gm5h) {
-    const remainPct = Math.round((gm5h.remaining_fraction ?? 1) * 100);
-    const usedPct = 100 - remainPct;
-    const color = colorForRemaining(remainPct);
-    const bar = progressBar(usedPct, 10, color);
-    quotaParts.push(`${color}💎 Gemini-5h${RESET} ${bar} ${color}${remainPct}%残${RESET}`);
-  }
+  // 2. CLAUDE AND GPT MODELS (Claude Opus, Claude Sonnet, GPT-OSS)
+  const cg5h = formatQuotaItem('🔮 Claude/GPT 5h', quota['3p-5h'], 10);
+  const cgWk = formatQuotaItem('🔮 Claude/GPT 週', quota['3p-weekly'], 10);
+  if (cg5h) quotaParts.push(cg5h);
+  if (cgWk) quotaParts.push(cgWk);
 
   if (quotaParts.length > 0) {
     line2 = quotaParts.join(sep);
