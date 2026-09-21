@@ -55,6 +55,8 @@
 !/.config/systemd/user/wsl-wayland-symlink.service
 !/.config/vcxsrv/
 !/.config/vcxsrv/config.xlaunch
+!/.config/iib/
+!/.config/iib/**
 !/.claude/
 /.claude/**
 !/.claude/settings.json
