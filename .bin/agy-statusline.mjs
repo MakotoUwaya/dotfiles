@@ -19,6 +19,7 @@ try {
   process.exit(0);
 }
 
+try {
 // ── Colors ──
 const GREEN = '\x1b[38;2;151;201;195m';
 const YELLOW = '\x1b[38;2;229;192;123m';
@@ -246,3 +247,9 @@ let output = line1;
 if (line2) output += '\n' + line2;
 if (line3) output += '\n' + line3;
 process.stdout.write(output);
+} catch (err) {
+  // エラー時でも exit 1 で落ちずに最低限のステータスを出力
+  const modelName = input?.model?.display_name ?? input?.model?.id ?? 'Antigravity';
+  process.stdout.write(`🤖 │ ${modelName}`);
+  process.exit(0);
+}
