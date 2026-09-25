@@ -1,46 +1,43 @@
 # AGENTS.md
 
-このプロジェクトにおける AI エージェント共通のガイドライン、プロジェクト概要、およびアーキテクチャの定義です。
+AI エージェント共通のガイドライン、プロジェクト概要、アーキテクチャ定義です。
 
 ## 言語設定
 - **第一言語**: すべての出力（回答、計画、説明、コードコメント等）は **日本語** で記述してください。
 
 ## プロジェクト概要
-- **WSL2 Ubuntu + Windows** 向けの個人用 dotfiles リポジトリ。
-- `mise` を中心としたツールバージョン管理と、独自のインストールスクリプトによる構成管理を行っています。
+- **WSL2 (Ubuntu) + Windows** 向け dotfiles。
+- `mise` を中心としたツールバージョン管理と、自作スクリプトによる構成管理。
 
 ## アーキテクチャ
 
-### ディレクトリ構成
-- `.config/nvim/`: Neovim 設定（Lua, lazy.nvim ベース）
+### 主要ディレクトリ
+- `.config/nvim/`: Neovim 設定（Lua, lazy.nvim: `init.lua` → `lua/config/lazy.lua` → `lua/plugins/*.lua`）
 - `.config/mise/config.toml`: ツールバージョン管理（node, pnpm, fzf, bat, lazygit, delta 等）
 - `.config/starship.toml`: プロンプトテーマ
-- `.config/claude-code/`: Claude Code グローバル設定（settings.json, rules/, skills/）
-- `.config/nushell/`: Nushell シェル設定（env.nu, config.nu）
-- `.config/lazygit/`: lazygit TUI 設定
-- `.bin/`: インストールスクリプト、apt パッケージリスト
+- `.config/claude-code/`: Claude Code 設定（settings.json, rules/, skills/）
+- `.config/nushell/`: Nushell 設定（`env.nu` → `vendor/autoload/*.nu` → `config.nu`）
+- `.config/lazygit/`: lazygit 設定
+- `.bin/`: インストールスクリプト、`apt-installed.list`
 - `etc/apt/`: APT ソースリスト・鍵ファイル
 - `PowerShell/`: Windows PowerShell プロファイル
 - `winget/`: Windows パッケージリスト
-- `.bashrc`, `.zshrc` 等: シェル初期化ファイル
-
-### シェル初期化チェーン
-**bash**: `.profile` → `.bashrc` → `.bash_aliases`
-`.bashrc` で `mise`, `keychain`, `cargo`, `fzf`, `direnv`, `starship` を順に初期化します。
-
-**Nushell**: `env.nu`（環境変数・PATH・starship/mise 生成）→ `vendor/autoload/*.nu`（自動読込）→ `config.nu`（エイリアス・コマンド・キーバインド）
-
-### Neovim プラグイン構成
-`init.lua` → `lua/config/lazy.lua`（lazy.nvim ブートストラップ）→ `lua/plugins/*.lua`
+- `.bashrc`, `.profile`, `.bash_aliases`: bash 初期化（mise, keychain, cargo, fzf, direnv, starship 順）
 
 ### ツール管理の階層
-1. **mise**: 主要ツールマネージャ
-2. **apt**: システムパッケージ（`.bin/apt-installed.list` で管理）
+1. **mise**: 主要ツールマネージャ（最優先）
+2. **apt**: システムパッケージ（`.bin/apt-installed.list`）
 3. **cargo/rustup**: Rust ツールチェーン
 4. **winget**: Windows アプリケーション
 
+## 設定追加手順（.gitignore ホワイトリスト対応）
+`.gitignore` はホワイトリスト方式（`/*` で全除外）のため、新しい設定（例: `.config/xxx`）を追加する際は以下をセットで実施すること:
+1. `.gitignore` に除外例外（`!/.config/xxx/` 等）を追記（既存行との重複に注意）
+2. インストールスクリプト（`.bin/install.sh` / `.bin/install.ps1`）にシンボリックリンク作成処理を追加
+3. `git check-ignore -v <file>` で追跡対象となったことを確認
+
 ## コミットコンベンション
-- **Gitmoji スタイル**を使用します。`gitmoji-cli` (`gitmoji -c`) を推奨。
+Gitmoji スタイルを使用（`gitmoji-cli` 推奨）:
 - `✨ Add ...`: 新機能・ツールの追加
 - `🔧 Fix ...`: 設定の修正
 - `📦️ Update ...`: パッケージ・依存関係の更新
@@ -48,21 +45,12 @@
 - `🔥 Remove ...`: 不要な設定の削除
 
 ## 共通注意事項
-- コードの修正やリファクタリングを行う際は、既存の `lazy.nvim` 構成や `mise` による管理方針を尊重してください。
-- 複雑なシェルスクリプトの変更を行う際は、`--debug` モードでの動作確認を考慮してください。
-- 新しいツールの追加や設定変更の際は、`.config/mise/config.toml` への反映を検討してください。
-- `.gitignore` はホワイトリスト方式（`/*` で全除外 → `!` で個別許可）。新ファイル追加時は除外例外の設定が必要（詳細は `.claude/rules/dotfiles-add-config.md`）
-- OS 分岐がある箇所（install.sh, Neovim build 関数等）では WSL2 Ubuntu と Windows 両方を考慮すること
-- PowerShell コマンドと WSL2 (Ubuntu) 上のコマンドを明確に区別して提案してください。
-- 設定の追加や修正を行う際は、根拠の不明瞭な記述（便宜的な慣習設定）を避け、現状の診断と事実に基づいた最小限の変更を優先してください。問題発生時は、まず現在のステータスや環境変数を確認し、必要性が客観的に証明された場合のみ設定の変更を提案してください。
+- **事実に基づく最小変更**: 現状の診断と事実（環境変数やステータス）を優先し、根拠の不明瞭な設定追加は避けること。
+- **環境の明確な区別**: PowerShell (Windows) と bash (WSL2 Ubuntu) のコマンドを明確に区別して提案すること。
+- **既存方針の尊重**: `lazy.nvim` 構成や `mise` による管理方針を維持し、新ツール追加時は `.config/mise/config.toml` への反映を検討すること。
+- **動作確認**: 複雑なシェルスクリプト変更時は `--debug` モードでの動作確認を考慮すること。
 
-## よく使うコマンド
-- `~/.bin/install.sh` — シンボリックリンク作成（WSL2/Linux）
-- `git check-ignore -v <file>` — .gitignore ルールの確認
-
-## インストール手順
-1. `mise use -g ghq`
-2. `ghq clone https://github.com/MakotoUwaya/dotfiles.git`
-3. OS に応じたインストールスクリプトを実行:
-   - **WSL2 / Linux**: `~/.bin/install.sh`（シンボリックリンク作成。既存ファイルは `~/.dotbackup` に移動）
-   - **Windows**: 管理者権限 PowerShell で `~\.bin\install.ps1`（シンボリックリンク作成 + winget パッケージインポート。既存ファイルは `~\.dotbackup` に移動）
+## 主要コマンド
+- **WSL2 / Linux リンク作成**: `~/.bin/install.sh`
+- **Windows リンク作成**: 管理者権限 PowerShell で `~\.bin\install.ps1`
+- **Git 除外ルール確認**: `git check-ignore -v <file>`
