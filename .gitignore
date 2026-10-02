@@ -36,6 +36,8 @@
 !/.config/mise/config.toml
 !/.config/nvim/
 !/.config/nvim/**
+!/.config/agents/
+!/.config/agents/**
 !/.config/claude-code/
 !/.config/claude-code/**
 /.config/claude-code/skills/generate-explainer*

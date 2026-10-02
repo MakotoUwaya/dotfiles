@@ -120,9 +120,17 @@ New-SymLink -LinkPath (Join-Path $HOME '.ripgreprc') `
 New-SymLink -LinkPath (Join-Path $HOME '.aws\config') `
             -TargetPath (Join-Path $dotdir '.aws\config')
 
+# Symlink: Global AGENTS.md (for Cursor, Codex, etc.)
+New-SymLink -LinkPath (Join-Path $HOME 'AGENTS.md') `
+            -TargetPath (Join-Path $dotdir '.config\agents\AGENTS.md')
+
+# Symlink: Gemini / Antigravity AGENTS.md
+New-SymLink -LinkPath (Join-Path $HOME '.gemini\config\AGENTS.md') `
+            -TargetPath (Join-Path $dotdir '.config\agents\AGENTS.md')
+
 # Symlink: Claude Code CLAUDE.md (global)
 New-SymLink -LinkPath (Join-Path $HOME '.claude\CLAUDE.md') `
-            -TargetPath (Join-Path $dotdir '.config\claude-code\CLAUDE.md')
+            -TargetPath (Join-Path $dotdir '.config\agents\AGENTS.md')
 
 # Symlink: Claude Code settings
 New-SymLink -LinkPath (Join-Path $HOME '.claude\settings.json') `

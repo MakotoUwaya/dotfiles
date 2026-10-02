@@ -112,10 +112,16 @@ make_symlink "$HOME/.config/herdr/config.toml" "$DOTDIR/.config/herdr/config.tom
 make_symlink "$HOME/.bin"                 "$DOTDIR/.bin"
 make_symlink "$HOME/.sound"              "$DOTDIR/sound"
 
-# 2. Claude Code settings
+# 2. AI Agents settings
+print_step "Linking AI Agents settings..."
+make_symlink "$HOME/AGENTS.md"                "$DOTDIR/.config/agents/AGENTS.md"
+command mkdir -p "$HOME/.gemini/config"
+make_symlink "$HOME/.gemini/config/AGENTS.md" "$DOTDIR/.config/agents/AGENTS.md"
+
+# 3. Claude Code settings
 print_step "Linking Claude Code settings..."
 command mkdir -p "$HOME/.claude"
-make_symlink "$HOME/.claude/CLAUDE.md"     "$DOTDIR/.config/claude-code/CLAUDE.md"
+make_symlink "$HOME/.claude/CLAUDE.md"     "$DOTDIR/.config/agents/AGENTS.md"
 make_symlink "$HOME/.claude/settings.json" "$DOTDIR/.config/claude-code/settings.json"
 make_symlink "$HOME/.claude/rules"         "$DOTDIR/.config/claude-code/rules"
 make_symlink "$HOME/.claude/skills"        "$DOTDIR/.config/claude-code/skills"
