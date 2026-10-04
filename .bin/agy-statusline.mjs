@@ -165,9 +165,25 @@ if (gitRepo && gitBranch) {
   line1 += `${sep}🔀 ${gitBranch}`;
 }
 
-// ディレクトリ
-if (dirDisplay) {
-  line1 += `${sep}📁 ${dirDisplay}`;
+// プランティア (ディレクトリ表示から変更)
+const planTier = input.plan_tier || 'Google AI Pro';
+line1 += `${sep}${CYAN}🏷️ ${planTier}${RESET}`;
+
+// サブエージェント情報 (2行に収めるためLine 1に集約)
+const subagents = input.subagents;
+if (Array.isArray(subagents) && subagents.length > 0) {
+  const running = subagents.filter(s => s.status !== 'completed' && s.status !== 'killed').length;
+  const completed = subagents.filter(s => s.status === 'completed').length;
+  if (running > 0) {
+    line1 += `${sep}${YELLOW}🔄 ${running}実行中/${completed}完了${RESET}`;
+  } else if (completed > 0) {
+    line1 += `${sep}${GREEN}✅ ${completed}完了${RESET}`;
+  }
+}
+
+// アーティファクト数
+if (input.artifact_count > 0) {
+  line1 += `${sep}${GRAY}📎 ${input.artifact_count}件${RESET}`;
 }
 
 // ── Line 2: Quota 情報 ──
@@ -212,40 +228,9 @@ if (quota && typeof quota === 'object') {
   }
 }
 
-// ── Line 3: Subagents / 追加情報 ──
-let line3 = '';
-const infoParts = [];
-
-// プランティア
-if (input.plan_tier) {
-  infoParts.push(`${CYAN}🏷️ ${input.plan_tier}${RESET}`);
-}
-
-// サブエージェント情報
-const subagents = input.subagents;
-if (Array.isArray(subagents) && subagents.length > 0) {
-  const running = subagents.filter(s => s.status !== 'completed' && s.status !== 'killed').length;
-  const completed = subagents.filter(s => s.status === 'completed').length;
-  if (running > 0) {
-    infoParts.push(`${YELLOW}🔄 サブエージェント: ${running}実行中 / ${completed}完了${RESET}`);
-  } else if (completed > 0) {
-    infoParts.push(`${GREEN}✅ サブエージェント: ${completed}完了${RESET}`);
-  }
-}
-
-// アーティファクト数
-if (input.artifact_count > 0) {
-  infoParts.push(`${GRAY}📎 ${input.artifact_count}件${RESET}`);
-}
-
-if (infoParts.length > 0) {
-  line3 = infoParts.join(sep);
-}
-
-// ── Output ──
+// ── Output (2行に集約) ──
 let output = line1;
 if (line2) output += '\n' + line2;
-if (line3) output += '\n' + line3;
 process.stdout.write(output);
 } catch (err) {
   // エラー時でも exit 1 で落ちずに最低限のステータスを出力
