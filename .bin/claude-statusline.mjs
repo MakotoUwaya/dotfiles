@@ -1,9 +1,23 @@
 // Claude Code Statusline - cross-platform (Node.js ESM)
 // 3-line display: session info, 5h usage, 7d usage
+//
+// 配置: ~/.bin/claude-statusline.mjs に置き、settings.json の statusLine から呼び出す
+// 前提: Node.js 18 以上（fetch を使用）、git
+//
+// 注意:
+// - 5h / 7d の使用率を取るため、OAuth アクセストークンを読み取る
+//   （macOS は Keychain の "Claude Code-credentials"、それ以外は ~/.claude/.credentials.json）
+//   トークンは api.anthropic.com への問い合わせにだけ使い、外部には送らない
+// - 問い合わせ先の https://api.anthropic.com/api/oauth/usage は非公開 API。
+//   仕様変更で失敗した場合は 2〜3 行目が出なくなるだけで、1 行目は表示される
+// - 結果は ~/.claude/statusline-usage-cache.json に 360 秒キャッシュする（パーミッション 600）
+// - タイムゾーンは Asia/Tokyo、リセット時刻の表示は日本語で固定
+// - 作業ディレクトリで git を実行する。core.fsmonitor は無効化しているが、
+//   リポジトリ側の filter.<driver>.clean は git status 時に実行されうる（Claude Code 自身の git 実行と同程度のリスク）
 
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
+import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 const chunks = [];
@@ -60,12 +74,17 @@ function progressBar(pct, divs = 0, total = 14, color = '', markerPct = -1) {
   return bar;
 }
 
+// 端末エスケープシーケンスを混入させないよう、外部由来の文字列から制御文字を除く
+function stripControl(s) {
+  return String(s).replace(/[\x00-\x1f\x7f-\x9f]/g, '');
+}
+
 // ── Line 1: Session info ──
-let model = input.model?.display_name ?? '';
+let model = stripControl(input.model?.display_name ?? '');
 if (model) {
   model = model.replace(' (1M context)', '(1M)').replaceAll(' ', '');
 }
-const effort = input.effort?.level ?? '';
+const effort = stripControl(input.effort?.level ?? '');
 const usedPct = input.context_window?.used_percentage;
 const linesAdded = input.cost?.total_lines_added ?? 0;
 const linesRemoved = input.cost?.total_lines_removed ?? 0;
@@ -74,25 +93,32 @@ const cwd = input.workspace?.current_dir ?? '';
 const ctxInt = usedPct != null ? Math.round(usedPct) : 0;
 const ctxColor = colorForPct(ctxInt);
 
+// リポジトリ設定の core.fsmonitor 経由で任意コマンドが実行されないよう無効化し、
+// status による index.lock の取得も避ける
+function git(args) {
+  return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-C', cwd, ...args], { encoding: 'utf8', stdio: 'pipe' }).trim();
+}
+
 let gitBranch = '';
 let gitRepo = '';
 if (cwd) {
   try {
-    execFileSync('git', ['-C', cwd, 'rev-parse', '--git-dir'], { stdio: 'pipe' });
+    git(['rev-parse', '--git-dir']);
     try {
-      gitBranch = execFileSync('git', ['-C', cwd, 'symbolic-ref', '--short', 'HEAD'], { encoding: 'utf8', stdio: 'pipe' }).trim();
+      gitBranch = git(['symbolic-ref', '--short', 'HEAD']);
     } catch {
       try {
-        gitBranch = execFileSync('git', ['-C', cwd, 'rev-parse', '--short', 'HEAD'], { encoding: 'utf8', stdio: 'pipe' }).trim();
+        gitBranch = git(['rev-parse', '--short', 'HEAD']);
       } catch {}
     }
     try {
-      const toplevel = execFileSync('git', ['-C', cwd, 'rev-parse', '--show-toplevel'], { encoding: 'utf8', stdio: 'pipe' }).trim();
-      if (toplevel) gitRepo = toplevel.split(/[/\\]/).pop();
+      const toplevel = git(['rev-parse', '--show-toplevel']);
+      if (toplevel) gitRepo = stripControl(toplevel.split(/[/\\]/).pop());
     } catch {}
+    gitBranch = stripControl(gitBranch);
     if (gitBranch) {
       try {
-        const porcelain = execFileSync('git', ['-C', cwd, 'status', '--porcelain'], { encoding: 'utf8', stdio: 'pipe' }).trim();
+        const porcelain = git(['status', '--porcelain']);
         if (porcelain) gitBranch += '*';
       } catch {}
     }
@@ -100,7 +126,7 @@ if (cwd) {
 }
 
 const home = homedir();
-const dirDisplay = cwd ? cwd.replace(home, '~') : '';
+const dirDisplay = cwd ? stripControl(cwd.replace(home, '~')) : '';
 const sep = `${GRAY} │ ${RESET}`;
 
 let modelDisplay = model;
@@ -117,7 +143,8 @@ if (gitRepo && gitBranch) {
 if (dirDisplay) line1 += `${sep}📁 ${dirDisplay}`;
 
 // ── Usage API (OAuth, cached) ──
-const CACHE_FILE = join(tmpdir(), 'claude-usage-cache.json');
+// 共有の一時ディレクトリは他ユーザーに先回りされうるため、ユーザー専用ディレクトリに置く
+const CACHE_FILE = join(home, '.claude', 'statusline-usage-cache.json');
 const CACHE_TTL = 360;
 
 async function fetchUsage() {
@@ -150,7 +177,7 @@ async function fetchUsage() {
     if (!res.ok) return null;
     const data = await res.json();
     try {
-      writeFileSync(CACHE_FILE, JSON.stringify({ ...data, cached_at: Math.floor(Date.now() / 1000) }));
+      writeFileSync(CACHE_FILE, JSON.stringify({ ...data, cached_at: Math.floor(Date.now() / 1000) }), { mode: 0o600 });
     } catch {}
     return data;
   } catch { return null; }
