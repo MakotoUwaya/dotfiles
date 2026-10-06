@@ -9,7 +9,17 @@ Cloud Monitoring / Personalized Service Health 由来のアラートを調査す
 gcloud config get-value account   # 認証済みアカウントの確認
 ```
 
-未認証の場合はユーザーに `! gcloud auth login` の実行を依頼する。
+未認証、または `Reauthentication failed. cannot prompt during non-interactive execution` が出た場合はユーザーに `! gcloud auth login` の実行を依頼する。
+
+プロジェクト ID は以下（gcloud の configuration 名 `es-account-prod` とは異なるので注意）:
+
+| 環境 | プロジェクト ID |
+|------|----------------|
+| prod | `es-account` |
+| stage | `es-account-stage` |
+| dev | `es-account-dev` |
+
+Service Health アラートは stage / prod で同時に発火することが多い。Slack 通知が片方のみでも両プロジェクトを確認する。
 
 ## 1. 発火元アラートポリシーの特定
 
@@ -39,6 +49,16 @@ gcloud logging read '<ポリシーの filter をそのまま、または緩め�
   --format="value(timestamp, resource.labels.event_id, jsonPayload.title)"
 ```
 
+Service Health の場合はポリシーの filter を調べなくても、次のクエリで一発で突合できる（`ViolationOpenEventv1` の `violation_id` が Slack 通知リンクの `alerts/<id>` と一致する）:
+
+```sh
+gcloud logging read 'logName:"servicehealth" OR resource.type="servicehealth.googleapis.com/Event"' --project=<project> --freshness=2d \
+  --format="value(timestamp, labels, jsonPayload.title, jsonPayload.state, jsonPayload.detailedState)"
+```
+
+発報ログ（logName `monitoring.googleapis.com/ViolationOpenEventv1`）は `resource.type` 側でしか拾えないため OR を外さない。
+通知リンクの ID が分かっていれば `labels.violation_id="<id>"` で直接引ける。
+
 発報時刻 ±数分のログエントリが対象イベント。
 Service Health の場合は `labels."servicehealth.googleapis.com/new_event" = true` のエントリが新規発火に対応する。
 
@@ -59,12 +79,22 @@ gcloud beta service-health events describe <EVENT_ID> \
 
 平常時ベースラインを先に確認してから異常判定する:
 
+`gcloud monitoring time-series` は存在しないため、Monitoring API を直接呼ぶ:
+
 ```sh
-# Metrics Explorer 相当の時系列取得
-gcloud monitoring time-series list --project=<project> \
-  --filter='metric.type="<metric>"' \
-  --interval-start-time=<RFC3339> --interval-end-time=<RFC3339>
+# 日次の点数で欠損・停止を確認（1 分間隔メトリクスなら平常 1440/日）
+curl -s -G -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+  "https://monitoring.googleapis.com/v3/projects/<project>/timeSeries" \
+  --data-urlencode 'filter=metric.type="<metric>"' \
+  --data-urlencode "interval.startTime=<RFC3339>" \
+  --data-urlencode "interval.endTime=<RFC3339>" \
+  --data-urlencode "aggregation.alignmentPeriod=86400s" \
+  --data-urlencode "aggregation.perSeriesAligner=ALIGN_COUNT" \
+  | jq -r '.timeSeries[]? | .points[] | "\(.interval.endTime) \(.value.int64Value)"' | sort
 ```
+
+aggregation を外して `jq '[.timeSeries[]?.points[].interval.endTime] | sort | .[-1]'` とすると最終データ点の時刻が取れる。
+メトリクス欠損系の障害では、同インスタンスの別メトリクス（CPU 等）を対照として並べて取得する。
 
 ## 4. 実影響の証拠ベース確認
 
