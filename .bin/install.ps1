@@ -164,11 +164,6 @@ New-SymLink -LinkPath (Join-Path $HOME '.wslconfig') `
 New-SymLink -LinkPath (Join-Path $env:APPDATA 'herdr\config.toml') `
             -TargetPath (Join-Path $dotdir 'herdr\config.toml')
 
-# Symlink: VcXsrv config
-New-SymLink -LinkPath (Join-Path $HOME '.config\vcxsrv') `
-            -TargetPath (Join-Path $dotdir '.config\vcxsrv') `
-            -IsDirectory
-
 # winget import (-ImportWinget 指定時のみ)
 $wingetFile = Join-Path $dotdir 'winget\settings.json'
 if (-not $ImportWinget) {
@@ -178,24 +173,6 @@ if (-not $ImportWinget) {
     winget import $wingetFile
 } else {
     Write-Warning "winget settings not found: $wingetFile"
-}
-
-# VcXsrv autostart (Startup folder shortcut)
-Write-Step 'Registering VcXsrv autostart...'
-$xlaunchExe = Join-Path $env:ProgramFiles 'VcXsrv\xlaunch.exe'
-if (Test-Path $xlaunchExe) {
-    $startupLink = Join-Path ([Environment]::GetFolderPath('Startup')) 'VcXsrv.lnk'
-    $xlaunchConfig = Join-Path $HOME '.config\vcxsrv\config.xlaunch'
-    $shell = New-Object -ComObject WScript.Shell
-    $shortcut = $shell.CreateShortcut($startupLink)
-    $shortcut.TargetPath = $xlaunchExe
-    $shortcut.Arguments = "-run `"$xlaunchConfig`""
-    $shortcut.WorkingDirectory = Split-Path -Parent $xlaunchExe
-    $shortcut.Description = 'Start VcXsrv X server for SSH X11 forwarding'
-    $shortcut.Save()
-    Write-Step "  Created: $startupLink"
-} else {
-    Write-Warning "VcXsrv not found: $xlaunchExe (skipping autostart registration)"
 }
 
 Write-Host ''

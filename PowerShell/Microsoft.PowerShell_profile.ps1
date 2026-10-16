@@ -73,14 +73,20 @@ $env:FZF_ALT_C_OPTS="--height 100% --preview ""pwsh -NoProfile -File \""$env:FZF
 # ripgrep
 $env:RIPGREP_CONFIG_PATH="$HOME\.ripgreprc"
 
-# VcXsrv: ssh -X でリモートの GUI アプリを Windows 側に表示する
-## DISPLAY が未設定だと ssh は X11 転送を警告なしでスキップするため必須
-$env:DISPLAY = "localhost:0.0"
-
 # xpra: 高レイテンシ回線でも実用的にリモートの GUI アプリを表示する
 $xpraDir = Join-Path $env:ProgramFiles "Xpra"
 if ((Test-Path $xpraDir) -and ($env:PATH -notlike "*$xpraDir*")) {
     $env:PATH = "$env:PATH;$xpraDir"
+}
+
+## リモートの GUI アプリをウィンドウ単位で起動する（例: xapp / xapp firefox / xapp google-chrome m）
+## 同梱 ssh は ~/.ssh/config と ssh-agent を使わないため Windows 標準の OpenSSH を指定する
+## ClearAllForwardings で接続先の LocalForward と既存 ssh セッションの衝突を避ける
+function xapp {
+    param([string]$Command = 'google-chrome', [string]$RemoteHost = 'm')
+    $ssh = Join-Path $env:SystemRoot 'System32\OpenSSH\ssh.exe'
+    xpra start "ssh://$RemoteHost/" "--ssh=$ssh -o ClearAllForwardings=yes -o ForwardX11=no" `
+        "--start-child=$Command" --exit-with-children=yes --speaker=off --microphone=off --webcam=no
 }
 
 # ghq
