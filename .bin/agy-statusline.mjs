@@ -1,6 +1,6 @@
 // Antigravity CLI (agy) Statusline - cross-platform (Node.js ESM)
 // agy が stdin に渡す実際の JSON 構造に対応
-// Display: model, context window, quota (Gemini / Claude & GPT), git status, directory, agent state
+// Display: model, context window, quota (Gemini / Argon / Claude & GPT), git status, directory, agent state
 
 import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
@@ -187,7 +187,7 @@ if (input.artifact_count > 0) {
 }
 
 // ── Line 2: Quota 情報 ──
-// usage の構成に沿って GEMINI MODELS と CLAUDE AND GPT MODELS の両グループを表示
+// usage の構成に沿って GEMINI MODELS (Flash / Pro / Argon) と CLAUDE AND GPT MODELS を表示
 function formatQuotaItem(name, qData, barLength = 10) {
   if (!qData) return null;
   const fraction = qData.remaining_fraction ?? 1;
@@ -211,11 +211,15 @@ const quota = input.quota;
 if (quota && typeof quota === 'object') {
   const quotaParts = [];
 
-  // 1. GEMINI MODELS (Gemini Flash, Gemini Pro)
+  // 1. GEMINI MODELS (Gemini Flash, Gemini Pro, Gemini Argon)
   const g5h = formatQuotaItem('💎 Gemini 5h', quota['gemini-5h'], 10);
   const gWk = formatQuotaItem('💎 Gemini 週', quota['gemini-weekly'], 10);
+  const gArgon5h = formatQuotaItem('💎 Argon 5h', quota['gemini-argon-wtu-5h'] ?? quota['gemini-argon-5h'], 10);
+  const gArgonWk = formatQuotaItem('💎 Argon 週', quota['gemini-argon-wtu-weekly'] ?? quota['gemini-argon-weekly'], 10);
   if (g5h) quotaParts.push(g5h);
   if (gWk) quotaParts.push(gWk);
+  if (gArgon5h) quotaParts.push(gArgon5h);
+  if (gArgonWk) quotaParts.push(gArgonWk);
 
   // 2. CLAUDE AND GPT MODELS (Claude Opus, Claude Sonnet, GPT-OSS)
   const cg5h = formatQuotaItem('🔮 Claude/GPT 5h', quota['3p-5h'], 10);
