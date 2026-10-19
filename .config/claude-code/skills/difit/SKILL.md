@@ -18,12 +18,25 @@ If the server is shut down without comments, treat it as "no review comments wer
 - Untracked ファイルがある場合: `difit . --clean --include-untracked`
   - `--include-untracked` で untracked ファイルも自動的に diff に含める
   - 対象引数が `.` または `working` のときのみ有効
+- **Windows（Git Bash）では必ず `--port 4976` を付ける**（下記「Windows でのポート」参照）
+  - 非対話の Git Bash では difit に PATH が通っていないため `mise x -- difit ...` で呼ぶ
 - **レビューに10分以上かかる見込みの場合**: バックグラウンド起動 → コメント取得の2段構えにする
-  - 起動: `difit . --background`（既定ポートは 4966）
-  - 取得: `difit comment get --port 4966`（レビュー完了をユーザーが知らせてから実行）
+  - 起動（Ubuntu）: `difit . --background`（JSON の `port` を使う）
+  - 起動（Windows）: **`--background` は使わない**。`mise x -- difit . --port 4976 --keep-alive --no-open` を **Bash ツールの `run_in_background: true`** で実行する
+    - Windows の `--background` は、サーバーが `::1` で起動するのに起動確認が `127.0.0.1` を見るため「Timed out while starting background difit server」で失敗する（`--host 127.0.0.1` でも同じ）。4966 だと ssh の転送先が応答して成功したように見えるだけ
+    - `--background` は切り離した cmd.exe を起動し、コンソールウィンドウがフォーカスを奪う
+  - ポート確認: バックグラウンドタスクの出力ファイルを Read し、`difit server started on http://localhost:<port>` の `<port>` を読む（`--port` は希望値で、使用中なら別ポートが割り当てられる）
+  - 取得: `difit comment get --port <port>`（レビュー完了をユーザーが知らせてから実行）
   - 停止: TaskStop にバックグラウンドタスク ID を渡す
   - フォアグラウンド実行は Bash ツールの実行上限（最大 600 秒）で SIGTERM され、レビュー途中でサーバーが落ちる
   - サーバーが落ちてもコメントは保持されるため、`--clean` を付けずに起動し直せば拾える（`--clean` を付けると消える）
+
+## Windows でのポート
+
+Windows 機の `ssh m` は `LocalForward 127.0.0.1:4966` で既定ポート 4966 を確保している（Ubuntu 機の difit を見るため）。
+このとき Windows の difit は空いている `::1:4966` で起動し、`localhost` は `::1` に解決されるので一見動く。
+しかし `127.0.0.1:4966` へのアクセスは Ubuntu に転送されるため、どちらの difit に繋がるかがアドレス次第になる。
+混線を避けるため、Windows では `--port 4976` を付けて 4966 を使わない。
 
 ## Basic Usage
 
@@ -72,7 +85,7 @@ difit working  # Unstaged changes only
 | `--comment <json>` | 起動時に初期レビューコメントを注入（thread / reply、繰り返し指定可） |
 
 起動中のサーバーに対するコメント操作は `difit comment` サブコマンドで行う
-（`add` / `get` / `resolve`）。いずれも `--port <port>` の指定が **必須**（既定ポートは 4966）。
+（`add` / `get` / `resolve`）。いずれも `--port <port>` の指定が **必須**（既定ポートは 4966、Windows は起動ログの `<port>`）。
 省略すると `error: required option '--port <port>' not specified` になる。
 
 **v5.0.0 の Breaking Change**: TUI モード (`--tui`) と `--mode <split|unified>` は削除された。
